@@ -3,6 +3,7 @@ import { FormattedMessage } from 'react-intl';
 
 // assets
 import { Calendar1 } from 'iconsax-react';
+import { MODULE, PERMISSIONS } from 'constant';
 
 // icons
 const icons = {
@@ -22,21 +23,30 @@ const invoice = {
       title: <FormattedMessage id="invoice" />,
       type: 'item',
       url: '/invoices/invoice',
-      icon: icons.samplePage
+      icon: icons.samplePage,
+      permissions: {
+        [MODULE.INVOICE]: PERMISSIONS.READ
+      }
     },
     {
       id: 'loans',
       title: <FormattedMessage id="loans" />,
       type: 'item',
       url: '/invoices/loans',
-      icon: icons.samplePage
+      icon: icons.samplePage,
+      permissions: {
+        [MODULE.LOAN]: PERMISSIONS.READ
+      }
     },
     {
       id: 'advance',
       title: <FormattedMessage id="advance" />,
       type: 'item',
       url: '/invoices/advance',
-      icon: icons.samplePage
+      icon: icons.samplePage,
+      permissions: {
+        [MODULE.ADVANCE]: PERMISSIONS.READ
+      }
     }
   ]
 };

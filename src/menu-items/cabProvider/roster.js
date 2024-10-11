@@ -3,6 +3,7 @@ import { FormattedMessage } from 'react-intl';
 
 // assets
 import { Calendar1 } from 'iconsax-react';
+import { MODULE, PERMISSIONS } from 'constant';
 
 // icons
 const icons = {
@@ -22,7 +23,10 @@ const roster = {
       title: <FormattedMessage id="roster" />,
       type: 'item',
       url: '/roster',
-      icon: icons.samplePage
+      icon: icons.samplePage,
+      permissions: {
+        [MODULE.ROSTER]: PERMISSIONS.READ
+      }
     }
   ]
 };

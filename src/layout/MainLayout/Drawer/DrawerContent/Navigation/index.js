@@ -51,7 +51,7 @@ const Navigation = () => {
   const { userType } = useSelector((state) => state.auth);
 
   // Helper function to check if a user has the required permissions
-  const hasPermissionItem = (itemId, userPermissions, requiredPermission) => {
+  const hasPermissionItem = (itemId, permissions, userPermissions, requiredPermission) => {
     console.log(`🚀 ~ hasPermissionItem ~ itemId:`, itemId);
     console.log(`🚀 ~ hasPermissionItem ~ userPermissions:`, userPermissions);
     console.log({ itemId, requiredPermission });
@@ -64,7 +64,8 @@ const Navigation = () => {
     }, {});
     console.log(`🚀 ~ modifiedUserPermissions ~ modifiedUserPermissions:`, modifiedUserPermissions);
 
-    return hasPermissionForItem(modifiedUserPermissions, itemId, requiredPermission);
+    // return hasPermissionForItem(modifiedUserPermissions, itemId, requiredPermission);
+    return isPermissionGranted(modifiedUserPermissions, permissions);
   };
 
   const hasPermissionCheckForGroup = (itemId, children, userPermissions, requiredPermission) => {
@@ -79,22 +80,35 @@ const Navigation = () => {
       }
       return acc;
     }, {});
+    console.log(`🚀 ~ modifiedUserPermissions ~ modifiedUserPermissions:`, modifiedUserPermissions);
 
-    const allChildren = children.map((i) => i.id);
-    console.log(`🚀 ~ hasPermissionCheckForGroup ~ allChildren:`, allChildren);
+    // const allChildren = children.map((i) => i.id);
+    // console.log(`🚀 ~ hasPermissionCheckForGroup ~ allChildren:`, allChildren);
 
-    // const x = children
-    //   .map((i) => i.extraModule)
-    //   .filter(Boolean)
-    //   .flat(Infinity);
-    // console.log(`🚀 ~ hasPermissionCheckForGroup ~ x:`, x);
+    // // const x = children
+    // //   .map((i) => i.extraModule)
+    // //   .filter(Boolean)
+    // //   .flat(Infinity);
+    // // console.log(`🚀 ~ hasPermissionCheckForGroup ~ x:`, x);
 
-    // console.log(`🚀 ~ modifiedUserPermissions ~ modifiedUserPermissions:`, modifiedUserPermissions);
-    // const extraAllChildren = [...allChildren, ...x];
-    // console.log(`🚀 ~ hasPermissionCheckForGroup ~ extraAllChildren:`, extraAllChildren);
-    // const result = hasPermissionForGroup(modifiedUserPermissions, extraAllChildren, 'rEad');
-    const result = hasPermissionForGroup(modifiedUserPermissions, allChildren, 'rEad');
-    console.log(`🚀 ~ hasPermissionCheckForGroup ~ result:`, result);
+    // // console.log(`🚀 ~ modifiedUserPermissions ~ modifiedUserPermissions:`, modifiedUserPermissions);
+    // // const extraAllChildren = [...allChildren, ...x];
+    // // console.log(`🚀 ~ hasPermissionCheckForGroup ~ extraAllChildren:`, extraAllChildren);
+    // // const result = hasPermissionForGroup(modifiedUserPermissions, extraAllChildren, 'rEad');
+    // const result = hasPermissionForGroup(modifiedUserPermissions, allChildren, 'rEad');
+    // console.log(`🚀 ~ hasPermissionCheckForGroup ~ result:`, result);
+
+    // return result;
+
+    const permissionObjForGroup = mergePermissionsForGroup(children);
+    console.log(`🚀 ~ hasPermissionCheckForGroup ~ permissionObjForGroup:`, permissionObjForGroup);
+
+    const result = isPermissionGranted(permissionObjForGroup, permissionObjForGroup);
+    console.log({
+      itemId,
+      permissionObjForGroup,
+      result
+    });
 
     return result;
   };
@@ -117,7 +131,7 @@ const Navigation = () => {
           acc.push(filteredItem);
         }
       } else if (item.type === 'item') {
-        if (hasPermissionItem(item.id, userPermissions, PERMISSIONS.READ)) {
+        if (hasPermissionItem(item.id, item.permissions, userPermissions, PERMISSIONS.READ)) {
           acc.push(filteredItem);
         }
       }
@@ -327,3 +341,31 @@ export function isPermissionGranted(permissionsObject, permissionPairs) {
   // Return false if none of the permission pairs match the user's permissions
   return false;
 }
+
+/**
+ * Merges and de-duplicates permissions from an array of objects.
+ * Ensures permissions are consistent as arrays and handles merging multiple permission sources.
+ *
+ * @param {Array} data - The input array containing objects with permissions.
+ * @returns {Object} A merged object where each key (permission type) holds a de-duplicated array of permissions.
+ */
+const mergePermissionsForGroup = (data) => {
+  return data.reduce((acc, { permissions }) => {
+    // Iterate through each permission key-value pair in the object
+    Object.entries(permissions).forEach(([key, value]) => {
+      // Ensure the value is treated as an array for consistency
+      const valuesArray = Array.isArray(value) ? value : [value];
+
+      // If the permission key is not present in the accumulator, initialize it as an empty array
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+
+      // Merge the current permissions with the existing ones, ensuring no duplicates using Set
+      acc[key] = [...new Set([...acc[key], ...valuesArray])];
+    });
+
+    // Return the accumulator for the next iteration
+    return acc;
+  }, {}); // Initialize the accumulator as an empty object
+};

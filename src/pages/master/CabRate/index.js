@@ -1,16 +1,28 @@
 /* eslint-disable no-unused-vars */
 import { MenuItem, Select, Stack, InputLabel, FormControl, Button } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { MODULE, PERMISSIONS } from 'constant';
+import { useCallback, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
+import { filteredArrayOfObjectsByUserPermissions } from 'utils/helper';
 
 const options = [
   {
     label: 'Cab Rate Master For Vendor',
-    value: 'vendor'
+    value: 'vendor',
+    check: {
+      [MODULE.CAB_RATE_VENDOR]: [PERMISSIONS.CREATE]
+      // [MODULE.ROLE]: [PERMISSIONS.UPDATE, PERMISSIONS.DELETE]
+      // [MODULE.ROLE]: [PERMISSIONS.CREATE, PERMISSIONS.DELETE]
+    }
   },
   {
     label: 'Cab Rate Master For Driver',
-    value: 'driver'
+    value: 'driver',
+    check: {
+      [MODULE.CAB_RATE_DRIVER]: [PERMISSIONS.CREATE]
+      // [MODULE.USER]: [PERMISSIONS.CREATE, PERMISSIONS.DELETE]
+    }
   }
 ];
 
@@ -22,6 +34,15 @@ const URL = {
 const CabRate = () => {
   const [value, setValue] = useState('');
   const navigate = useNavigate();
+
+  const { userPermissions } = useSelector((state) => state.auth);
+
+  // Filter options dynamically based on user permissions
+  const filteredOptions = useMemo(() => {
+    const result = filteredArrayOfObjectsByUserPermissions(options, userPermissions);
+    return result;
+  }, [userPermissions]);
+  console.log(`🚀 ~ filteredOptions ~ filteredOptions:`, filteredOptions);
 
   const handleChange = useCallback((event) => {
     setValue(event.target.value);
@@ -48,7 +69,7 @@ const CabRate = () => {
             label="Select Cab Rate Master"
             onChange={handleChange}
           >
-            {options.map((item) => (
+            {filteredOptions.map((item) => (
               <MenuItem key={item.value} value={item.value}>
                 {item.label}
               </MenuItem>

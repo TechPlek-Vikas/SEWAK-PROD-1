@@ -385,3 +385,52 @@ export function omitKeysFromArray(arr, keysToOmit) {
     }, {});
   });
 }
+
+/**
+ * Filters an array of option objects based on the user's permissions,
+ * excluding specified properties from the returned objects.
+ *
+ * This function checks each option against the user's permissions,
+ * ensuring that for each module specified in the option's "check" object,
+ * at least one of the required permissions exists in the user's permissions.
+ * Both module names and permissions are compared in a case-insensitive manner.
+ *
+ * @param {Array} options - An array of option objects, each containing a "check" object.
+ * @param {Object} userPermissions - An object representing the user's permissions,
+ * where keys are module names and values are arrays of permissions.
+ * @param {Array<string>} [filterKeys] - An optional array of additional keys to exclude from the returned objects.
+ * @returns {Array} - An array of options that meet the permission criteria,
+ * excluding the "check" property and any additional specified keys.
+ */
+export function filteredArrayOfObjectsByUserPermissions(options, userPermissions, filterKeys = []) {
+  return options
+    .filter((option) => {
+      const { check } = option;
+
+      // Check each module and its permissions in the "check" object
+      return Object.keys(check).some((moduleKey) => {
+        // Find the corresponding module in userPermissions (case-insensitive)
+        const userPermissionKey = Object.keys(userPermissions).find((key) => key.toLowerCase() === moduleKey.toLowerCase());
+
+        if (!userPermissionKey) return false; // Skip if no matching module found
+
+        // Normalize both userPermissions and check permissions to lower case
+        const userModulePermissions = userPermissions[userPermissionKey].map((perm) => perm.toLowerCase());
+        const requiredPermissions = Array.isArray(check[moduleKey])
+          ? check[moduleKey].map((perm) => perm.toLowerCase())
+          : [check[moduleKey].toLowerCase()]; // Ensure it's always an array
+
+        // Check if at least one required permission exists in userModulePermissions
+        return requiredPermissions.some((perm) => userModulePermissions.includes(perm));
+      });
+    })
+    .map((option) => {
+      // Exclude the "check" property and specified additional keys from the option object
+      return Object.keys(option)
+        .filter((key) => key !== 'check' && !filterKeys.includes(key)) // Filter out "check" and any additional keys
+        .reduce((acc, key) => {
+          acc[key] = option[key]; // Build new object excluding the specified keys
+          return acc;
+        }, {});
+    });
+}
