@@ -35,6 +35,8 @@ const AddCab = Loadable(lazy(() => import('pages/management/cab/AddCab')));
 const Company = Loadable(lazy(() => import('pages/management/company')));
 const AddCompany = Loadable(lazy(() => import('pages/management/company/AddCompany')));
 const AddBranch = Loadable(lazy(() => import('pages/management/company/AddBranch')));
+const CompanyOverview = Loadable(lazy(() => import('pages/overview/CompanyOverview')));
+
 
 // reports
 const Reports = Loadable(lazy(() => import('pages/Reports')));
@@ -109,11 +111,12 @@ const CabProvidorRoutes = {
                   path: 'add-company-branch',
                   // element: <AddBranch />
                   element: <ProtectedRoute element={AddBranch} moduleName={MODULE.COMPANY} permission={PERMISSIONS.CREATE} />
+                },
+                {
+                  path: 'overview/:id',
+                  // element: <CompanyOverview />
+                  element: <ProtectedRoute element={CompanyOverview} moduleName={MODULE.COMPANY} permission={PERMISSIONS.READ} />
                 }
-                // {
-                //   path: 'overview/:id',
-                //   element: <CompanyOverview />
-                // }
               ]
             },
             {

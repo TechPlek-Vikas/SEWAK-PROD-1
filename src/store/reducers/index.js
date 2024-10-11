@@ -17,6 +17,8 @@ import { zoneTypeReducer } from 'store/slice/cabProvidor/zoneTypeSlice';
 import { cabRateReducer } from 'store/slice/cabProvidor/cabRateSlice';
 import { advanceReducer } from 'store/slice/cabProvidor/advanceSlice';
 import { advanceTypeReducer } from 'store/slice/cabProvidor/advanceTypeSlice';
+import { chatReducer } from './chat';
+import { invoiceReducer } from './invoice';
 
 // ==============================|| COMBINE REDUCERS ||============================== //
 
@@ -35,7 +37,9 @@ const reducers = combineReducers({
   roles: roleReducer,
   cabRate: cabRateReducer,
   advances: advanceReducer,
-  advanceType: advanceTypeReducer
+  advanceType: advanceTypeReducer,
+  chat: chatReducer,
+  invoice: invoiceReducer
 });
 
 export default reducers;

@@ -61,9 +61,9 @@ const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
           return (
             <Typography>
               <Link
-                to={`/company/overview/${row._id}`}
+                to={`/management/company/overview/${row.original._id}`}
                 onClick={(e) => e.stopPropagation()} // Prevent interfering with row expansion
-                style={{ textDecoration: 'none' }}
+                style={{ textDecoration: 'none', color: 'rgb(70,128,255)' }}
               >
                 {value}
               </Link>
