@@ -42,7 +42,9 @@ const Loans = Loadable(lazy(() => import('pages/invoices/Loans')));
 const Advance = Loadable(lazy(() => import('pages/invoices/Advance')));
 // Master
 const Role = Loadable(lazy(() => import('pages/master/Role')));
-const Zone = Loadable(lazy(() => import('pages/master/Zone')));
+const Zone = Loadable(lazy(() => import('pages/master/zones')));
+const ZoneType = Loadable(lazy(() => import('pages/master/zones/ZoneType')));
+
 const CabType = Loadable(lazy(() => import('pages/master/CabType')));
 // Cab Rate
 const CabRate = Loadable(lazy(() => import('pages/master/CabRate')));
@@ -186,6 +188,11 @@ const CabProvidorRoutes = {
               path: 'zone',
               // element: <Zone />
               element: <ProtectedRoute element={Zone} moduleName={MODULE.ZONE} permission={PERMISSIONS.READ} />
+            },
+            {
+              path: 'zone-type',
+              // element: <ZoneType />
+              element: <ProtectedRoute element={ZoneType} moduleName={MODULE.ZONE_TYPE} permission={PERMISSIONS.READ} />
             },
             {
               path: 'cab-type',

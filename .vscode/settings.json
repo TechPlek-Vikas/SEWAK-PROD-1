@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
+    "addzone",
     "Amit",
     "avtar",
     "bgcolor",
@@ -9,6 +10,7 @@
     "describedby",
     "drivertype",
     "Dropzop",
+    "fetchzone",
     "formik",
     "GSTIN",
     "iconsax",
@@ -21,7 +23,9 @@
     "pincode",
     "Providor",
     "Trupti",
+    "updatezone",
     "USERTYPE",
-    "vikas"
+    "vikas",
+    "zonetype"
   ]
 }

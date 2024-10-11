@@ -13,10 +13,10 @@ export const fetchZoneNames = createAsyncThunk('zoneNames/fetchZoneNames', async
 });
 
 // Define the async thunk for adding a zone name
-export const addZoneName = createAsyncThunk('zoneNames/addZoneName', async (zoneName, { rejectWithValue }) => {
+export const addZoneName = createAsyncThunk('zoneNames/addZoneName', async (payload, { rejectWithValue }) => {
   try {
     // Replace with your actual endpoint
-    const response = await axios.post('/api/zoneNames', zoneName);
+    const response = await axios.post('/zone/add', payload);
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response ? error.response.data : error.message);
@@ -24,10 +24,10 @@ export const addZoneName = createAsyncThunk('zoneNames/addZoneName', async (zone
 });
 
 // Define the async thunk for updating a zone name
-export const updateZoneName = createAsyncThunk('zoneNames/updateZoneName', async ({ id, updatedData }, { rejectWithValue }) => {
+export const updateZoneName = createAsyncThunk('zoneNames/updateZoneName', async (payload, { rejectWithValue }) => {
   try {
     // Replace with your actual endpoint
-    const response = await axios.put(`/api/zoneNames/${id}`, updatedData);
+    const response = await axios.put(`/zone/edit`, payload);
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response ? error.response.data : error.message);
@@ -35,10 +35,10 @@ export const updateZoneName = createAsyncThunk('zoneNames/updateZoneName', async
 });
 
 // Define the async thunk for deleting a zone name
-export const deleteZoneName = createAsyncThunk('zoneNames/deleteZoneName', async (id, { rejectWithValue }) => {
+export const deleteZoneName = createAsyncThunk('zoneNames/deleteZoneName', async (payload, { rejectWithValue }) => {
   try {
     // Replace with your actual endpoint
-    await axios.delete(`/api/zoneNames/${id}`);
+    await axios.put(`/zone/delete`, payload);
     return id; // Return the id for deletion
   } catch (error) {
     return rejectWithValue(error.response ? error.response.data : error.message);
@@ -48,10 +48,14 @@ export const deleteZoneName = createAsyncThunk('zoneNames/deleteZoneName', async
 // Initial state for the zone names
 const initialState = {
   zoneNames: [], // Empty array initially
+  metaData: {
+    totalCount: 0,
+    page: 1,
+    limit: 10
+  },
   loading: false,
   error: null
 };
-
 // Create the slice for zone names
 const zoneNameSlice = createSlice({
   name: 'zoneNames',

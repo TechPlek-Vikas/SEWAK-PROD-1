@@ -3,6 +3,11 @@ import axios from 'utils/axios';
 
 const initialState = {
   zoneTypes: [], // Empty array initially
+  metaData: {
+    totalCount: 0,
+    page: 1,
+    limit: 10
+  },
   loading: false,
   error: null
 };
@@ -11,6 +16,48 @@ export const fetchAllZoneTypes = createAsyncThunk('zoneTypes/fetchAll', async (_
   try {
     const response = await axios.get('/zoneType/all');
     return response?.data?.data;
+  } catch (error) {
+    return rejectWithValue(error.response ? error.response.data : error.message);
+  }
+});
+
+export const addZoneType = createAsyncThunk(
+  'zoneType/addzoneType',
+  async ({ zoneId, zoneTypeName, zoneTypeDescription }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post('/zoneType/add', {
+        data: {
+          zoneId,
+          zoneTypeName,
+          zoneTypeDescription
+        }
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+  }
+);
+
+// Define the async thunk for updating a zone type
+export const updateZoneType = createAsyncThunk(
+  'zoneType/updatezoneType',
+  async ({ _id, zoneTypeName, zoneTypeDescription }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`/zoneType/edit`, { data: { _id, zoneTypeName, zoneTypeDescription } });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+  }
+);
+
+// Define the async thunk for deleting a zone type
+export const deleteZoneType = createAsyncThunk('zoneType/deletezoneType', async (id, { rejectWithValue }) => {
+  try {
+    // Replace with your actual endpoint
+    await axios.delete(`/zoneType?zoneTypeId=${id}`);
+    return id; // Return the id for deletion
   } catch (error) {
     return rejectWithValue(error.response ? error.response.data : error.message);
   }
