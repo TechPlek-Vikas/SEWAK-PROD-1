@@ -39,7 +39,8 @@ const Reports = Loadable(lazy(() => import('pages/Reports')));
 // Invoice
 const Invoice = Loadable(lazy(() => import('pages/invoices/Invoice')));
 const Loans = Loadable(lazy(() => import('pages/invoices/Loans')));
-const Advance = Loadable(lazy(() => import('pages/invoices/Advance')));
+const Advance = Loadable(lazy(() => import('pages/invoices/advance')));
+const AdvanceType = Loadable(lazy(() => import('pages/invoices/advance/AdvanceType')));
 // Master
 const Role = Loadable(lazy(() => import('pages/master/Role')));
 const Zone = Loadable(lazy(() => import('pages/master/zones')));
@@ -168,7 +169,13 @@ const CabProvidorRoutes = {
             },
             {
               path: 'advance',
-              element: <Advance />
+              // element: <Advance />
+              element: <ProtectedRoute element={Advance} moduleName={MODULE.ADVANCE} permission={PERMISSIONS.READ} />
+            },
+            {
+              path: 'advance-type',
+              // element: <AdvanceType />
+              element: <ProtectedRoute element={AdvanceType} moduleName={MODULE.ADVANCE_TYPE} permission={PERMISSIONS.READ} />
             }
           ]
         },
