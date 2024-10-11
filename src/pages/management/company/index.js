@@ -20,9 +20,9 @@ const Company = () => {
     dispatch(fetchCompanies({ page: page, limit: limit }));
   }, [dispatch, page, limit]);
 
-  if (loading) return <TableSkeleton rows={10} columns={9} />;
+  if (loading) return <TableSkeleton rows={10} columns={6} />;
   if (error) return <Error500 />;
-  if (companies.length === 0) return <EmptyTableDemo />;
+  if (companies?.length === 0) return <EmptyTableDemo />;
   return (
     <CompanyTable
       data={companies}

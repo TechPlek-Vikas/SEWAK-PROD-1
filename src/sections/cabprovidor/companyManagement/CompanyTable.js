@@ -42,7 +42,7 @@ const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
         Cell: ({ row }) => {
           const collapseIcon = row.isExpanded ? <ArrowDown2 size={14} /> : <ArrowRight2 size={14} />;
           let branch = row.original.Branches;
-          if (branch.length > 0) {
+          if (branch?.length > 0) {
             return (
               <Box sx={{ fontSize: '0.75rem', color: 'text.secondary' }} {...row.getToggleRowExpandedProps()}>
                 {collapseIcon}
@@ -113,13 +113,13 @@ const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
       <Stack direction={'row'} spacing={1} justifyContent="flex-end" alignItems="center" sx={{ p: 0, pb: 3 }}>
         <Stack direction={'row'} alignItems="center" spacing={2}>
           <WrapperButton moduleName={MODULE.COMPANY} permission={PERMISSIONS.CREATE}>
-            <Button variant="contained" startIcon={<Add />} onClick={handleAddCompany} size="small" color="success">
+            <Button variant="contained" startIcon={<Add />} onClick={handleAddCompanyBranch} size="small" color="success">
               Add Branch
             </Button>
           </WrapperButton>
 
           <WrapperButton moduleName={MODULE.COMPANY} permission={PERMISSIONS.CREATE}>
-            <Button variant="contained" startIcon={<Add />} onClick={handleAddCompanyBranch} size="small">
+            <Button variant="contained" startIcon={<Add />} onClick={handleAddCompany} size="small">
               Add Company
             </Button>
           </WrapperButton>

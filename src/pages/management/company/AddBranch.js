@@ -8,30 +8,35 @@ import MainCard from 'components/MainCard';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-// import SingleFileUpload from 'components/third-party/dropzone/SingleFile';
-import { useDispatch } from 'react-redux';
+import { useCallback, useEffect, useState } from 'react';
 import { openSnackbar } from 'store/reducers/snackbar';
-import { useNavigate } from 'react-router-dom';
-import { addCompany } from 'store/slice/cabProvidor/companySlice';
+import { useDispatch } from 'react-redux';
 import MultiFileUpload from 'components/third-party/dropzone/MultiFile';
-import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { addBranch, fetchCompanies } from 'store/slice/cabProvidor/companySlice';
+import ConfigurableAutocomplete from 'components/autocomplete/ConfigurableAutocomplete';
 
 // ==============================|| LAYOUTS -  COLUMNS ||============================== //
-const taxOptions = {
-  No: 0,
-  'Per Trip': 1,
-  Monthly: 2
-};
 
-function AddCompany() {
-  const dispatch = useDispatch();
+function AddBranch() {
+  const [branchData] = useState({});
   const navigate = useNavigate();
-  const [companyData] = useState(null);
+  const dispatch = useDispatch();
   const [list] = useState(false);
+  const [, setPdf] = useState([]);
+  const location = useLocation();
+  const [selectedOption, setSelectedOption] = useState(null);
+  const rowOriginal = location.state;
 
   const handleCancel = () => {
     navigate(-1);
   };
+
+  // const { companies = [] } = useSelector((state) => state.companies || {});
+
+  useEffect(() => {
+    dispatch(fetchCompanies());
+  }, [dispatch]);
 
   const YupValidationConfig = {
     company_name: {
@@ -52,16 +57,23 @@ function AddCompany() {
 
   const DIGITS_ONLY_PATTERN = /^\d+$/;
 
+  const TAX = {
+    No: 0,
+    'Per Trip': 1,
+    Monthly: 2
+  };
+
   const validationSchema = yup.object({
-    company_name: yup
+    parentCompanyID: yup.string().required('Company Name is required'),
+    companyBranchName: yup
       .string()
       .trim()
-      .min(YupValidationConfig.company_name.min, ({ min }) => `Company Name must be at least ${min} characters`)
-      .max(YupValidationConfig.company_name.max, ({ max }) => `Company Name must be at most ${max} characters`)
-      .test('no-leading-digit', 'Company Name cannot start with a number', (value) => {
+      .min(YupValidationConfig.company_name.min, ({ min }) => `Branch Name must be at least ${min} characters`)
+      .max(YupValidationConfig.company_name.max, ({ max }) => `Branch Name must be at most ${max} characters`)
+      .test('no-leading-digit', 'Branch Name cannot start with a number', (value) => {
         return /^[^0-9]/.test(value);
       })
-      .required('Company Name is required'),
+      .required('Branch Name is required'),
     contact_person: yup
       .string()
       .trim()
@@ -75,12 +87,18 @@ function AddCompany() {
     mobile: yup
       .string()
       .trim()
-      .matches(/^[0-9]{10}$/, { message: 'Please enter valid mobile number', excludeEmptyString: false })
+      .matches(/^[0-9]{10}$/, {
+        message: 'Please enter valid mobile number',
+        excludeEmptyString: false
+      })
       .required('Mobile Number is required'),
     landline: yup
       .string()
       .trim()
-      .matches(/^[0-9]{10}$/, { message: 'Please enter valid landline number', excludeEmptyString: false })
+      .matches(/^[0-9]{10}$/, {
+        message: 'Please enter valid landline number',
+        excludeEmptyString: false
+      })
       .test('not-same-as-phone', 'Landline phone number should be different from mobile number', function (value) {
         const { mobile: phone } = this.parent;
         return typeof phone === 'undefined' ? true : value !== phone;
@@ -97,7 +115,10 @@ function AddCompany() {
     //   .matches(/^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z1-9]{1}Z[A-Z0-9]{1})$/, 'Enter a valid GSTIN'),
     postal_code: yup
       .string()
-      .matches(/^[0-9]{6}$/, { message: 'Please enter valid pin code', excludeEmptyString: false })
+      .matches(/^[0-9]{6}$/, {
+        message: 'Please enter valid pin code',
+        excludeEmptyString: false
+      })
       .required('Pin Code is required'),
     address: yup
       .string()
@@ -129,44 +150,40 @@ function AddCompany() {
       .required('State Amount is required'),
     files: yup
       .mixed()
-      .test('fileSize', 'File size is too large', (value) => {
-        if (value && value[0]) {
-          // Check if file size is within acceptable range (e.g., 5MB)
-          return value[0].size <= 5 * 1024 * 1024;
-        }
-        return true; // Allow empty
-      })
       .test('single-file', 'You can only upload one file', (value) => {
         return Array.isArray(value) && value.length === 1 && value[0] instanceof File;
       })
       .required('Company Contract is required')
-    // companyContract: yup.mixed().required('Company Contract is required')
   });
 
   const formik = useFormik({
     initialValues: {
-      company_name: companyData?.company_name || '',
-      contact_person: companyData?.contact_person || '',
-      company_email: companyData?.company_email || '',
-      mobile: companyData?.mobile || '',
-      landline: companyData?.landline || '',
-      PAN: companyData?.PAN || '',
-      GSTIN: companyData?.GSTIN || '',
-      postal_code: companyData?.postal_code || '',
-      address: companyData?.address || '',
-      city: companyData?.city || '',
-      state: companyData?.state || '',
-      MCDTax: companyData?.MCDTax || '',
-      MCDAmount: companyData?.MCDAmount || '',
-      stateTax: companyData?.stateTax || '',
-      stateTaxAmount: companyData?.stateTaxAmount || '',
-      files: companyData?.companyContract || null
+      parentCompanyID: branchData.parentCompanyID || '',
+      parentCompanyName: '',
+      companyBranchName: branchData.companyBranchName || '',
+      contact_person: branchData.contact_person || '',
+      company_email: branchData.company_email || '',
+      mobile: branchData.mobile || '',
+      landline: branchData.landline || '',
+      PAN: branchData.PAN || '',
+      GSTIN: branchData.GSTIN || '',
+      postal_code: branchData.postal_code || '',
+      address: branchData.address || '',
+      city: branchData.city || '',
+      state: branchData.state || '',
+      MCDTax: branchData.MCDTax || '',
+      MCDAmount: branchData.MCDAmount || '',
+      stateTax: branchData.stateTax || '',
+      stateTaxAmount: branchData.stateTaxAmount || '',
+      files: branchData.companyContract || null
     },
     validationSchema,
+    enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
       try {
         const formData = new FormData();
-        formData.append('company_name', values.company_name);
+        formData.append('parentCompanyID', values.parentCompanyID);
+        formData.append('companyBranchName', values.companyBranchName);
         formData.append('contact_person', values.contact_person);
         formData.append('company_email', values.company_email);
         formData.append('mobile', values.mobile);
@@ -183,16 +200,15 @@ function AddCompany() {
         formData.append('stateTaxAmount', values.stateTaxAmount);
         formData.append('companyContract', values.files[0]);
 
-        const resultAction = await dispatch(addCompany(formData));
-        console.log(`🚀 ~ onSubmit: ~ resultAction:`, resultAction);
+        const resultAction = await dispatch(addBranch(formData));
 
-        if (addCompany.fulfilled.match(resultAction)) {
+        if (addBranch.fulfilled.match(resultAction)) {
           // Company successfully added
           resetForm();
           dispatch(
             openSnackbar({
               open: true,
-              message: 'Company added successfully',
+              message: 'Company branch added successfully',
               variant: 'alert',
               alert: {
                 color: 'success'
@@ -219,25 +235,83 @@ function AddCompany() {
     }
   });
 
+  const handleSelectionChange = useCallback(
+    (value) => {
+      setSelectedOption(value);
+      console.log('Selected Option:', value);
+      formik.setFieldValue('parentCompanyID', value?._id || '');
+    },
+    [formik]
+  );
+
+  useEffect(() => {
+    if (rowOriginal) {
+      formik.setValues({
+        parentCompanyID: rowOriginal.parentCompanyID || '',
+        companyBranchName: rowOriginal.companyBranchName || '',
+        contact_person: rowOriginal.contact_person || '',
+        company_email: rowOriginal.company_email || '',
+        mobile: rowOriginal.mobile || '',
+        landline: rowOriginal.landline || '',
+        PAN: rowOriginal.PAN || '',
+        GSTIN: rowOriginal.GSTIN || '',
+        postal_code: rowOriginal.postal_code || '',
+        address: rowOriginal.address || '',
+        city: rowOriginal.city || '',
+        state: rowOriginal.state || '',
+        MCDTax: rowOriginal.MCDTax || '',
+        MCDAmount: rowOriginal.MCDAmount || '',
+        stateTax: rowOriginal.stateTax || '',
+        stateTaxAmount: rowOriginal.stateTaxAmount || '',
+        files: [{ name: 'files', url: rowOriginal.companyContract }] || null
+      });
+    }
+  }, [rowOriginal]);
+
   return (
     <form onSubmit={formik.handleSubmit} id="validation-forms">
       <Grid container spacing={3}>
         <Grid item xs={12}>
-          <MainCard title={'ADD COMPANY INFORMATION'}>
+          <MainCard title={'ADD BRANCH INFORMATION'}>
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} lg={4}>
                 <Stack spacing={1}>
-                  <InputLabel>Company Name</InputLabel>
+                  <InputLabel id="demo-simple-select-helper-label">Company Name</InputLabel>
+                  <FormControl>
+                    <ConfigurableAutocomplete
+                      apiUrl="/company/getCompanyByName" // Replace with your actual API URL
+                      onChange={handleSelectionChange} // Handle selected item
+                      label="Search Company" // Input field label
+                      maxItems={3} // Limit the results to 3 items
+                      optionLabelKey="company_name" // Key to display from API response
+                      searchParam="filter"
+                      noOptionsText="No Company Found"
+                      placeHolderText="Type to search for company" // Pass placeholder text
+                      autoHighlight // Enable auto highlight
+                    />
+                  </FormControl>
+
+                  {selectedOption && (
+                    <div>
+                      <h3>Selected Option:</h3>
+                      <p>{selectedOption.company_name}</p>
+                    </div>
+                  )}
+                </Stack>
+              </Grid>
+              <Grid item xs={12} lg={4}>
+                <Stack spacing={1}>
+                  <InputLabel>Branch Name</InputLabel>
                   <TextField
                     fullWidth
-                    placeholder="Enter Company Name"
-                    id="company_name"
-                    name="company_name"
-                    value={formik.values.company_name}
+                    placeholder="Enter Branch Name"
+                    id="companyBranchName"
+                    name="companyBranchName"
+                    value={branchData.companyBranchName || formik.values.companyBranchName}
                     onChange={formik.handleChange}
-                    error={formik.touched.company_name && Boolean(formik.errors.company_name)}
-                    helperText={formik.touched.company_name && formik.errors.company_name}
-                    autoComplete="company_name"
+                    error={formik.touched.companyBranchName && Boolean(formik.errors.companyBranchName)}
+                    helperText={formik.touched.companyBranchName && formik.errors.companyBranchName}
+                    autoComplete="companyBranchName"
                   />
                 </Stack>
               </Grid>
@@ -249,7 +323,7 @@ function AddCompany() {
                     placeholder="Enter Person Name"
                     id="contact_person"
                     name="contact_person"
-                    value={formik.values.contact_person}
+                    value={branchData.contact_person || formik.values.contact_person}
                     onChange={formik.handleChange}
                     error={formik.touched.contact_person && Boolean(formik.errors.contact_person)}
                     helperText={formik.touched.contact_person && formik.errors.contact_person}
@@ -264,7 +338,7 @@ function AddCompany() {
                     placeholder="Enter Company Email"
                     id="company_email"
                     name="company_email"
-                    value={formik.values.company_email}
+                    value={branchData.company_email || formik.values.company_email}
                     onChange={formik.handleChange}
                     error={formik.touched.company_email && Boolean(formik.errors.company_email)}
                     helperText={formik.touched.company_email && formik.errors.company_email}
@@ -279,7 +353,7 @@ function AddCompany() {
                     placeholder="Enter Mobile Number"
                     id="mobile"
                     name="mobile"
-                    value={formik.values.mobile}
+                    value={branchData.mobile || formik.values.mobile}
                     onChange={formik.handleChange}
                     error={formik.touched.mobile && Boolean(formik.errors.mobile)}
                     helperText={formik.touched.mobile && formik.errors.mobile}
@@ -294,7 +368,7 @@ function AddCompany() {
                     placeholder="Enter Landline Number"
                     id="landline"
                     name="landline"
-                    value={formik.values.landline}
+                    value={branchData.landline || formik.values.landline}
                     onChange={formik.handleChange}
                     error={formik.touched.landline && Boolean(formik.errors.landline)}
                     helperText={formik.touched.landline && formik.errors.landline}
@@ -309,7 +383,7 @@ function AddCompany() {
                     placeholder="Enter PAN"
                     id="PAN"
                     name="PAN"
-                    value={formik.values.PAN}
+                    value={branchData.PAN || formik.values.PAN}
                     onChange={formik.handleChange}
                     error={formik.touched.PAN && Boolean(formik.errors.PAN)}
                     helperText={formik.touched.PAN && formik.errors.PAN}
@@ -324,7 +398,7 @@ function AddCompany() {
                     placeholder="Enter GSTIN"
                     id="GSTIN"
                     name="GSTIN"
-                    value={formik.values.GSTIN}
+                    value={branchData.GSTIN || formik.values.GSTIN}
                     onChange={formik.handleChange}
                     error={formik.touched.GSTIN && Boolean(formik.errors.GSTIN)}
                     helperText={formik.touched.GSTIN && formik.errors.GSTIN}
@@ -339,7 +413,7 @@ function AddCompany() {
                     placeholder="Enter Pincode"
                     id="postal_code"
                     name="postal_code"
-                    value={formik.values.postal_code}
+                    value={branchData.postal_code || formik.values.postal_code}
                     onChange={formik.handleChange}
                     error={formik.touched.postal_code && Boolean(formik.errors.postal_code)}
                     helperText={formik.touched.postal_code && formik.errors.postal_code}
@@ -354,7 +428,7 @@ function AddCompany() {
                     placeholder="Enter Address"
                     id="address"
                     name="address"
-                    value={formik.values.address}
+                    value={branchData.address || formik.values.address}
                     onChange={formik.handleChange}
                     error={formik.touched.address && Boolean(formik.errors.address)}
                     helperText={formik.touched.address && formik.errors.address}
@@ -369,7 +443,7 @@ function AddCompany() {
                     placeholder="Enter City"
                     id="city"
                     name="city"
-                    value={formik.values.city}
+                    value={branchData.city || formik.values.city}
                     onChange={formik.handleChange}
                     error={formik.touched.city && Boolean(formik.errors.city)}
                     helperText={formik.touched.city && formik.errors.city}
@@ -384,7 +458,7 @@ function AddCompany() {
                     placeholder="Enter State"
                     id="state"
                     name="state"
-                    value={formik.values.state}
+                    value={branchData.state || formik.values.state}
                     onChange={formik.handleChange}
                     error={formik.touched.state && Boolean(formik.errors.state)}
                     helperText={formik.touched.state && formik.errors.state}
@@ -404,16 +478,17 @@ function AddCompany() {
                     <InputLabel>MCD Tax</InputLabel>
                     <Select
                       fullWidth
+                      placeholder="Enter MCD Tax"
                       defaultValue=""
                       id="MCDTax"
                       name="MCDTax"
-                      value={formik.values.MCDTax}
+                      value={branchData.MCDTax || formik.values.MCDTax}
                       onChange={formik.handleChange}
                       error={formik.touched.MCDTax && Boolean(formik.errors.MCDTax)}
                       helperText={formik.touched.MCDTax && formik.errors.MCDTax}
                       autoComplete="MCDTax"
                     >
-                      {Object.entries(taxOptions).map(([key, value]) => (
+                      {Object.entries(TAX).map(([key, value]) => (
                         <MenuItem key={key} value={value}>
                           {key}
                         </MenuItem>
@@ -431,7 +506,7 @@ function AddCompany() {
                     id="MCDAmount"
                     name="MCDAmount"
                     type="number"
-                    value={formik.values.MCDAmount}
+                    value={branchData.MCDAmount || formik.values.MCDAmount}
                     onChange={formik.handleChange}
                     error={formik.touched.MCDAmount && Boolean(formik.errors.MCDAmount)}
                     helperText={formik.touched.MCDAmount && formik.errors.MCDAmount}
@@ -446,16 +521,17 @@ function AddCompany() {
                     <InputLabel>State Tax</InputLabel>
                     <Select
                       fullWidth
+                      placeholder="Enter State Tax"
                       defaultValue=""
                       id="stateTax"
                       name="stateTax"
-                      value={formik.values.stateTax}
+                      value={branchData.stateTax || formik.values.stateTax}
                       onChange={formik.handleChange}
                       error={formik.touched.stateTax && Boolean(formik.errors.stateTax)}
                       helperText={formik.touched.stateTax && formik.errors.stateTax}
                       autoComplete="stateTax"
                     >
-                      {Object.entries(taxOptions).map(([key, value]) => (
+                      {Object.entries(TAX).map(([key, value]) => (
                         <MenuItem key={key} value={value}>
                           {key}
                         </MenuItem>
@@ -473,7 +549,7 @@ function AddCompany() {
                     id="stateTaxAmount"
                     name="stateTaxAmount"
                     type="number"
-                    value={formik.values.stateTaxAmount}
+                    value={branchData.stateTaxAmount || formik.values.stateTaxAmount}
                     onChange={formik.handleChange}
                     error={formik.touched.stateTaxAmount && Boolean(formik.errors.stateTaxAmount)}
                     helperText={formik.touched.stateTaxAmount && formik.errors.stateTaxAmount}
@@ -485,15 +561,6 @@ function AddCompany() {
         </Grid>
         <Grid item xs={12}>
           <MainCard title="CONTRACT INFORMATION">
-            {/* <SingleFileUpload
-              id="companyContract"
-              name="companyContract"
-              setFieldValue={formik.setFieldValue}
-              value={formik.values.files}
-              file={formik.values.files}
-              error={formik.touched.companyContract && Boolean(formik.errors.companyContract)}
-              helperText={formik.touched.companyContract && formik.errors.companyContract}
-            /> */}
             <>
               <MultiFileUpload
                 name="files"
@@ -521,7 +588,7 @@ function AddCompany() {
                 Cancel
               </Button>
               <Button variant="contained" sx={{ my: 3, ml: 1 }} type="submit">
-                {'Save'}
+                Add
               </Button>
             </DialogActions>
           </Stack>
@@ -531,4 +598,4 @@ function AddCompany() {
   );
 }
 
-export default AddCompany;
+export default AddBranch;
