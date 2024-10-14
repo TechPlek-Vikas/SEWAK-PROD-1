@@ -29,7 +29,7 @@ const Cab = () => {
     setPage(1);
   }, []);
 
-  if (loading) return <TableSkeleton rows={10} columns={9} />;
+  if (loading) return <TableSkeleton rows={10} columns={5} />;
   if (error) return <Error500 />;
   if (cabs.length === 0) return <EmptyTableDemo />;
 
