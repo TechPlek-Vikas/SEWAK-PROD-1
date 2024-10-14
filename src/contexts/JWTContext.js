@@ -145,6 +145,13 @@ export const JWTProvider = ({ children }) => {
     const response = await axios.post('/user/login', payload);
     const { userData, userSpecificData } = response.data;
 
+    const userInfo = {
+      userId: userData._id,
+      userType: userData.userType
+    };
+
+    localStorage.setItem('userInformation', JSON.stringify(userInfo));
+
     setSession(userData.token);
     dispatch({
       type: LOGIN,
