@@ -28,14 +28,12 @@ const AdvanceTypeForm = ({ customer, onCancel, updateKey, setUpdateKey }) => {
   const isCreating = !customer;
   // const [openAlert, setOpenAlert] = useState(false);
 
-  console.log('customer', customer);
 
   const formik = useFormik({
     initialValues: { advanceTypeName: customer?.advanceTypeName || '', interestRate: customer?.interestRate || '' },
     validationSchema: CustomerSchema,
     enableReinitialize: true,
     onSubmit: async (values) => {
-      console.log('values', values);
 
       try {
         if (isCreating) {

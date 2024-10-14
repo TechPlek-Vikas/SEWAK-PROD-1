@@ -9,7 +9,7 @@ import PaginationBox from 'components/tables/Pagination';
 import { ArrowSquare } from 'iconsax-react';
 
 const ViewRosterTable = ({ data, page, setPage, limit, setLimit, lastPageNo, payload }) => {
-  console.log('payload', payload);
+  // console.log('payload', payload);
   const navigate = useNavigate();
   const columns = useMemo(
     () => [

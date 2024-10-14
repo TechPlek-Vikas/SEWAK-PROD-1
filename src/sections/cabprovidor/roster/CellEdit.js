@@ -20,15 +20,15 @@ const CellEdit = ({
 
   const handleInputChange = (e, newValue) => {
     if (dataType === 'autoComplete') {
-      console.log('handleInputChange', newValue);
+      // console.log('handleInputChange', newValue);
       setValue(newValue); // for autocomplete
     } else if (dataType === 'date') {
-      console.log('date = ', e);
+      // console.log('date = ', e);
       setValue(e);
       updateData(index, id, e);
       // handleBlur();
     } else if (dataType === 'time') {
-      console.log('time = ', e);
+      // console.log('time = ', e);
       setValue(e);
       updateData(index, id, e);
     } else {
@@ -38,7 +38,7 @@ const CellEdit = ({
   };
 
   const handleBlur = () => {
-    console.log('handleBlur');
+    // console.log('handleBlur');
     updateData(index, id, value); // Update the table data when editing is complete
   };
 
@@ -175,7 +175,7 @@ const CellEdit = ({
           options={properties.options}
           // getOptionLabel={(option) => option[properties.displayName] || ""}
           getOptionLabel={(option) => {
-            console.log('Type = ', typeof option, 'Option = ', option);
+            // console.log('Type = ', typeof option, 'Option = ', option);
             // return option[properties.displayName] || "";
             if (typeof option === 'string') {
               return option;
@@ -186,7 +186,7 @@ const CellEdit = ({
             return option[properties.displayName] || ''; // Display zoneName in dropdown
           }}
           filterOptions={(options, params) => {
-            console.log('Params', params);
+            // console.log('Params', params);
             const filtered = options.filter((option) =>
               option[properties.displayName]?.toLowerCase().includes(params.inputValue?.toLowerCase())
             );

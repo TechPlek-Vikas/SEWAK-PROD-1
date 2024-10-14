@@ -1,25 +1,10 @@
-import PropTypes from "prop-types";
-import { useState } from "react";
-import {
-  FormControl,
-  Grid,
-  MenuItem,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-  Pagination,
-} from "@mui/material";
+import PropTypes from 'prop-types';
+import { useState } from 'react';
+import { FormControl, Grid, MenuItem, Select, Stack, TextField, Typography, Pagination } from '@mui/material';
 
 let options = [5, 10, 25, 50, 100];
 
-const PaginationBox = ({
-  pageSize,
-  setPageSize,
-  pageIndex,
-  gotoPage,
-  lastPageIndex,
-}) => {
+const PaginationBox = ({ pageSize, setPageSize, pageIndex, gotoPage, lastPageIndex }) => {
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -35,12 +20,7 @@ const PaginationBox = ({
   };
 
   return (
-    <Grid
-      container
-      alignItems="center"
-      justifyContent="space-between"
-      sx={{ width: "auto" }}
-    >
+    <Grid container alignItems="center" justifyContent="space-between" sx={{ width: 'auto' }}>
       <Grid item>
         <Stack direction="row" spacing={1} alignItems="center">
           <Stack direction="row" spacing={1} alignItems="center">
@@ -57,7 +37,7 @@ const PaginationBox = ({
                 value={pageSize}
                 onChange={setPageSize}
                 size="small"
-                sx={{ "& .MuiSelect-select": { py: 0.75, px: 1.25 } }}
+                sx={{ '& .MuiSelect-select': { py: 0.75, px: 1.25 } }}
               >
                 {options.map((option) => (
                   <MenuItem key={option} value={option}>
@@ -78,14 +58,14 @@ const PaginationBox = ({
             value={pageIndex}
             onChange={(e) => {
               const page = e.target.value ? Number(e.target.value) : 1;
-              console.log(`🚀 ~ Pagination ~ page:`, page);
+              // console.log(`🚀 ~ Pagination ~ page:`, page);
               gotoPage(page);
             }}
             InputProps={{
-              inputProps: { min: 1, max: lastPageIndex }, // Optional: Set minimum value
+              inputProps: { min: 1, max: lastPageIndex } // Optional: Set minimum value
             }}
             sx={{
-              "& .MuiOutlinedInput-input": { py: 0.75, px: 1.25, width: 36 },
+              '& .MuiOutlinedInput-input': { py: 0.75, px: 1.25, width: 36 }
             }}
           />
         </Stack>
@@ -112,7 +92,7 @@ PaginationBox.propTypes = {
   setPageSize: PropTypes.func.isRequired,
   pageIndex: PropTypes.number.isRequired,
   gotoPage: PropTypes.func.isRequired,
-  lastPageIndex: PropTypes.number.isRequired,
+  lastPageIndex: PropTypes.number.isRequired
 };
 
 export default PaginationBox;

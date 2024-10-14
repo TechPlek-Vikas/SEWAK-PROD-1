@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import { Button, Stack, Table, TableBody, TableCell, TableHead, TableRow, useMediaQuery } from '@mui/material';
 import { Fragment, useMemo } from 'react';
@@ -57,8 +58,6 @@ function ReactTable({
     usePagination,
     useRowSelect
   );
-
-  console.log(`🚀 ~ ReactTable ~ allColumns:`, allColumns);
 
   return (
     <>

@@ -252,8 +252,9 @@ const Roster = () => {
     dispatch(fetchZoneNames());
   }, [dispatch]);
 
+  // eslint-disable-next-line no-unused-vars
   const { zoneNames } = useSelector((state) => state.zoneName);
-  console.log('zoneNames', zoneNames);
+  // console.log('zoneNames', zoneNames);
   const columns = useMemo(
     () => [
       {

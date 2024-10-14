@@ -18,7 +18,7 @@ const ConfigurableAutocomplete = React.memo(
     placeHolderText = 'Type to search', // Default placeholder text
     ...props
   }) => {
-    console.log('ConfigurableAutocomplete Render .................');
+    // console.log('ConfigurableAutocomplete Render .................');
     const [open, setOpen] = useState(false);
     const [options, setOptions] = useState([]);
     const [, setInputValue] = useState('');
@@ -46,7 +46,7 @@ const ConfigurableAutocomplete = React.memo(
             params: { [searchParam]: searchText } // Use the configurable search parameter
           });
 
-          console.log('response.data = ', response.data);
+          // console.log('response.data = ', response.data);
 
           if (response.status === 200) {
             const results = response.data.data.result.slice(0, maxItems); // Limit displayed options based on maxItems
