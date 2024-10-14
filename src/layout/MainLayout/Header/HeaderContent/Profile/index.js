@@ -19,6 +19,9 @@ import { ThemeMode } from 'config';
 // assets
 import avatar1 from 'assets/images/users/avatar-6.png';
 import { Setting2, Profile, Logout } from 'iconsax-react';
+import { getKeyByValue } from 'utils/helper';
+import { MAPPING_USER_TYPE_NAMES } from 'constant';
+import { useSelector } from 'react-redux';
 
 // tab panel wrapper
 function TabPanel(props) {
@@ -57,6 +60,11 @@ const ProfilePage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
 
+  const userName = useSelector((state) => state.auth?.user?.userName);
+  const userType = useSelector((state) => state.auth?.user?.userType);
+  const profileImageURL = useSelector((state) => state.auth?.user?.userImage);
+
+  // eslint-disable-next-line no-unused-vars
   const { logout, user } = useAuth();
   const handleLogout = async () => {
     try {
@@ -108,7 +116,7 @@ const ProfilePage = () => {
         aria-haspopup="true"
         onClick={handleToggle}
       >
-        <Avatar alt="profile user" src={avatar1} />
+        <Avatar alt="profile user" src={profileImageURL || avatar1} />
       </ButtonBase>
       <Popper
         placement="bottom-end"
@@ -148,11 +156,12 @@ const ProfilePage = () => {
                     <Grid container justifyContent="space-between" alignItems="center">
                       <Grid item>
                         <Stack direction="row" spacing={1.25} alignItems="center">
-                          <Avatar alt="profile user" src={avatar1} />
+                          <Avatar alt="profile user" src={profileImageURL || avatar1} />
                           <Stack>
-                            <Typography variant="subtitle1">{user?.name}</Typography>
+                            <Typography variant="subtitle1">{userName}</Typography>
                             <Typography variant="body2" color="secondary">
-                              UI/UX Designer
+                              {/* UI/UX Designer */}
+                              {getKeyByValue(MAPPING_USER_TYPE_NAMES, userType) || 'UI/UX Designer'}
                             </Typography>
                           </Stack>
                         </Stack>
