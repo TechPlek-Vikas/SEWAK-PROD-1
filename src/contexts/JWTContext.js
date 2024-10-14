@@ -32,6 +32,7 @@ import { MODULE, PERMISSIONS } from 'constant';
 //   'cab-rate': ['read']
 // };
 
+// eslint-disable-next-line no-unused-vars
 const x = {
   [MODULE.ROSTER]: [PERMISSIONS.READ],
 
@@ -110,8 +111,8 @@ export const JWTProvider = ({ children }) => {
               user: userData,
               userType: userData.userType,
               userSpecificData: userSpecificData,
-              // userPermissions: userPermissions
-              userPermissions: x
+              userPermissions: userPermissions
+              // userPermissions: x
             }
           });
         } else {
@@ -143,7 +144,7 @@ export const JWTProvider = ({ children }) => {
     };
 
     const response = await axios.post('/user/login', payload);
-    const { userData, userSpecificData } = response.data;
+    const { userData, userSpecificData, userPermissions } = response.data;
 
     const userInfo = {
       userId: userData._id,
@@ -159,7 +160,8 @@ export const JWTProvider = ({ children }) => {
         user: userData,
         userType: userData.userType,
         userSpecificData: userSpecificData,
-        userPermissions: x
+        // userPermissions: x
+        userPermissions: userPermissions
       }
     });
   };
@@ -210,19 +212,16 @@ export const JWTProvider = ({ children }) => {
   const OTPSend = async (email) => {
     const payload = {
       data: {
-        userEmail: email,
-      },
+        userEmail: email
+      }
     };
 
     try {
-      const response = await axios.post("/user/send/otp", payload);
+      const response = await axios.post('/user/send/otp', payload);
       // console.log('OTP sent successfully:', response.data);
       return response;
     } catch (error) {
-      console.error(
-        "Error sending OTP:",
-        error.response ? error.response.data : error.message
-      );
+      console.error('Error sending OTP:', error.response ? error.response.data : error.message);
       throw error;
     }
   };
@@ -231,19 +230,16 @@ export const JWTProvider = ({ children }) => {
     const payload = {
       data: {
         userEmail: email,
-        OTP: otp,
-      },
+        OTP: otp
+      }
     };
 
     try {
-      const response = await axios.post("/user/verify/otp", payload);
+      const response = await axios.post('/user/verify/otp', payload);
       // console.log('OTP verified successfully:', response.data);
       return response;
     } catch (error) {
-      console.error(
-        "Error verifying OTP:",
-        error.response ? error.response.data : error.message
-      );
+      console.error('Error verifying OTP:', error.response ? error.response.data : error.message);
       throw error;
     }
   };
@@ -252,19 +248,16 @@ export const JWTProvider = ({ children }) => {
     const payload = {
       data: {
         userEmail: email,
-        userPassword: newPassword,
-      },
+        userPassword: newPassword
+      }
     };
 
     try {
-      const response = await axios.post("/user/reset/password", payload);
+      const response = await axios.post('/user/reset/password', payload);
       // console.log('Password reset successfully:', response.data);
       return response;
     } catch (error) {
-      console.error(
-        "Error resetting password:",
-        error.response ? error.response.data : error.message
-      );
+      console.error('Error resetting password:', error.response ? error.response.data : error.message);
       throw error;
     }
   };
@@ -285,7 +278,7 @@ export const JWTProvider = ({ children }) => {
         resetPassword,
         updateProfile,
         verifyOTP,
-        OTPSend,
+        OTPSend
       }}
     >
       {children}
