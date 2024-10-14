@@ -16,6 +16,10 @@ const ProtectedRoute = ({ element: Component, moduleName, permission, modulePerm
   let hasPermission = false;
   const { userPermissions } = useSelector((state) => state.auth);
 
+  if (!userPermissions) {
+    return <Navigate to={redirectURL} />;
+  }
+
   if (typeof modulePermissions === 'object') {
     hasPermission = isPermissionGranted(userPermissions, modulePermissions);
   } else {
