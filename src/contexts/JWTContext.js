@@ -207,8 +207,66 @@ export const JWTProvider = ({ children }) => {
     dispatch({ type: LOGOUT });
   };
 
-  const resetPassword = async () => {
-    // Handle reset password logic
+  const OTPSend = async (email) => {
+    const payload = {
+      data: {
+        userEmail: email,
+      },
+    };
+
+    try {
+      const response = await axios.post("/user/send/otp", payload);
+      // console.log('OTP sent successfully:', response.data);
+      return response;
+    } catch (error) {
+      console.error(
+        "Error sending OTP:",
+        error.response ? error.response.data : error.message
+      );
+      throw error;
+    }
+  };
+
+  const verifyOTP = async (email, otp) => {
+    const payload = {
+      data: {
+        userEmail: email,
+        OTP: otp,
+      },
+    };
+
+    try {
+      const response = await axios.post("/user/verify/otp", payload);
+      // console.log('OTP verified successfully:', response.data);
+      return response;
+    } catch (error) {
+      console.error(
+        "Error verifying OTP:",
+        error.response ? error.response.data : error.message
+      );
+      throw error;
+    }
+  };
+
+  const resetPassword = async (email, newPassword) => {
+    const payload = {
+      data: {
+        userEmail: email,
+        userPassword: newPassword,
+      },
+    };
+
+    try {
+      const response = await axios.post("/user/reset/password", payload);
+      // console.log('Password reset successfully:', response.data);
+      return response;
+    } catch (error) {
+      console.error(
+        "Error resetting password:",
+        error.response ? error.response.data : error.message
+      );
+      throw error;
+    }
   };
 
   const updateProfile = () => {
@@ -225,7 +283,9 @@ export const JWTProvider = ({ children }) => {
         logout,
         register,
         resetPassword,
-        updateProfile
+        updateProfile,
+        verifyOTP,
+        OTPSend,
       }}
     >
       {children}

@@ -34,11 +34,10 @@ import { Eye, EyeSlash } from 'iconsax-react';
 
 // ============================|| FIREBASE - RESET PASSWORD ||============================ //
 
-const AuthResetPassword = () => {
+const AuthResetPassword = ({ email }) => {
   const scriptedRef = useScriptRef();
   const navigate = useNavigate();
-
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, resetPassword } = useAuth();
 
   const [level, setLevel] = useState();
   const [showPassword, setShowPassword] = useState(false);
@@ -73,9 +72,11 @@ const AuthResetPassword = () => {
             .required('Confirm Password is required')
             .test('confirmPassword', 'Both Password must be match!', (confirmPassword, yup) => yup.parent.password === confirmPassword)
         })}
-        onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+        onSubmit={async (values, { setStatus, setSubmitting }) => {
           try {
-            // password reset
+            // Call the reset password function
+            await resetPassword(email, values.password); // Pass the email and new password
+
             if (scriptedRef.current) {
               setStatus({ success: true });
               setSubmitting(false);
@@ -83,7 +84,7 @@ const AuthResetPassword = () => {
               dispatch(
                 openSnackbar({
                   open: true,
-                  message: 'Successfuly reset password.',
+                  message: 'Successfully reset password.',
                   variant: 'alert',
                   alert: {
                     color: 'success'
@@ -93,14 +94,26 @@ const AuthResetPassword = () => {
               );
 
               setTimeout(() => {
-                navigate(isLoggedIn ? '/auth/login' : '/login', { replace: true });
+                navigate(isLoggedIn ? '/auth/login' : '/auth/login', { replace: true });
               }, 1500);
             }
           } catch (err) {
-            console.error(err);
             if (scriptedRef.current) {
               setStatus({ success: false });
-              setErrors({ submit: err.message });
+              // setErrors({ submit: err.message });
+              if (err.response.status === 404) {
+                dispatch(
+                  openSnackbar({
+                    open: true,
+                    message: err.response.data,
+                    variant: 'alert',
+                    alert: {
+                      color: 'error'
+                    },
+                    close: true
+                  })
+                );
+              }
               setSubmitting(false);
             }
           }
@@ -111,7 +124,7 @@ const AuthResetPassword = () => {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="password-reset">Password</InputLabel>
+                  <InputLabel htmlFor="password-reset">New Password</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.password && errors.password)}

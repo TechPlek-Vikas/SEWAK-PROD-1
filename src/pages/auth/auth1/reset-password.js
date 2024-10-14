@@ -1,14 +1,20 @@
 // material-ui
 import { Grid, Stack, Typography } from '@mui/material';
+import { useLocation } from 'react-router';
+import AuthResetPassword from 'sections/auth/auth-forms/AuthResetPassword';
 
 // project-imports
-import AuthWrapper from 'sections/auth/AuthWrapper';
-import AuthResetPassword from 'sections/auth/auth-forms/AuthResetPassword';
+import AuthWrapper2 from 'sections/auth/AuthWrapper2';
 
 // ================================|| RESET PASSWORD ||================================ //
 
-const ResetPassword = () => (
-  <AuthWrapper>
+const ResetPassword = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const email = queryParams.get('email');
+
+  return (
+  <AuthWrapper2>
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <Stack sx={{ mb: { xs: -0.5, sm: 0.5 } }} spacing={1}>
@@ -17,10 +23,11 @@ const ResetPassword = () => (
         </Stack>
       </Grid>
       <Grid item xs={12}>
-        <AuthResetPassword />
+        <AuthResetPassword email={email}/>
       </Grid>
     </Grid>
-  </AuthWrapper>
+  </AuthWrapper2>
 );
+};
 
 export default ResetPassword;
