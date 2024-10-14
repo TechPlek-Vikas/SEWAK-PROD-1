@@ -7,9 +7,6 @@ import { useTheme } from '@mui/material/styles';
 // project-imports
 import AuthCard from './AuthCard';
 
-// assets
-import AuthSideImg from 'assets/images/auth/img-auth-sideimg.png';
-
 // ==============================|| AUTHENTICATION - WRAPPER ||============================== //
 
 const AuthWrapper2 = ({ children }) => {
@@ -35,7 +32,7 @@ const AuthWrapper2 = ({ children }) => {
             sx={{ minHeight: { xs: 'calc(100vh - 210px)', sm: 'calc(100vh - 134px)', md: 'calc(100vh - 112px)' } }}
           >
             <Grid item md={7} sx={{ display: { xs: 'none', md: 'flex' }, alignSelf: 'center', justifyContent: 'flex-start' }}>
-              <img src={AuthSideImg} alt="Authimg" style={{ height: '100vh', minHeight: '100%', width: '100%' }} />
+              <img src="/login.png" alt="Authimg" style={{ height: '100vh', minHeight: '100%', width: '100%' }} />
             </Grid>
             <Grid item md={5} sx={{ display: 'flex', justifyContent: 'center' }}>
               <AuthCard border={false}>{children}</AuthCard>
