@@ -165,6 +165,10 @@ const Navigation = () => {
   useLayoutEffect(() => {
     const menu = menuItem; // This is your static menu data
     console.log(`🚀 ~ useLayoutEffect ~ menu:`, menu);
+
+    if (!userPermissions) return;
+
+    // Filter menu items based on permissions
     const filteredMenu = {
       ...menu,
       items: filterMenuItems(menu.items, userPermissions)
