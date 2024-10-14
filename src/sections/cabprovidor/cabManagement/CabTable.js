@@ -35,12 +35,12 @@ const CabTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
         Header: 'Cab Name',
         accessor: 'vehicleName',
         disableSortBy: true,
-        Cell: ({ row, value }) => {
+        Cell: ({ value }) => {
           return (
             <Typography>
               <Link
-                to={`/cab/overview/${row.original._id}`}
-                onClick={(e) => e.stopPropagation()} // Prevent interfering with row expansion
+                // to={`/cab/overview/${row.original._id}`}
+                // onClick={(e) => e.stopPropagation()} // Prevent interfering with row expansion
                 style={{ textDecoration: 'none' }}
               >
                 {value}
