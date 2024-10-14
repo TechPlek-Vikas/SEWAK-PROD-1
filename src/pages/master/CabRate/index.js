@@ -42,7 +42,6 @@ const CabRate = () => {
     const result = filteredArrayOfObjectsByUserPermissions(options, userPermissions);
     return result;
   }, [userPermissions]);
-  console.log(`🚀 ~ filteredOptions ~ filteredOptions:`, filteredOptions);
 
   const handleChange = useCallback((event) => {
     setValue(event.target.value);

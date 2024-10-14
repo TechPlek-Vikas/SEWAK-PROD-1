@@ -184,7 +184,6 @@ function AddCompany() {
         formData.append('companyContract', values.files[0]);
 
         const resultAction = await dispatch(addCompany(formData));
-        console.log(`🚀 ~ onSubmit: ~ resultAction:`, resultAction);
 
         if (addCompany.fulfilled.match(resultAction)) {
           // Company successfully added

@@ -30,7 +30,7 @@ const ProtectedRoute = ({ element: Component, moduleName, permission, modulePerm
 
   //   const hasPermission = checkPermission(userPermissions, moduleName, permission);
   //   console.log({ moduleName, permission });
-  console.log(`🚀 ~ ProtectedRoute ~ hasPermission:`, hasPermission);
+  // console.log(`🚀 ~ ProtectedRoute ~ hasPermission:`, hasPermission);
 
   return hasPermission ? <Component /> : <Navigate to={redirectURL} />;
 };

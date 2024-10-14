@@ -7,8 +7,8 @@ import ZoneTypeTable from 'sections/cabprovidor/master/zoneType/ZoneTypeTable';
 import { fetchAllZoneTypes } from 'store/slice/cabProvidor/zoneTypeSlice';
 const ZoneType = () => {
   const dispatch = useDispatch();
+  // eslint-disable-next-line no-unused-vars
   const temp = useSelector((state) => state.zoneType);
-  console.log(temp);
   const { zoneTypes, metaData, loading, error } = useSelector((state) => state.zoneType);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);

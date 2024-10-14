@@ -119,7 +119,7 @@ export const ColumnMappingForm = ({ columns, handleClose, handleOk }) => {
     }));
   };
   const handleSave = () => {
-    console.log('selectedMandatory', selectedMandatory);
+    // console.log('selectedMandatory', selectedMandatory);
 
     const emptyStringResult = {};
     const filledResult = {};
@@ -139,16 +139,17 @@ export const ColumnMappingForm = ({ columns, handleClose, handleOk }) => {
       }
     }
 
-    console.log('Empty String Result:', emptyStringResult);
-    console.log('Filled Result:', filledResult);
+    // console.log('Empty String Result:', emptyStringResult);
+    // console.log('Filled Result:', filledResult);
 
     // Combine both objects as needed
+    // eslint-disable-next-line no-unused-vars
     const result = {
       ...filledResult,
       ...emptyStringResult
     };
 
-    console.log('Final Result:', result);
+    // console.log('Final Result:', result);
     handleOk(filledResult, emptyStringResult);
   };
 

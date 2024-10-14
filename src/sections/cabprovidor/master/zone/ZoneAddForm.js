@@ -31,7 +31,6 @@ const ZoneAddForm = ({ zone, onCancel, updateKey, setUpdateKey }) => {
               }
             })
           );
-          console.log('resultAction', resultAction);
           if (addZoneName.fulfilled.match(resultAction)) {
             setUpdateKey(updateKey + 1);
             dispatch(
@@ -70,8 +69,6 @@ const ZoneAddForm = ({ zone, onCancel, updateKey, setUpdateKey }) => {
               }
             })
           );
-
-          console.log('resultAction', resultAction);
 
           if (updateZoneName.fulfilled.match(resultAction)) {
             setUpdateKey(updateKey + 1);

@@ -19,7 +19,6 @@ import AttachedCompany from 'sections/cabprovidor/vendorManagement/vendorOvervie
 const VendorOverview = () => {
   const { id } = useParams(); // used to extract companyId to fetch company Data
   const vendorId = id;
-  console.log(`🚀 ~ VendorOverview ~ vendorId:`, vendorId);
 
   const [activeTab, setActiveTab] = useState(0);
   const [vendorDetail, setVendorDetail] = useState(null);
@@ -69,7 +68,6 @@ const VendorOverview = () => {
             }
           });
 
-          console.log('vendorDetail', response.data.data);
 
           if (response.status === 200) {
             setVendorData(response.data.data);

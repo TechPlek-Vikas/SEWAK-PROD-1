@@ -10,8 +10,6 @@ export const isExcelDate = (value) => {
 export const excelDateToJSDate = (excelDate) => {
   // Excel dates are stored as the number of days since 1/1/1900, so we need to convert that
   const jsDate = new Date((excelDate - 25569) * 86400 * 1000);
-  console.log(`🚀 ~ excelDateToJSDate ~ jsDate:`, jsDate);
-  // return jsDate;
   return formatDateUsingMoment(jsDate, 'YYYY-MM-DDT00:00:00.000');
 };
 

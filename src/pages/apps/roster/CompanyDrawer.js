@@ -34,8 +34,6 @@ function CompanyDrawer({ handleDrawerOpen, openCompanyListDrawer, setCompany }) 
     setSearch(newString);
   };
 
-  console.log(error);
-
   if (loading) return <Loader />;
 
   if (error) return <Error500_2 />;
