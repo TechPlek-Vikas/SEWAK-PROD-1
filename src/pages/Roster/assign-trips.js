@@ -650,6 +650,7 @@ const AssignTrips = () => {
           <EditableReactTable columns={columns} data={data} updateData={updateData} skipPageReset={skipPageReset} />
         </ScrollX>
       </MainCard>
+      <div style={{ marginTop: '10px' }}>
       <Pagination
         pageSize={limit}
         setPageSize={handleLimitChange}
@@ -657,6 +658,7 @@ const AssignTrips = () => {
         gotoPage={handlePageChange}
         lastPageIndex={lastPageNo}
       />
+      </div>
     </>
   );
 };

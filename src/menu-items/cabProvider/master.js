@@ -2,12 +2,15 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { MenuBoard } from 'iconsax-react';
+import { Car, Location, MenuBoard, Profile2User } from 'iconsax-react';
 import { MODULE, PERMISSIONS } from 'constant';
 
 // icons
 const icons = {
-  samplePage: MenuBoard
+  samplePage: MenuBoard,
+  zone:Location,
+  vehicle:Car,
+  role:Profile2User
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -23,7 +26,7 @@ const master = {
       title: <FormattedMessage id="role" />,
       type: 'item',
       url: '/master/role',
-      icon: icons.samplePage,
+      icon: icons.role,
       permissions: {
         [MODULE.ROLE]: PERMISSIONS.READ
       }
@@ -33,7 +36,7 @@ const master = {
       title: <FormattedMessage id="zone" />,
       type: 'item',
       url: '/master/zone',
-      icon: icons.samplePage,
+      icon: icons.zone,
       permissions: {
         [MODULE.ZONE]: PERMISSIONS.READ
       }
@@ -43,7 +46,7 @@ const master = {
       title: <FormattedMessage id="cab-type" />,
       type: 'item',
       url: '/master/cab-type',
-      icon: icons.samplePage,
+      icon: icons.vehicle,
       permissions: {
         [MODULE.CAB_TYPE]: PERMISSIONS.READ
       }
