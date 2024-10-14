@@ -2,12 +2,12 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { Calendar1 } from 'iconsax-react';
+import { MenuBoard } from 'iconsax-react';
 import { MODULE, PERMISSIONS } from 'constant';
 
 // icons
 const icons = {
-  samplePage: Calendar1
+  samplePage: MenuBoard
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //

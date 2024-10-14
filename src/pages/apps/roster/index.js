@@ -160,19 +160,19 @@ const Roster = () => {
                         <HambergerMenu />
                       </IconButton>
                       <BreadcrumbShort navigation={navigation} title titleBottom card={false} divider={false} />
-                      <Typography variant="subtitle1">{company?.company_name}</Typography>
+                      <Typography variant="subtitle1" sx={{ ml: 1 }}>{company?.company_name}</Typography>
                     </Grid>
 
                     <Grid item>
-                      <Button startIcon={<Add />} onClick={handleFileUploadDialogue} size="small">
+                      <Button startIcon={<Add />} onClick={handleFileUploadDialogue} size="medium">
                         Upload File
                       </Button>
 
-                      <Button startIcon={<Eye />} onClick={handleViewUploadDialogue} size="small" color="success">
+                      <Button startIcon={<Eye />} onClick={handleViewUploadDialogue} size="medium" color="success">
                         View Roster
                       </Button>
 
-                      <IconButton onClick={handleUserChange} size="large" color={emailDetails ? 'error' : 'secondary'}>
+                      <IconButton onClick={handleUserChange} size="medium" color={emailDetails ? 'error' : 'secondary'}>
                         {emailDetails ? <Add style={{ transform: 'rotate(45deg)' }} /> : <InfoCircle />}
                       </IconButton>
                     </Grid>
