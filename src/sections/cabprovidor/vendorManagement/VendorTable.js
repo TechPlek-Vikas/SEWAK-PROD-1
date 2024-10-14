@@ -29,7 +29,7 @@ const VendorTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
           return (
             <Typography>
               <Link
-                to={`/vendor/overview/${row.original._id}`}
+                to={`/management/vendor/overview/${row.original.vendorId}`}
                 onClick={(e) => e.stopPropagation()} // Prevent interfering with row expansion
                 style={{ textDecoration: 'none' }}
               >
