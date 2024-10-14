@@ -4,6 +4,7 @@ import { lazy } from 'react';
 import GuestGuard from 'utils/route-guard/GuestGuard';
 import CommonLayout from 'layout/CommonLayout';
 import Loadable from 'components/Loadable';
+import OTPverification from 'pages/auth/auth1/OTPverfication';
 
 // render - login
 const AuthLogin = Loadable(lazy(() => import('pages/auth/auth1/login')));
@@ -41,6 +42,10 @@ const LoginRoutes = {
         {
           path: 'forgot-password',
           element: <AuthForgotPassword />
+        },
+        {
+          path: 'otp-verification',
+          element: <OTPverification />
         },
         {
           path: 'check-mail',

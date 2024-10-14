@@ -20,7 +20,7 @@ const AuthForgotPassword = () => {
   const scriptedRef = useScriptRef();
   const navigate = useNavigate();
 
-  const { isLoggedIn, resetPassword } = useAuth();
+  const { OTPSend } = useAuth();
 
   return (
     <>
@@ -34,14 +34,15 @@ const AuthForgotPassword = () => {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            await resetPassword(values.email).then(
+            await OTPSend(values.email).then(
               () => {
                 setStatus({ success: true });
+                
                 setSubmitting(false);
                 dispatch(
                   openSnackbar({
                     open: true,
-                    message: 'Check mail for reset password link',
+                    message: 'Check mail for OTP',
                     variant: 'alert',
                     alert: {
                       color: 'success'
@@ -50,23 +51,35 @@ const AuthForgotPassword = () => {
                   })
                 );
                 setTimeout(() => {
-                  navigate(isLoggedIn ? '/auth/check-mail' : '/check-mail', { replace: true });
+                  // navigate(isLoggedIn ? '/auth/check-mail' : '/check-mail', { replace: true });
+                  navigate(`/auth/otp-verification?email=${encodeURIComponent(values.email)}`, { replace: true });
                 }, 1500);
-
-                // WARNING: do not set any formik state here as formik might be already destroyed here. You may get following error by doing so.
-                // Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application.
-                // To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function.
-                // github issue: https://github.com/formium/formik/issues/2430
               },
               (err) => {
+                if(err.response.status === 404){
+ 
+                  dispatch(
+                    openSnackbar({
+                      open: true,
+                      message: err.response.data,
+                      variant: 'alert',
+                      alert: {
+                        color: 'error'
+                      },
+                      close: true
+                    })
+                  );
+                }
+                
                 setStatus({ success: false });
-                setErrors({ submit: err.message });
+                // setErrors({ submit: error.response.data });
                 setSubmitting(false);
               }
             );
           } catch (err) {
-            console.error(err);
+            
             if (scriptedRef.current) {
+
               setStatus({ success: false });
               setErrors({ submit: err.message });
               setSubmitting(false);
@@ -110,7 +123,7 @@ const AuthForgotPassword = () => {
               <Grid item xs={12}>
                 <AnimateButton>
                   <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Send Password Reset Email
+                    Send OTP
                   </Button>
                 </AnimateButton>
               </Grid>

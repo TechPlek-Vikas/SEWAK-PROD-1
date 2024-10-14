@@ -5,7 +5,7 @@ import { Grid, Stack, Typography } from '@mui/material';
 
 // project-imports
 import useAuth from 'hooks/useAuth';
-import AuthWrapper from 'sections/auth/AuthWrapper';
+import AuthWrapper2 from 'sections/auth/AuthWrapper2';
 import AuthForgotPassword from 'sections/auth/auth-forms/AuthForgotPassword';
 
 // ================================|| FORGOT PASSWORD ||================================ //
@@ -14,14 +14,14 @@ const ForgotPassword = () => {
   const { isLoggedIn } = useAuth();
 
   return (
-    <AuthWrapper>
+    <AuthWrapper2>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: { xs: -0.5, sm: 0.5 } }}>
             <Typography variant="h3">Forgot Password</Typography>
             <Typography
               component={Link}
-              to={isLoggedIn ? '/auth/login' : '/login'}
+              to={isLoggedIn ? '/auth/login' : '/auth/login'}
               variant="body1"
               sx={{ textDecoration: 'none' }}
               color="primary"
@@ -34,7 +34,7 @@ const ForgotPassword = () => {
           <AuthForgotPassword />
         </Grid>
       </Grid>
-    </AuthWrapper>
+    </AuthWrapper2>
   );
 };
 

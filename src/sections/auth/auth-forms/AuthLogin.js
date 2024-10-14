@@ -1,41 +1,36 @@
-import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 // material-ui
 import {
   Button,
-  Checkbox,
-  FormControlLabel,
   FormHelperText,
   Grid,
   Link,
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  Stack,
-  Typography
+  Stack
 } from '@mui/material';
 
 // third-party
-import * as Yup from 'yup';
-import { Formik } from 'formik';
+import { ArrowRight, Eye, EyeSlash, Sms } from 'iconsax-react';
 
-// project-imports
-import useAuth from 'hooks/useAuth';
+// project imports
 import useScriptRef from 'hooks/useScriptRef';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
-
-// assets
-import { Eye, EyeSlash } from 'iconsax-react';
+import { credentials } from 'constant';
+import useAuth from 'hooks/useAuth';
 
 // ============================|| JWT - LOGIN ||============================ //
 
-const AuthLogin = ({ forgot }) => {
-  const [checked, setChecked] = useState(false);
+const AuthLogin = () => {
 
-  const { isLoggedIn, login } = useAuth();
+  const { login } = useAuth();
   const scriptedRef = useScriptRef();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -51,8 +46,8 @@ const AuthLogin = ({ forgot }) => {
     <>
       <Formik
         initialValues={{
-          email: 'user123@gmail.com',
-          password: 'User@123'
+          email: credentials.email,
+          password: credentials.password
         }}
         validationSchema={Yup.object().shape({
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
@@ -80,7 +75,7 @@ const AuthLogin = ({ forgot }) => {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login">Email Address</InputLabel>
+                  <InputLabel htmlFor="email-login" style={{ color: 'black', fontWeight: "600" }}>What is your Email?</InputLabel>
                   <OutlinedInput
                     id="email-login"
                     type="email"
@@ -89,8 +84,13 @@ const AuthLogin = ({ forgot }) => {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     placeholder="Enter email address"
+                    color='secondary'
                     fullWidth
-                    error={Boolean(touched.email && errors.email)}
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <Sms />
+                      </InputAdornment>
+                    }
                   />
                   {touched.email && errors.email && (
                     <FormHelperText error id="standard-weight-helper-text-email-login">
@@ -101,14 +101,14 @@ const AuthLogin = ({ forgot }) => {
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="password-login">Password</InputLabel>
+                  <InputLabel htmlFor="password-login" style={{ color: 'black', fontWeight: "600" }}>Password</InputLabel>
                   <OutlinedInput
                     fullWidth
-                    error={Boolean(touched.password && errors.password)}
-                    id="-password-login"
+                    id="password-login"
                     type={showPassword ? 'text' : 'password'}
                     value={values.password}
                     name="password"
+                    color='secondary'
                     onBlur={handleBlur}
                     onChange={handleChange}
                     endAdornment={
@@ -134,37 +134,29 @@ const AuthLogin = ({ forgot }) => {
                 </Stack>
               </Grid>
 
-              <Grid item xs={12} sx={{ mt: -1 }}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={checked}
-                        onChange={(event) => setChecked(event.target.checked)}
-                        name="checked"
-                        color="primary"
-                        size="small"
-                      />
-                    }
-                    label={<Typography variant="h6">Keep me sign in</Typography>}
-                  />
-
-                  <Link variant="h6" component={RouterLink} to={isLoggedIn && forgot ? forgot : '/forgot-password'} color="text.primary">
-                    Forgot Password?
-                  </Link>
-                </Stack>
-              </Grid>
               {errors.submit && (
                 <Grid item xs={12}>
                   <FormHelperText error>{errors.submit}</FormHelperText>
                 </Grid>
               )}
-              <Grid item xs={12}>
+              <Grid item xs={9}>
                 <AnimateButton>
-                  <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Login
+                  <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" style={{ backgroundColor: "black" }}>
+                    Login to your account <ArrowRight />
                   </Button>
                 </AnimateButton>
+              </Grid>
+
+              <Grid item xs={12} sx={{ mt: -1 }}>
+                <Stack direction="column" justifyContent="space-between" alignItems="left" spacing={1}>
+                  <Link variant="h6" component={RouterLink} to="/register" color="#959595" fontWeight={"500"}>
+                    Create an account?
+                  </Link>
+
+                  <Link variant="h6" component={RouterLink} to="/auth/forgot-password" color="#959595" fontWeight={"500"}>
+                    Forgot Password?
+                  </Link>
+                </Stack>
               </Grid>
             </Grid>
           </form>
