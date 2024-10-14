@@ -7,6 +7,10 @@ import Loadable from 'components/Loadable';
 import AuthGuard from 'utils/route-guard/AuthGuard';
 import ProtectedRoute from 'components/common/guards/ProtectedRoute';
 import { MODULE, PERMISSIONS } from 'constant';
+import RosterFileList from 'pages/Roster/file-management';
+import MapRosterFile from 'pages/Roster/map-roster';
+import ViewRoster from 'pages/Roster/view-roster';
+import AssignTrips from 'pages/Roster/assign-trips';
 
 const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/error/404')));
 const MaintenanceError500 = Loadable(lazy(() => import('pages/maintenance/error/500')));
@@ -16,13 +20,15 @@ const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/comi
 // Dashboard
 const Dashboard = Loadable(lazy(() => import('pages')));
 // Roster
-const Roster = Loadable(lazy(() => import('pages/Roster')));
+const Roster = Loadable(lazy(() => import('pages/apps/roster')));
+
 // Management
 const User = Loadable(lazy(() => import('pages/management/user')));
 const AddUser = Loadable(lazy(() => import('pages/management/user/AddUser')));
 // Vendor
 const Vendor = Loadable(lazy(() => import('pages/management/vendor')));
 const AddVendor = Loadable(lazy(() => import('pages/management/vendor/AddVendor')));
+const VendorOverview = Loadable(lazy(() => import('pages/overview/VendorOverview')));
 
 // Driver
 const Driver = Loadable(lazy(() => import('pages/management/driver')));
@@ -37,7 +43,6 @@ const Company = Loadable(lazy(() => import('pages/management/company')));
 const AddCompany = Loadable(lazy(() => import('pages/management/company/AddCompany')));
 const AddBranch = Loadable(lazy(() => import('pages/management/company/AddBranch')));
 const CompanyOverview = Loadable(lazy(() => import('pages/overview/CompanyOverview')));
-
 
 // reports
 const Reports = Loadable(lazy(() => import('pages/Reports')));
@@ -73,9 +78,34 @@ const CabProvidorRoutes = {
           path: 'dashboard',
           element: <Dashboard />
         },
+        // {
+        //   path: 'roster',
+        //   element: <Roster />
+        // },
         {
           path: 'roster',
-          element: <Roster />
+          children: [
+            {
+              path: '',
+              element: <Roster /> // Render Company only for base path
+            },
+            {
+              path: 'file-management',
+              element: <RosterFileList /> // Render Company only for base path
+            },
+            {
+              path: 'map-roster',
+              element: <MapRosterFile /> // Render Company only for base path
+            },
+            {
+              path: 'view-roster',
+              element: <ViewRoster /> // Render Company only for base path
+            },
+            {
+              path: 'assign-trips',
+              element: <AssignTrips /> // Render Company only for base path
+            }
+          ]
         },
         {
           path: 'management',
@@ -132,6 +162,11 @@ const CabProvidorRoutes = {
                   path: 'add-vendor',
                   // element: <AddVendor />
                   element: <ProtectedRoute element={AddVendor} moduleName={MODULE.VENDOR} permission={PERMISSIONS.CREATE} />
+                },
+                {
+                  path: 'overview/:id',
+                  // element: <VendorOverview />
+                  element: <ProtectedRoute element={VendorOverview} moduleName={MODULE.VENDOR} permission={PERMISSIONS.READ} />
                 }
               ]
             },
@@ -281,3 +316,4 @@ const CabProvidorRoutes = {
 };
 
 export default CabProvidorRoutes;
+

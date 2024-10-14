@@ -19,6 +19,8 @@ import { advanceReducer } from 'store/slice/cabProvidor/advanceSlice';
 import { advanceTypeReducer } from 'store/slice/cabProvidor/advanceTypeSlice';
 import { chatReducer } from './chat';
 import { invoiceReducer } from './invoice';
+import { rosterFileReducer } from 'store/slice/cabProvidor/rosterFileSlice';
+import { rosterDataReducer } from 'store/slice/cabProvidor/rosterDataSlice';
 
 // ==============================|| COMBINE REDUCERS ||============================== //
 
@@ -39,7 +41,9 @@ const reducers = combineReducers({
   advances: advanceReducer,
   advanceType: advanceTypeReducer,
   chat: chatReducer,
-  invoice: invoiceReducer
+  invoice: invoiceReducer,
+  rosterFile: rosterFileReducer,
+  rosterData: rosterDataReducer
 });
 
 export default reducers;

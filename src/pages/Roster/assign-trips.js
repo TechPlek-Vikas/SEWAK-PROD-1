@@ -1,22 +1,22 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import axios from 'utils/axios';
-import { Box, Button, Checkbox, CircularProgress, Stack } from '@mui/material';
+import Pagination from 'components/tables/Pagination';
+import { Button, Checkbox, Stack } from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
-import { TableNoDataMessage } from 'components/tables/reactTable1/ReactTable';
 import { dispatch } from 'store';
 import { useSelector } from 'store';
 import { omitKeysFromArray } from 'utils/helper';
 import { openSnackbar } from 'store/reducers/snackbar';
-import { useLocation, useParams } from 'react-router';
+import { useLocation } from 'react-router';
+import EditableReactTable from 'sections/cabprovidor/roster/EditableTable';
 import { fetchZoneNames } from 'store/slice/cabProvidor/ZoneNameSlice';
 import { fetchAllZoneTypes } from 'store/slice/cabProvidor/zoneTypeSlice';
-import ReactTable from './editRosterTable/ReactTable';
-import PaginationBox from './editRosterTable/Pagination';
-import { fetchAllVehicleTypes } from 'store/slice/cabProvidor/vehicleTypeSlice';
+import { fetchAllVehicleTypesForAll } from 'store/slice/cabProvidor/vehicleTypeSlice';
+import axios from 'utils/axios';
+import TableSkeleton from 'components/tables/TableSkeleton';
+import EmptyTableDemo from 'components/tables/EmptyTable';
 
 const optionsForGuard = [
-  //   { value: "", label: <em>Placeholder</em>, disabled: true, hide: true },
   { value: 1, label: 'Yes' },
   { value: 0, label: 'No' }
 ];
@@ -32,22 +32,8 @@ const optionsForTripType = [
   }
 ];
 
-/**
- * Checks if all elements in the given array are non-empty strings.
- *
- * @param {Array<string>} arr - The array of strings to be evaluated.
- * @returns {boolean} - Returns `true` if all elements are non-empty after trimming whitespace; otherwise, `false`.
- *
- * The function uses the `every` method to iterate through the array `arr`.
- * Each element is trimmed of leading and trailing whitespace, and checked to ensure it is not an empty string.
- * An empty string after trimming indicates that the corresponding element is considered empty.
- * If any element is empty, the function will return `false`; if all elements are valid, it will return `true`.
- */
-
-// Helper function to check if a value is empty
 const isEmpty = (value) => value === '';
 
-// Conditions for invalid values using functions
 const invalidConditions = {
   tripId: isEmpty, // Invalid if empty string
   tripDate: isEmpty, // Invalid if empty string
@@ -57,27 +43,22 @@ const invalidConditions = {
   vehicleNumber: isEmpty, // Invalid if empty string
   driverId: isEmpty, // Invalid if empty string
   tripType: (value) => typeof value !== 'number' || value === '', // Invalid if not a number or empty
-  // guard: (value) => value < 0, // Invalid if negative
-  // guardPrice: (value) => value < 0 || value > 1000, // Invalid if negative or greater than 1000
   vehicleRate: (value) => value < 0 || value === ''
 };
 
-const AssignTripTable = () => {
-  const { id } = useParams();
-  // const { fromDate, toDate } = useSearchParams();
-
+const AssignTrips = () => {
+  //   const { id } = useParams();
   const location = useLocation();
 
-  // Parse the query string
-  const searchParams = new URLSearchParams(location.search);
+  const { payload } = location.state;
 
-  // Access individual query parameters
-  const fromDate = searchParams.get('fromDate'); // e.g., "2023-10-03"
-  const toDate = searchParams.get('toDate'); // e.g., "2023-10-10"
+  const fromDate = payload.startDate;
+  const toDate = payload.endDate;
+  const id = payload.companyId;
 
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(10);
   const [loading, setLoading] = useState(false);
   const [lastPageNo, setLastPageNo] = useState(1);
   const [skipPageReset, setSkipPageReset] = useState(false);
@@ -92,9 +73,10 @@ const AssignTripTable = () => {
 
   const [dummyForVehiclesAndDriver, setDummyForVehiclesAndDriver] = useState([]);
 
-  const zonesOptions = useSelector((state) => state.zone.zones);
-  const zoneTypeAllOptions = useSelector((state) => state.zoneType.zoneTypes);
-  const vehicleTypeOptions = useSelector((state) => state.vehicleType.data);
+  //   redux data call
+  const { zoneNames: zonesOptions } = useSelector((state) => state.zoneName);
+  const { zoneTypes: zoneTypeAllOptions } = useSelector((state) => state.zoneType);
+  const { vehicleTypes: vehicleTypeOptions } = useSelector((state) => state.vehicleTypes);
 
   const handleLimitChange = useCallback((event) => {
     setLimit(+event.target.value);
@@ -106,12 +88,14 @@ const AssignTripTable = () => {
   }, []);
 
   useEffect(() => {
+    console.log(limit, page);
+    console.log('fromDate', fromDate);
+
     async function fetchData() {
       try {
         setLoading(true);
         const response = await axios.post(`/tripData/trip/requests/company?page=${page}&limit=${limit}`, {
           data: {
-            // companyId: "663e0b2b692625507ec05015",
             companyId: id,
             fromDate: fromDate,
             toDate: toDate,
@@ -120,6 +104,8 @@ const AssignTripTable = () => {
         });
 
         if (response.status === 200) {
+          console.log('Data = ', response.data.data);
+          console.log('Central Data = ', centralData);
           //   setData(response.data.data);
           setLastPageNo(Math.ceil(response.data.totalCount / response.data.limit));
 
@@ -127,7 +113,10 @@ const AssignTripTable = () => {
             // modify data with central data
 
             const modifiedData = response.data.data.map((row) => {
+              console.log('row = ', row);
               const found = centralData.find((i) => i.tripId === row._id);
+
+              console.log('found = ', found);
 
               return {
                 tripId: found?.tripId || row._id || '',
@@ -170,6 +159,8 @@ const AssignTripTable = () => {
               };
             });
 
+            console.log('modifiedData = ', modifiedData);
+
             setData(modifiedData);
           } else {
             // central data not available or empty
@@ -201,12 +192,15 @@ const AssignTripTable = () => {
               remarks: row.remarks,
               isValidRow: false
             }));
+
+            console.log('Modified Data = ', modifiedData);
             setData(modifiedData);
           }
         }
 
         setLoading(false);
       } catch (error) {
+        console.log('Error : ', error);
         setLoading(false);
       }
     }
@@ -218,7 +212,11 @@ const AssignTripTable = () => {
   useEffect(() => {
     dispatch(fetchZoneNames());
     dispatch(fetchAllZoneTypes());
-    dispatch(fetchAllVehicleTypes());
+    dispatch(fetchAllVehicleTypesForAll());
+    // required
+    // fetchRatesByCompany
+    // fetchVehiclesAndDriver vehicleList
+    // fetchROsterData *
   }, []);
 
   useEffect(() => {
@@ -226,6 +224,7 @@ const AssignTripTable = () => {
       const response = await axios.get(`/company/all/rates?companyId=${id}`);
 
       if (response.status === 200) {
+        console.log('Data = ', response.data.data);
         setRates(response.data.data);
       }
     }
@@ -239,6 +238,7 @@ const AssignTripTable = () => {
         const response = await axios.get(`/vehicle/list/all`);
 
         if (response.status === 200) {
+          console.log('Data = ', response.data.data);
           setDummyForVehiclesAndDriver(response.data.data);
         }
       } catch (error) {
@@ -416,7 +416,6 @@ const AssignTripTable = () => {
 
   const updateData = (rowIndex, columnId, value) => {
     // we also turn on the flag to not reset the page
-
     if (columnId === 'zoneName') {
       const filterZoneType = zoneTypeAllOptions.filter((item) => item.zoneId._id === value._id);
       setZoneTypeOptions(filterZoneType);
@@ -430,11 +429,13 @@ const AssignTripTable = () => {
           let oldZoneNameId;
           if (columnId === 'zoneName') {
             oldZoneName = oldRow.zoneName;
-            // eslint-disable-next-line no-unused-vars
             oldZoneNameId = oldRow.zoneNameID;
             setOptionsForCabAmount([]);
           }
 
+          console.log('old zone name', oldZoneName);
+          console.log('old zone name id', oldZoneNameId);
+          console.log('old row', oldRow);
           let res = {
             ...old[rowIndex],
             ...(columnId === 'guard' ? (value === 0 ? { guardPrice: 0 } : {}) : {}),
@@ -468,13 +469,24 @@ const AssignTripTable = () => {
             ...(columnId === 'driver_id' && { driverId: value._id })
           };
 
+          console.log('Res = ', res);
           const { zoneNameID: oldZoneNameID, zoneTypeID: oldZoneTypeID, vehicleTypeID: oldVehicleTypeID } = res;
 
+          console.log({
+            oldZoneNameID,
+            oldZoneTypeID,
+            oldVehicleTypeID
+          });
+
           if (oldZoneNameID && oldZoneTypeID && oldVehicleTypeID && ['zoneName', 'zoneType', 'vehicleType'].includes(columnId)) {
+            console.log('Included .........');
             const result = getCabAmountsByZoneAndType(rates, oldZoneNameID, oldZoneTypeID);
 
+            console.log(result);
             setOptionsForCabAmount(result);
           }
+
+          console.log(`🚀 ~ updateData ~ res:`, res);
 
           if (columnId === 'vehicle_number') {
             const vehicleNumberID = value._id;
@@ -482,24 +494,33 @@ const AssignTripTable = () => {
               .filter((item) => item._id === vehicleNumberID)
               .flatMap((item) => item.assignedDriver.map((driver) => driver.driverId))
               .filter((item) => item !== null);
+            console.log(`🚀 ~ old.map ~ filterDrivers:`, filterDrivers);
             setDriverOptions(filterDrivers);
           }
 
+          console.log('final res = ', res);
+
           let newRes = removeNestedObjects(res);
+          console.log(`🚀 ~ old.map ~ newRes:`, newRes);
 
           const isValidRow = isObjectValidBasedOnConditions(newRes, invalidConditions);
 
+          console.log('Before :: ', newRes);
+          console.log('isValidRow = ', isValidRow);
           //   isRowValid(res);
           newRes = {
             ...newRes,
             isValidRow
           };
 
+          console.log('After :: ', newRes);
+
           res = {
             ...res,
             isValidRow
           };
 
+          console.log(`🚀 ~ updateData ~ res:`, res);
           return res;
           // return newRes;
         }
@@ -514,7 +535,6 @@ const AssignTripTable = () => {
 
   const saveLater = useCallback(() => {
     const result = data.filter((item) => item.isValidRow);
-
     if (result.length > 0) {
       // Create a merged array with updated objects
       const result1 = centralData.map((itemX) => {
@@ -530,6 +550,7 @@ const AssignTripTable = () => {
       const output = [...result1, ...uniqueFromY];
 
       localStorage.setItem(`centralData`, JSON.stringify(output));
+
       dispatch(
         openSnackbar({
           open: true,
@@ -577,6 +598,7 @@ const AssignTripTable = () => {
         if (response?.status === 201) {
           // alert("Trip assigned successfully");
           const result = centralData.filter((item) => !resultId.includes(item.tripId));
+          console.log(`🚀 ~ assignTripToDriver ~ result:`, result);
           localStorage.setItem(`centralData`, JSON.stringify(result));
           dispatch(
             openSnackbar({
@@ -609,71 +631,38 @@ const AssignTripTable = () => {
     }
   }, [data]);
 
+  if (loading) return <TableSkeleton rows={limit} columns={9} />;
+  if (data.length === 0) return <EmptyTableDemo />;
   return (
     <>
-      <MainCard>
-        <Stack gap={3}>
-          {loading ? (
-            <Box
-              sx={{
-                height: '100vh',
-                width: 'inherit',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : data?.length > 0 ? (
-            <>
-              <Stack direction="row" alignItems="center" justifyContent="flex-end">
-                <Stack direction="row" gap={2}>
-                  <Button onClick={saveLater} variant="contained" color="secondary">
-                    Save Later
-                  </Button>
-                  <Button onClick={assignTripToDriver} variant="contained">
-                    Assign Trip
-                  </Button>
-                </Stack>
-              </Stack>
-              <ScrollX>
-                <ReactTable columns={columns} data={data} updateData={updateData} skipPageReset={skipPageReset} />
-              </ScrollX>
-
-              <PaginationBox
-                pageSize={limit}
-                setPageSize={handleLimitChange}
-                pageIndex={page}
-                gotoPage={handlePageChange}
-                lastPageIndex={lastPageNo}
-              />
-            </>
-          ) : (
-            <>
-              <TableNoDataMessage text="No Data Found" />
-            </>
-          )}
+      <Stack direction={'row'} spacing={1} justifyContent="flex-end" alignItems="center" sx={{ p: 0, pb: 3 }}>
+        <Stack direction={'row'} alignItems="center" spacing={2}>
+          <Button onClick={saveLater} variant="contained" color="secondary" size="small">
+            Save Later
+          </Button>
+          <Button onClick={assignTripToDriver} variant="contained" size="small">
+            Assign Trip
+          </Button>
         </Stack>
+      </Stack>
+      <MainCard content={false}>
+        <ScrollX>
+          <EditableReactTable columns={columns} data={data} updateData={updateData} skipPageReset={skipPageReset} />
+        </ScrollX>
       </MainCard>
+      <Pagination
+        pageSize={limit}
+        setPageSize={handleLimitChange}
+        pageIndex={page}
+        gotoPage={handlePageChange}
+        lastPageIndex={lastPageNo}
+      />
     </>
   );
 };
 
-export default AssignTripTable;
+export default AssignTrips;
 
-/**
- * Removes keys from the object that contain nested objects.
- *
- * @param {Object} obj - The original object from which to remove nested objects.
- * @returns {Object} A new object containing only the non-object key-value pairs.
- *
- * This function iterates over the properties of the input object and checks
- * the type of each property's value. If a property's value is not an object
- * (including arrays) and not null, it is added to the result object.
- * This is useful for filtering out complex structures and retaining only
- * primitive values (strings, numbers, booleans).
- */
 function removeNestedObjects(obj) {
   const result = {}; // Initialize an empty object to store non-object keys
 
@@ -693,35 +682,6 @@ function removeNestedObjects(obj) {
   return result; // Return the new object with only non-object keys
 }
 
-/**
- * Checks the validity of an object based on specified invalid conditions.
- *
- * @param {Object} obj - The object to be validated.
- * @param {Object} invalidConditions - An object where each key corresponds to a property in the `obj` and
- *                                      each value is a function that takes the property value as an argument
- *                                      and returns a boolean indicating whether the value is considered invalid.
- *
- * @returns {boolean} - Returns `true` if all properties in the `obj` pass the invalid conditions (i.e., are valid);
- *                      returns `false` if any property fails its corresponding invalid condition.
- *
- * @example
- * const obj = {
-    zoneTypeID: 'delhi',
-    guard: 0,
-    guardPrice: 1000,
-    vehicle_number: 'dl01aa256',
-  };
-
-  const invalidConditions = {
-    zoneTypeID: (value) => value === '', // Invalid if empty string
-    guard: (value) => value < 0, // Invalid if negative
-    guardPrice: (value) => value < 0 || value > 1000, // Invalid if negative or greater than 1000
-    vehicle_number: (value) => value === '', // Invalid if empty
-  };
-               
- * const result = isObjectValidBasedOnConditions(obj, conditions); // Checks if 'obj' is valid based on 'conditions'.
- */
-
 function isObjectValidBasedOnConditions(obj, invalidConditions) {
   for (const key in invalidConditions) {
     const isInvalid = invalidConditions[key]; // This is now a function
@@ -735,19 +695,6 @@ function isObjectValidBasedOnConditions(obj, invalidConditions) {
   return true;
 }
 
-/**
- * Retrieves a list of cab amounts for a specific zone and zone type.
- * The function filters the provided data array based on the given zone ID and zone type ID,
- * then maps the matching vehicle types and their corresponding amounts into a new array.
- * Each item in the returned array contains a 'value' representing the amount and a 'label'
- * formatted as "VehicleTypeName - Amount".
- *
- * @param {Array} data - The input data array containing zones, zone types, and cab amounts.
- * @param {string} zoneId - The ID of the zone to filter the data by.
- * @param {string} zoneTypeId - The ID of the zone type to filter the data by.
- * @returns {Array} - An array of objects where each object contains 'value' (amount) and 'label' (formatted string).
- *                    Returns an empty array if no matching zone and zone type is found.
- */
 function getCabAmountsByZoneAndType(data, zoneId, zoneTypeId) {
   // Find the zone and type that matches the given zoneId and zoneTypeId
   const zoneData = data.find((zone) => zone.zoneNameID._id === zoneId && zone.zoneTypeID._id === zoneTypeId);
@@ -761,8 +708,3 @@ function getCabAmountsByZoneAndType(data, zoneId, zoneTypeId) {
     label: `${cab.vehicleTypeID.vehicleTypeName} - ${cab.amount}`
   }));
 }
-
-/** SUMMARY :
- *  - Editable Table for assign Drivers to trip
- *  - Working with ALL API calls
- */

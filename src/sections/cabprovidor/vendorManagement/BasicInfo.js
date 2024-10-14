@@ -118,9 +118,10 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
         //Post request for adding basic details Vendor
 
         const response = await dispatch(registerUser(formData)).unwrap();
+        console.log(`🚀 ~ onSubmit: ~ response:`, response);
 
         if (response?.status === 201) {
-          setVendorId(response.data.data._id);
+          setVendorId(response.data._id);
           handleNext(); // handling next button
           resetForm(); // Reset the form after successful submission
 
