@@ -76,6 +76,7 @@ const CabTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
                     label={driver.driverId?.userName || 'Unknown'} // show individual driver name
                     size="small"
                     variant="light"
+                    sx={{ display: 'flex', justifyContent: 'space-between', textAlign: 'center', width: '100%' }}
                   />
                 ))}
               </div>

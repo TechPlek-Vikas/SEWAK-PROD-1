@@ -130,7 +130,9 @@ const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
           <ReactTable columns={columns} data={data} renderRowSubComponent={renderRowSubComponent} />
         </ScrollX>
       </MainCard>
-      <PaginationBox pageIndex={page} gotoPage={setPage} pageSize={limit} setPageSize={setLimit} lastPageIndex={lastPageNo} />
+      <div style={{ marginTop: '20px' }}>
+        <PaginationBox pageIndex={page} gotoPage={setPage} pageSize={limit} setPageSize={setLimit} lastPageIndex={lastPageNo} />
+      </div>
     </>
   );
 };
