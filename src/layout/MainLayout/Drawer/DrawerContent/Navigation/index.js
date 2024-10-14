@@ -26,24 +26,7 @@ const Navigation = () => {
   const { menuOrientation } = useConfig();
   const { drawerOpen } = useSelector((state) => state.menu);
 
-  // const { userSpecificData, userPermissions: deo, user } = useSelector((state) => state.auth);
-  // console.log('userPermissions', deo);
   const { userSpecificData, userPermissions, user } = useSelector((state) => state.auth);
-  console.log(`🚀 ~ Navigation ~ userPermissions:`, userPermissions);
-  // console.log('user', user);
-  // console.log('userSpecificData', userSpecificData);
-  // const userPermissions = {
-  //   company: ['read', 'edit'],
-  //   vendor: ['add', 'Read'],
-  //   driver: ['add'],
-  //   invoice: ['add'],
-  //   reports: ['add'],
-  //   user: [''],
-  //   roster: ['READ'],
-  //   role: ['READ', 'CREATE'],
-  //   zone: ['CREATE', 'UPDATE', 'DELETE'],
-  //   'cab-rate': ['read']
-  // };
 
   const [selectedItems, setSelectedItems] = useState('');
   const [selectedLevel, setSelectedLevel] = useState(0);
@@ -52,9 +35,6 @@ const Navigation = () => {
 
   // Helper function to check if a user has the required permissions
   const hasPermissionItem = (itemId, permissions, userPermissions, requiredPermission) => {
-    console.log(`🚀 ~ hasPermissionItem ~ itemId:`, itemId);
-    console.log(`🚀 ~ hasPermissionItem ~ userPermissions:`, userPermissions);
-    console.log({ itemId, requiredPermission });
 
     const modifiedUserPermissions = Object.keys(userPermissions).reduce((acc, key) => {
       if (Array.isArray(userPermissions[key])) {
@@ -62,17 +42,12 @@ const Navigation = () => {
       }
       return acc;
     }, {});
-    console.log(`🚀 ~ modifiedUserPermissions ~ modifiedUserPermissions:`, modifiedUserPermissions);
 
     // return hasPermissionForItem(modifiedUserPermissions, itemId, requiredPermission);
     return isPermissionGranted(modifiedUserPermissions, permissions);
   };
 
   const hasPermissionCheckForGroup = (itemId, children, userPermissions, requiredPermission) => {
-    console.log(`🚀 ~ hasPermissionCheckForGroup ~ itemId:`, itemId);
-    console.log(`🚀 ~ hasPermissionCheckForGroup ~ children:`, children);
-    console.log(`🚀 ~ hasPermissionCheckForGroup ~ userPermissions:`, userPermissions);
-    console.log(`🚀 ~ hasPermissionCheckForGroup ~ requiredPermission:`, requiredPermission);
 
     const modifiedUserPermissions = Object.keys(userPermissions).reduce((acc, key) => {
       if (Array.isArray(userPermissions[key])) {
@@ -80,46 +55,19 @@ const Navigation = () => {
       }
       return acc;
     }, {});
-    console.log(`🚀 ~ modifiedUserPermissions ~ modifiedUserPermissions:`, modifiedUserPermissions);
 
-    // const allChildren = children.map((i) => i.id);
-    // console.log(`🚀 ~ hasPermissionCheckForGroup ~ allChildren:`, allChildren);
-
-    // // const x = children
-    // //   .map((i) => i.extraModule)
-    // //   .filter(Boolean)
-    // //   .flat(Infinity);
-    // // console.log(`🚀 ~ hasPermissionCheckForGroup ~ x:`, x);
-
-    // // console.log(`🚀 ~ modifiedUserPermissions ~ modifiedUserPermissions:`, modifiedUserPermissions);
-    // // const extraAllChildren = [...allChildren, ...x];
-    // // console.log(`🚀 ~ hasPermissionCheckForGroup ~ extraAllChildren:`, extraAllChildren);
-    // // const result = hasPermissionForGroup(modifiedUserPermissions, extraAllChildren, 'rEad');
-    // const result = hasPermissionForGroup(modifiedUserPermissions, allChildren, 'rEad');
-    // console.log(`🚀 ~ hasPermissionCheckForGroup ~ result:`, result);
-
-    // return result;
 
     const permissionObjForGroup = mergePermissionsForGroup(children);
-    console.log(`🚀 ~ hasPermissionCheckForGroup ~ permissionObjForGroup:`, permissionObjForGroup);
 
     const result = isPermissionGranted(permissionObjForGroup, permissionObjForGroup);
-    console.log({
-      itemId,
-      permissionObjForGroup,
-      result
-    });
 
     return result;
   };
 
   // Recursive function to filter menu items based on permissions
   const filterMenuItems = (items, userPermissions) => {
-    console.log(`🚀 ~ filterMenuItems ~ items:`, items);
-    // console.log(`🚀 ~ filterMenuItems ~ userPermissions:`, userPermissions);
     const result = items.reduce((acc, item) => {
       const filteredItem = { ...item };
-      console.log(`🚀 ~ result ~ filteredItem:`, filteredItem);
 
       // If the item has children, filter them first
       if (item.children) {
@@ -144,7 +92,6 @@ const Navigation = () => {
 
   useLayoutEffect(() => {
     let menu;
-    console.log('userType', userType);
 
     switch (userType) {
       case 0:
@@ -164,7 +111,6 @@ const Navigation = () => {
 
   useLayoutEffect(() => {
     const menu = menuItem; // This is your static menu data
-    console.log(`🚀 ~ useLayoutEffect ~ menu:`, menu);
 
     if (!userPermissions) return;
 

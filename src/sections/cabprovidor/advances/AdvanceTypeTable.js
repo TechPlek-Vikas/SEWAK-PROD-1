@@ -17,7 +17,6 @@ import WrapperButton from 'components/common/guards/WrapperButton';
 import { MODULE, PERMISSIONS } from 'constant';
 
 const AdvanceTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo, updateKey, setUpdateKey }) => {
-  console.log('updateKey', updateKey);
   const theme = useTheme();
   const mode = theme.palette.mode;
   const [add, setAdd] = useState(false);
@@ -49,8 +48,6 @@ const AdvanceTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo, up
   const handleDelete = async () => {
     try {
       const response = await dispatch(deleteAdvanceType(deleteId));
-
-      console.log('Delete Response:', response);
 
       if (deleteAdvanceType.fulfilled.match(response)) {
         setUpdateKey(updateKey + 1);

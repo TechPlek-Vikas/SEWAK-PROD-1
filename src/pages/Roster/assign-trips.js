@@ -88,8 +88,8 @@ const AssignTrips = () => {
   }, []);
 
   useEffect(() => {
-    console.log(limit, page);
-    console.log('fromDate', fromDate);
+    // console.log(limit, page);
+    // console.log('fromDate', fromDate);
 
     async function fetchData() {
       try {
@@ -104,8 +104,8 @@ const AssignTrips = () => {
         });
 
         if (response.status === 200) {
-          console.log('Data = ', response.data.data);
-          console.log('Central Data = ', centralData);
+          // console.log('Data = ', response.data.data);
+          // console.log('Central Data = ', centralData);
           //   setData(response.data.data);
           setLastPageNo(Math.ceil(response.data.totalCount / response.data.limit));
 
@@ -113,10 +113,10 @@ const AssignTrips = () => {
             // modify data with central data
 
             const modifiedData = response.data.data.map((row) => {
-              console.log('row = ', row);
+              // console.log('row = ', row);
               const found = centralData.find((i) => i.tripId === row._id);
 
-              console.log('found = ', found);
+              // console.log('found = ', found);
 
               return {
                 tripId: found?.tripId || row._id || '',
@@ -159,7 +159,7 @@ const AssignTrips = () => {
               };
             });
 
-            console.log('modifiedData = ', modifiedData);
+            // console.log('modifiedData = ', modifiedData);
 
             setData(modifiedData);
           } else {
@@ -193,7 +193,7 @@ const AssignTrips = () => {
               isValidRow: false
             }));
 
-            console.log('Modified Data = ', modifiedData);
+            // console.log('Modified Data = ', modifiedData);
             setData(modifiedData);
           }
         }
@@ -224,7 +224,7 @@ const AssignTrips = () => {
       const response = await axios.get(`/company/all/rates?companyId=${id}`);
 
       if (response.status === 200) {
-        console.log('Data = ', response.data.data);
+        // console.log('Data = ', response.data.data);
         setRates(response.data.data);
       }
     }
@@ -238,7 +238,7 @@ const AssignTrips = () => {
         const response = await axios.get(`/vehicle/list/all`);
 
         if (response.status === 200) {
-          console.log('Data = ', response.data.data);
+          // console.log('Data = ', response.data.data);
           setDummyForVehiclesAndDriver(response.data.data);
         }
       } catch (error) {
@@ -429,13 +429,14 @@ const AssignTrips = () => {
           let oldZoneNameId;
           if (columnId === 'zoneName') {
             oldZoneName = oldRow.zoneName;
+            // eslint-disable-next-line no-unused-vars
             oldZoneNameId = oldRow.zoneNameID;
             setOptionsForCabAmount([]);
           }
 
-          console.log('old zone name', oldZoneName);
-          console.log('old zone name id', oldZoneNameId);
-          console.log('old row', oldRow);
+          // console.log('old zone name', oldZoneName);
+          // console.log('old zone name id', oldZoneNameId);
+          // console.log('old row', oldRow);
           let res = {
             ...old[rowIndex],
             ...(columnId === 'guard' ? (value === 0 ? { guardPrice: 0 } : {}) : {}),
@@ -469,24 +470,24 @@ const AssignTrips = () => {
             ...(columnId === 'driver_id' && { driverId: value._id })
           };
 
-          console.log('Res = ', res);
+          // console.log('Res = ', res);
           const { zoneNameID: oldZoneNameID, zoneTypeID: oldZoneTypeID, vehicleTypeID: oldVehicleTypeID } = res;
 
-          console.log({
-            oldZoneNameID,
-            oldZoneTypeID,
-            oldVehicleTypeID
-          });
+          // console.log({
+          //   oldZoneNameID,
+          //   oldZoneTypeID,
+          //   oldVehicleTypeID
+          // });
 
           if (oldZoneNameID && oldZoneTypeID && oldVehicleTypeID && ['zoneName', 'zoneType', 'vehicleType'].includes(columnId)) {
-            console.log('Included .........');
+            // console.log('Included .........');
             const result = getCabAmountsByZoneAndType(rates, oldZoneNameID, oldZoneTypeID);
 
-            console.log(result);
+            // console.log(result);
             setOptionsForCabAmount(result);
           }
 
-          console.log(`🚀 ~ updateData ~ res:`, res);
+          // console.log(`🚀 ~ updateData ~ res:`, res);
 
           if (columnId === 'vehicle_number') {
             const vehicleNumberID = value._id;
@@ -494,33 +495,33 @@ const AssignTrips = () => {
               .filter((item) => item._id === vehicleNumberID)
               .flatMap((item) => item.assignedDriver.map((driver) => driver.driverId))
               .filter((item) => item !== null);
-            console.log(`🚀 ~ old.map ~ filterDrivers:`, filterDrivers);
+            // console.log(`🚀 ~ old.map ~ filterDrivers:`, filterDrivers);
             setDriverOptions(filterDrivers);
           }
 
-          console.log('final res = ', res);
+          // console.log('final res = ', res);
 
           let newRes = removeNestedObjects(res);
-          console.log(`🚀 ~ old.map ~ newRes:`, newRes);
+          // console.log(`🚀 ~ old.map ~ newRes:`, newRes);
 
           const isValidRow = isObjectValidBasedOnConditions(newRes, invalidConditions);
 
-          console.log('Before :: ', newRes);
-          console.log('isValidRow = ', isValidRow);
+          // console.log('Before :: ', newRes);
+          // console.log('isValidRow = ', isValidRow);
           //   isRowValid(res);
           newRes = {
             ...newRes,
             isValidRow
           };
 
-          console.log('After :: ', newRes);
+          // console.log('After :: ', newRes);
 
           res = {
             ...res,
             isValidRow
           };
 
-          console.log(`🚀 ~ updateData ~ res:`, res);
+          // console.log(`🚀 ~ updateData ~ res:`, res);
           return res;
           // return newRes;
         }
@@ -598,7 +599,7 @@ const AssignTrips = () => {
         if (response?.status === 201) {
           // alert("Trip assigned successfully");
           const result = centralData.filter((item) => !resultId.includes(item.tripId));
-          console.log(`🚀 ~ assignTripToDriver ~ result:`, result);
+          // console.log(`🚀 ~ assignTripToDriver ~ result:`, result);
           localStorage.setItem(`centralData`, JSON.stringify(result));
           dispatch(
             openSnackbar({

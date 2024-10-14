@@ -22,7 +22,6 @@ const AdvanceForm = ({ onCancel, advanceData, key, setKey }) => {
   const token = localStorage.getItem('serviceToken');
   const dispatch = useDispatch();
   const theme = useTheme();
-  console.log('advance', advanceData);
 
   const handleReject = async () => {
     try {

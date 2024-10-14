@@ -20,7 +20,6 @@ export const fetchCompaniesRosterFile = createAsyncThunk(
 // Define the async thunk for adding a company
 export const uploadRosterFile = createAsyncThunk('rosterFile/uploadRosterFile', async (roster, { rejectWithValue, dispatch }) => {
   try {
-    console.log('payload', roster);
     const response = await axios.post('/cabProvider/upload/roster', roster);
     if (response.status === 200) {
       // Dispatch success snackbar

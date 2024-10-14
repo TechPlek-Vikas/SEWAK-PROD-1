@@ -57,7 +57,6 @@ const getStepContent = (
 // ==============================|| FORMS WIZARD - VALIDATION ||============================== //
 
 const AddVendor = () => {
-  console.log('AddVendor rendered .......');
   const [activeStep, setActiveStep] = useState(0);
   const [basicInfo, setBasicInfo] = useState({});
   const [specificDetail, setSpecificDetail] = useState({});

@@ -56,7 +56,7 @@ const MapRosterFile = () => {
       // Fetch the URL from the server
       const response = await axiosServices.get(`cabProvider/rosterurl?rosterId=${data._id}`);
       const fileUrl = response.data.rosterData.rosterUrl;
-      console.log(fileUrl);
+      // console.log(fileUrl);
 
       if (fileUrl) {
         // Fetch the file and convert it to a blob
@@ -244,7 +244,7 @@ const MapRosterFile = () => {
             setMappedColumn(selectedColumns);
             mappedHeaders.current = obj;
             const formattedData = await formatExcelData(selectedFile, selectedColumns, unselectedColumns);
-            console.log('formattedData = ', formattedData);
+            // console.log('formattedData = ', formattedData);
             setValue(formattedData);
             setCount(formattedData.length);
             setLoading(false);

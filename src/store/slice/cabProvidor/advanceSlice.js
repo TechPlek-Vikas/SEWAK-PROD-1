@@ -6,7 +6,6 @@ export const fetchAdvances = createAsyncThunk('advances/fetchAdvances', async (_
   try {
     // Advance Requests to CabProvider
     const response = await axios.get(`/advance/requested/cab/provider`);
-    console.log("response",response.data.data);
     return response.data.data;
   } catch (error) {
     return rejectWithValue(error.response ? error.response.data : error.message);
@@ -48,7 +47,7 @@ const advanceSlice = createSlice({
       .addCase(fetchAdvances.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || action.error.message;
-      })
+      });
   }
 });
 

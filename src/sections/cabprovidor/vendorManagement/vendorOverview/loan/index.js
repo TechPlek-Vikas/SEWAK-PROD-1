@@ -44,8 +44,6 @@ function ReactTable({ columns, data, renderRowSubComponent }) {
   const theme = useTheme();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
 
-  console.log('data', data);
-
   const filterTypes = useMemo(() => renderFilterTypes, []);
   const sortBy = { id: 'fatherName', desc: false };
 
@@ -188,7 +186,6 @@ const Loan = () => {
           Authorization: `${token}`
         }
       });
-      console.log('company', response.data.data.result);
       const result = response.data.data.result.map((company, index) => ({
         id: index + 1,
         company_name: company.company_name,

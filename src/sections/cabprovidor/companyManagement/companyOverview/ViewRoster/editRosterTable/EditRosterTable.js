@@ -68,10 +68,7 @@ const invalidConditions = {
 };
 
 const EditRosterTable = () => {
-  console.log('EditRosterTable rendered .............');
   const { id } = useParams();
-  console.log(`🚀 ~ One ~ id:`, id);
-  // const { fromDate, toDate } = useSearchParams();
 
   const location = useLocation();
 
@@ -81,8 +78,8 @@ const EditRosterTable = () => {
   // Access individual query parameters
   const fromDate = searchParams.get('fromDate'); // e.g., "2023-10-03"
   const toDate = searchParams.get('toDate'); // e.g., "2023-10-10"
-  console.log(`🚀 ~ One ~ fromDate:`, fromDate);
-  console.log(`🚀 ~ One ~ toDate:`, toDate);
+  // console.log(`🚀 ~ One ~ fromDate:`, fromDate);
+  // console.log(`🚀 ~ One ~ toDate:`, toDate);
 
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -104,7 +101,7 @@ const EditRosterTable = () => {
   const [dummyForVehiclesAndDriver, setDummyForVehiclesAndDriver] = useState([]);
 
   const zonesOptions = useSelector((state) => state.zone.zones);
-  console.log(`🚀 ~ One ~ zonesOptions:`, zonesOptions);
+  // console.log(`🚀 ~ One ~ zonesOptions:`, zonesOptions);
   const zoneTypeAllOptions = useSelector((state) => state.zoneType.zoneTypes);
   const vehicleTypeOptions = useSelector((state) => state.vehicleType.data);
 
@@ -123,7 +120,6 @@ const EditRosterTable = () => {
         setLoading(true);
         const response = await axios.post(`/tripData/trip/requests/company?page=${page}&limit=${limit}`, {
           data: {
-            // companyId: "663e0b2b692625507ec05015",
             companyId: id,
             fromDate: fromDate,
             toDate: toDate,
@@ -132,8 +128,8 @@ const EditRosterTable = () => {
         });
 
         if (response.status === 200) {
-          console.log('Data = ', response.data.data);
-          console.log('Central Data = ', centralData);
+          // console.log('Data = ', response.data.data);
+          // console.log('Central Data = ', centralData);
           //   setData(response.data.data);
           setLastPageNo(Math.ceil(response.data.totalCount / response.data.limit));
 
@@ -141,10 +137,10 @@ const EditRosterTable = () => {
             // modify data with central data
 
             const modifiedData = response.data.data.map((row) => {
-              console.log('row = ', row);
+              // console.log('row = ', row);
               const found = centralData.find((i) => i.tripId === row._id);
 
-              console.log('found = ', found);
+              // console.log('found = ', found);
 
               return {
                 tripId: found?.tripId || row._id || '',
@@ -187,7 +183,7 @@ const EditRosterTable = () => {
               };
             });
 
-            console.log('modifiedData = ', modifiedData);
+            // console.log('modifiedData = ', modifiedData);
 
             setData(modifiedData);
           } else {
@@ -221,7 +217,7 @@ const EditRosterTable = () => {
               isValidRow: false
             }));
 
-            console.log('Modified Data = ', modifiedData);
+            // console.log('Modified Data = ', modifiedData);
             setData(modifiedData);
           }
         }
@@ -248,7 +244,7 @@ const EditRosterTable = () => {
       const response = await axios.get(`/company/all/rates?companyId=${id}`);
 
       if (response.status === 200) {
-        console.log('Data = ', response.data.data);
+        // console.log('Data = ', response.data.data);
         setRates(response.data.data);
       }
     }
@@ -262,7 +258,7 @@ const EditRosterTable = () => {
         const response = await axios.get(`/vehicle/list/all`);
 
         if (response.status === 200) {
-          console.log('Data = ', response.data.data);
+          // console.log('Data = ', response.data.data);
           setDummyForVehiclesAndDriver(response.data.data);
         }
       } catch (error) {
@@ -440,11 +436,11 @@ const EditRosterTable = () => {
 
   const updateData = (rowIndex, columnId, value) => {
     // we also turn on the flag to not reset the page
-    console.log('rowIndex', rowIndex, 'columnId', columnId, 'value', value);
+    // console.log('rowIndex', rowIndex, 'columnId', columnId, 'value', value);
 
     if (columnId === 'zoneName') {
       const filterZoneType = zoneTypeAllOptions.filter((item) => item.zoneId._id === value._id);
-      console.log(`🚀 ~ updateData ~ filterZoneType:`, filterZoneType);
+      // console.log(`🚀 ~ updateData ~ filterZoneType:`, filterZoneType);
       setZoneTypeOptions(filterZoneType);
     }
     setSkipPageReset(true);
@@ -460,9 +456,9 @@ const EditRosterTable = () => {
             setOptionsForCabAmount([]);
           }
 
-          console.log('old zone name', oldZoneName);
-          console.log('old zone name id', oldZoneNameId);
-          console.log('old row', oldRow);
+          // console.log('old zone name', oldZoneName);
+          // console.log('old zone name id', oldZoneNameId);
+          // console.log('old row', oldRow);
           let res = {
             ...old[rowIndex],
             ...(columnId === 'guard' ? (value === 0 ? { guardPrice: 0 } : {}) : {}),
@@ -496,24 +492,24 @@ const EditRosterTable = () => {
             ...(columnId === 'driver_id' && { driverId: value._id })
           };
 
-          console.log('Res = ', res);
+          // console.log('Res = ', res);
           const { zoneNameID: oldZoneNameID, zoneTypeID: oldZoneTypeID, vehicleTypeID: oldVehicleTypeID } = res;
 
-          console.log({
-            oldZoneNameID,
-            oldZoneTypeID,
-            oldVehicleTypeID
-          });
+          // console.log({
+          //   oldZoneNameID,
+          //   oldZoneTypeID,
+          //   oldVehicleTypeID
+          // });
 
           if (oldZoneNameID && oldZoneTypeID && oldVehicleTypeID && ['zoneName', 'zoneType', 'vehicleType'].includes(columnId)) {
-            console.log('Included .........');
+            // console.log('Included .........');
             const result = getCabAmountsByZoneAndType(rates, oldZoneNameID, oldZoneTypeID);
 
-            console.log(result);
+            // console.log(result);
             setOptionsForCabAmount(result);
           }
 
-          console.log(`🚀 ~ updateData ~ res:`, res);
+          // console.log(`🚀 ~ updateData ~ res:`, res);
 
           if (columnId === 'vehicle_number') {
             const vehicleNumberID = value._id;
@@ -521,33 +517,33 @@ const EditRosterTable = () => {
               .filter((item) => item._id === vehicleNumberID)
               .flatMap((item) => item.assignedDriver.map((driver) => driver.driverId))
               .filter((item) => item !== null);
-            console.log(`🚀 ~ old.map ~ filterDrivers:`, filterDrivers);
+            // console.log(`🚀 ~ old.map ~ filterDrivers:`, filterDrivers);
             setDriverOptions(filterDrivers);
           }
 
-          console.log('final res = ', res);
+          // console.log('final res = ', res);
 
           let newRes = removeNestedObjects(res);
-          console.log(`🚀 ~ old.map ~ newRes:`, newRes);
+          // console.log(`🚀 ~ old.map ~ newRes:`, newRes);
 
           const isValidRow = isObjectValidBasedOnConditions(newRes, invalidConditions);
 
-          console.log('Before :: ', newRes);
-          console.log('isValidRow = ', isValidRow);
+          // console.log('Before :: ', newRes);
+          // console.log('isValidRow = ', isValidRow);
           //   isRowValid(res);
           newRes = {
             ...newRes,
             isValidRow
           };
 
-          console.log('After :: ', newRes);
+          // console.log('After :: ', newRes);
 
           res = {
             ...res,
             isValidRow
           };
 
-          console.log(`🚀 ~ updateData ~ res:`, res);
+          // console.log(`🚀 ~ updateData ~ res:`, res);
           return res;
           // return newRes;
         }
@@ -561,13 +557,13 @@ const EditRosterTable = () => {
   }, [data]);
 
   const saveLater = useCallback(() => {
-    console.log('save later');
+    // console.log('save later');
     const result = data.filter((item) => item.isValidRow);
     // alert(JSON.stringify(result, null, 2));
-    console.log(`🚀 ~ result ~ result:`, result);
+    // console.log(`🚀 ~ result ~ result:`, result);
 
     if (result.length > 0) {
-      console.log('centralData = ', centralData);
+      // console.log('centralData = ', centralData);
 
       // const finalResult = [...centralData, ...result];
       // console.log(`🚀 ~ finalResult ~ finalResult:`, finalResult);
@@ -585,7 +581,7 @@ const EditRosterTable = () => {
       // Combine both arrays
       const output = [...result1, ...uniqueFromY];
 
-      console.log('output = ', output);
+      // console.log('output = ', output);
       localStorage.setItem(`centralData`, JSON.stringify(output));
       dispatch(
         openSnackbar({
@@ -615,22 +611,22 @@ const EditRosterTable = () => {
 
   const assignTripToDriver = useCallback(async () => {
     try {
-      console.log('assign trip to driver');
+      // console.log('assign trip to driver');
       const result = data.filter((item) => item.isValidRow);
       //   alert(JSON.stringify(result, null, 2));
-      console.log(`🚀 ~ result ~ result:`, result);
+      // console.log(`🚀 ~ result ~ result:`, result);
 
       if (result.length > 0) {
         const resultId = result.map((item) => item.tripId);
 
-        console.log('centralData = ', centralData);
-        console.log('resultId = ', resultId);
+        // console.log('centralData = ', centralData);
+        // console.log('resultId = ', resultId);
 
         const omitKeys = ['trip_date', 'trip_time', 'zoneName', 'zoneType', 'vehicleType', 'vehicle_number', 'driver_id', 'isValidRow'];
         const assignTripsData = omitKeysFromArray(result, omitKeys);
 
         // alert(JSON.stringify(assignTripsData, null, 2));
-        console.log(`🚀 ~ assignTripsData ~ assignTripsData:`, assignTripsData);
+        // console.log(`🚀 ~ assignTripsData ~ assignTripsData:`, assignTripsData);
 
         const payload = {
           data: {
@@ -638,16 +634,16 @@ const EditRosterTable = () => {
           }
         };
 
-        console.log(`🚀 ~ payload ~ payload:`, payload);
+        // console.log(`🚀 ~ payload ~ payload:`, payload);
 
         const response = await axios.post(`/assignTrip/to/driver`, payload);
 
-        console.log(`🚀 ~ response ~ response:`, response);
+        // console.log(`🚀 ~ response ~ response:`, response);
 
         if (response?.status === 201) {
           // alert("Trip assigned successfully");
           const result = centralData.filter((item) => !resultId.includes(item.tripId));
-          console.log(`🚀 ~ assignTripToDriver ~ result:`, result);
+          // console.log(`🚀 ~ assignTripToDriver ~ result:`, result);
           localStorage.setItem(`centralData`, JSON.stringify(result));
           dispatch(
             openSnackbar({

@@ -101,7 +101,6 @@ const VendorRate = ({ onClose, companyName }) => {
   };
 
   const handleFormSubmit = async (formValues) => {
-    console.log('formValues', formValues);
     if (formValues.billingCycle === 'Custom') {
       formValues.billingCycle = formValues.customBillingCycle;
     }
@@ -110,11 +109,7 @@ const VendorRate = ({ onClose, companyName }) => {
   };
 
   const handleSaveRate = async () => {
-    console.log('companyRate', companyRate);
-
     const formValues = companyRate.map((item) => {
-      console.log('single object inside company rate array', item);
-
       return {
         zoneNameID: item.zoneNameID,
         zoneTypeID: item.zoneTypeID,
@@ -134,8 +129,6 @@ const VendorRate = ({ onClose, companyName }) => {
       };
     });
 
-    console.log('formValues', formValues);
-
     try {
       // Replace the URL with your API endpoint
       const response = await axios.post(
@@ -154,7 +147,6 @@ const VendorRate = ({ onClose, companyName }) => {
       );
 
       if (response.status === 201) {
-        console.log('response', response);
         // Add the new rate to the existing data
         setData((prevData) => [...prevData, ...response.data.data]);
 
@@ -188,9 +180,6 @@ const VendorRate = ({ onClose, companyName }) => {
         accessor: 'zoneNameID',
         Cell: ({ value }) => {
           const zoneType = zones.find((item) => item._id === value);
-          // console.log("zoneType", zoneType);
-          console.log('zoneType', zoneType);
-          console.log('value', value);
           return zoneType ? zoneType.zoneName : 'Unknown';
         }
       },
@@ -221,7 +210,6 @@ const VendorRate = ({ onClose, companyName }) => {
               <TableBody>
                 {value.map((item) => {
                   const vehicle = vehicleTypeList.find((item1) => item1._id === item.vehicleTypeID);
-                  console.log(vehicle);
                   return (
                     <>
                       {vehicle && (

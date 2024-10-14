@@ -12,6 +12,7 @@ import axiosServices from 'utils/axios';
 
 function CompanyList({ setCompany, search, selectedUser }) {
   const { companies, loading } = useSelector((state) => state.companies);
+  // eslint-disable-next-line no-unused-vars
   const [data, setData] = useState([companies]);
 
   const [companySearchLoading, setCompanySearchLoading] = useState(false);
@@ -26,7 +27,6 @@ function CompanyList({ setCompany, search, selectedUser }) {
       } else {
         data = [];
       }
-      console.log(data);
       return data;
     } catch (err) {
       console.error(err);
@@ -35,7 +35,6 @@ function CompanyList({ setCompany, search, selectedUser }) {
     }
   };
   useEffect(() => {
-    
     if (search) {
       const searchResult = fetchCompanyListSearchAPi();
       setData(searchResult);
@@ -44,9 +43,7 @@ function CompanyList({ setCompany, search, selectedUser }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
-  console.log('data', data);
-
-  if (companySearchLoading|| loading)
+  if (companySearchLoading || loading)
     return (
       <List>
         {[1, 2, 3, 4, 5].map((index) => (

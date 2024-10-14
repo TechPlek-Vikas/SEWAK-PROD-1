@@ -238,7 +238,6 @@ function AddBranch() {
   const handleSelectionChange = useCallback(
     (value) => {
       setSelectedOption(value);
-      console.log('Selected Option:', value);
       formik.setFieldValue('parentCompanyID', value?._id || '');
     },
     [formik]

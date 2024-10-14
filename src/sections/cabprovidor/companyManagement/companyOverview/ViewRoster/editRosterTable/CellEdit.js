@@ -1,136 +1,104 @@
-import {
-  TextField,
-  Select,
-  MenuItem,
-  Autocomplete,
-} from "@mui/material";
+import { TextField, Select, MenuItem, Autocomplete } from '@mui/material';
 // const {
 //   default: LinearWithLabel,
 // } = require("components/@extended/progress/LinearWithLabel");
-import { Formik, Form } from "formik";
-import { useEffect, useState } from "react";
-import * as Yup from "yup";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DesktopDatePicker, TimeField } from "@mui/x-date-pickers";
+import { Formik, Form } from 'formik';
+import { useEffect, useState } from 'react';
+import * as Yup from 'yup';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DesktopDatePicker, TimeField } from '@mui/x-date-pickers';
 
 const CellEdit = ({
   value: initialValue,
   row: { index, original },
   column: { id, dataType, properties, editableCondition },
-  updateData,
+  updateData
 }) => {
   // const [value, setValue] = useState(initialValue);
   const [value, setValue] = useState(() =>
-    dataType === "date"
-      ? new Date(initialValue)
-      : dataType === "time"
-      ? new Date(initialValue * 1000)
-      : initialValue
+    dataType === 'date' ? new Date(initialValue) : dataType === 'time' ? new Date(initialValue * 1000) : initialValue
   );
 
-  console.log(value, typeof value);
+  // console.log(value, typeof value);
 
-  console.log({
-    value,
-    what: dataType,
-    initialValue,
-  });
+  // console.log({
+  //   value,
+  //   what: dataType,
+  //   initialValue
+  // });
 
-  // const handleInputChange = (e) => {
-  //   // setValue(e.target.value);
-  //   const { value, type, name } = e.target;
-  //   console.log("handleInputChange", type);
-  //   setValue(type === "number" ? Number(value) : value);
-  // };
 
   const handleInputChange = (e, newValue) => {
-    if (dataType === "autoComplete") {
-      console.log("handleInputChange", newValue);
+    if (dataType === 'autoComplete') {
+      // console.log('handleInputChange', newValue);
       setValue(newValue); // for autocomplete
-    } else if (dataType === "date") {
-      console.log("date = ", e);
+    } else if (dataType === 'date') {
+      // console.log('date = ', e);
       setValue(e);
       updateData(index, id, e);
       // handleBlur();
-    } else if (dataType === "time") {
-      console.log("time = ", e);
+    } else if (dataType === 'time') {
+      // console.log('time = ', e);
       setValue(e);
       updateData(index, id, e);
     } else {
       const { value, type } = e.target;
-      setValue(type === "number" ? Number(value) : value);
+      setValue(type === 'number' ? Number(value) : value);
     }
   };
 
   const handleBlur = () => {
-    console.log("handleBlur");
+    // console.log('handleBlur');
     updateData(index, id, value); // Update the table data when editing is complete
   };
 
   useEffect(() => {
     // setValue(initialValue); // Reset the value when the row data changes
     // setValue(dataType === "date" ? new Date(initialValue) : initialValue); // Reset the value when the row data changes
-    setValue(
-      dataType === "date"
-        ? new Date(initialValue)
-        : dataType === "time"
-        ? new Date(initialValue * 1000)
-        : initialValue
-    ); // Reset the value when the row data changes
+    setValue(dataType === 'date' ? new Date(initialValue) : dataType === 'time' ? new Date(initialValue * 1000) : initialValue); // Reset the value when the row data changes
   }, [initialValue]);
 
   const renderValue = (selected) => {
-    console.log(`🚀 ~ renderValue ~ selected:`, selected);
-    console.log("initial = ", initialValue);
+    // console.log(`🚀 ~ renderValue ~ selected:`, selected);
+    // console.log('initial = ', initialValue);
 
-    const selectedOption = properties.options.find(
-      (option) => option.value === selected
-    );
+    const selectedOption = properties.options.find((option) => option.value === selected);
     return selectedOption ? selectedOption.label : selected; // Ensure the label is returned
   };
 
   // Check if the field is editable based on the condition
   const isEditable = editableCondition ? editableCondition(original) : true;
-  console.log(`🚀 ~ isEditable:`, isEditable, id);
+  // console.log(`🚀 ~ isEditable:`, isEditable, id);
 
   let element;
   let userInfoSchema;
   switch (id) {
-    case "tripType":
+    case 'tripType':
       userInfoSchema = Yup.object().shape({
-        userInfo: Yup.string().required("Trip Type is required"),
+        userInfo: Yup.string().required('Trip Type is required')
       });
       break;
     default:
       userInfoSchema = Yup.object().shape({
-        userInfo: Yup.string()
-          .min(2, "Too Short!")
-          .max(50, "Too Long!")
-          .required("Name is Required"),
+        userInfo: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Name is Required')
       });
       break;
   }
 
   switch (dataType) {
-    case "text":
+    case 'text':
       element = (
         <>
           <Formik
             initialValues={{
-              userInfo: value,
+              userInfo: value
             }}
             enableReinitialize
             validationSchema={userInfoSchema}
             onSubmit={() => {}}
           >
-            {({
-              values,
-              handleChange,
-              handleBlur: formikHandleBlur,
-              errors,
-              touched,
-            }) => (
+            {({ values, handleChange, handleBlur: formikHandleBlur, errors, touched }) => (
               <Form>
                 <TextField
                   value={values.userInfo}
@@ -147,16 +115,14 @@ const CellEdit = ({
                     handleBlur(); // Commit the change to parent
                   }}
                   error={touched.userInfo && Boolean(errors.userInfo)}
-                  helperText={
-                    touched.userInfo && errors.userInfo && errors.userInfo
-                  }
+                  helperText={touched.userInfo && errors.userInfo && errors.userInfo}
                   sx={{
-                    "& .MuiOutlinedInput-input": {
+                    '& .MuiOutlinedInput-input': {
                       py: 0.75,
                       px: 1,
-                      width: id === "email" ? 150 : 80,
+                      width: id === 'email' ? 150 : 80
                     },
-                    "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
                   }}
                 />
               </Form>
@@ -166,15 +132,15 @@ const CellEdit = ({
       );
       break;
 
-    case "select":
+    case 'select':
       element = (
         <>
           <Select
             labelId="editable-select-status-label"
             sx={{
-              boxShadow: "none",
-              ".MuiOutlinedInput-notchedOutline": { border: 0 },
-              svg: { display: "none" },
+              boxShadow: 'none',
+              '.MuiOutlinedInput-notchedOutline': { border: 0 },
+              svg: { display: 'none' }
             }}
             id="editable-select-status"
             value={value}
@@ -183,7 +149,7 @@ const CellEdit = ({
             renderValue={renderValue}
           >
             {properties.options.length === 0 ? (
-              <MenuItem disabled>{properties.noDataText || "No Data"}</MenuItem>
+              <MenuItem disabled>{properties.noDataText || 'No Data'}</MenuItem>
             ) : (
               properties.options.map((item, index) => (
                 <MenuItem key={index} value={item.value}>
@@ -196,7 +162,7 @@ const CellEdit = ({
       );
       break;
 
-    case "number":
+    case 'number':
       element = (
         <TextField
           type="number"
@@ -209,40 +175,38 @@ const CellEdit = ({
           // disabled={original.guard === 0}
           disabled={!isEditable}
           sx={{
-            "& .MuiOutlinedInput-input": {
+            '& .MuiOutlinedInput-input': {
               py: 0.75,
               px: 1,
-              width: id === "email" ? 150 : 80,
+              width: id === 'email' ? 150 : 80
             },
-            "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+            '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
           }}
         />
       );
       break;
 
-    case "autoComplete":
+    case 'autoComplete':
       element = (
         <Autocomplete
           value={value}
           options={properties.options}
           // getOptionLabel={(option) => option[properties.displayName] || ""}
           getOptionLabel={(option) => {
-            console.log("Type = ", typeof option, "Option = ", option);
+            // console.log('Type = ', typeof option, 'Option = ', option);
             // return option[properties.displayName] || "";
-            if (typeof option === "string") {
+            if (typeof option === 'string') {
               return option;
             }
             if (option.inputValue) {
               return option.inputValue;
             }
-            return option[properties.displayName] || ""; // Display zoneName in dropdown
+            return option[properties.displayName] || ''; // Display zoneName in dropdown
           }}
           filterOptions={(options, params) => {
-            console.log("Params", params);
+            // console.log('Params', params);
             const filtered = options.filter((option) =>
-              option[properties.displayName]
-                ?.toLowerCase()
-                .includes(params.inputValue?.toLowerCase())
+              option[properties.displayName]?.toLowerCase().includes(params.inputValue?.toLowerCase())
             );
 
             return filtered;
@@ -260,9 +224,7 @@ const CellEdit = ({
           renderInput={(params) => (
             <TextField
               {...params}
-              placeholder={
-                properties.placeholder || "Select Option Placeholder"
-              }
+              placeholder={properties.placeholder || 'Select Option Placeholder'}
               // sx={{
               //   "& .MuiOutlinedInput-input": {
               //     py: 0.75,
@@ -272,12 +234,12 @@ const CellEdit = ({
               // }}
 
               sx={{
-                boxShadow: "none",
-                ".MuiOutlinedInput-notchedOutline": {
-                  border: 0,
+                boxShadow: 'none',
+                '.MuiOutlinedInput-notchedOutline': {
+                  border: 0
                 },
-                svg: { display: "none" },
-                minWidth: 150,
+                svg: { display: 'none' },
+                minWidth: 150
               }}
             />
           )}
@@ -287,7 +249,7 @@ const CellEdit = ({
       );
       break;
 
-    case "date":
+    case 'date':
       element = (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DesktopDatePicker
@@ -295,17 +257,17 @@ const CellEdit = ({
             value={value}
             onChange={handleInputChange}
             sx={{
-              "& .MuiOutlinedInput-input": {
-                minWidth: 150,
+              '& .MuiOutlinedInput-input': {
+                minWidth: 150
               },
-              "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+              '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
             }}
           />
         </LocalizationProvider>
       );
       break;
 
-    case "time":
+    case 'time':
       element = (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           {/* <TimePicker
@@ -322,10 +284,10 @@ const CellEdit = ({
             value={value}
             onChange={handleInputChange}
             sx={{
-              "& .MuiOutlinedInput-input": {
-                minWidth: 150,
+              '& .MuiOutlinedInput-input': {
+                minWidth: 150
               },
-              "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+              '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
             }}
           />
         </LocalizationProvider>
