@@ -37,7 +37,7 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
           return (
             <Typography>
               <Link
-                to={`/driver/overview/${row.original._id}`}
+                to={`/management/driver/overview/${row.original._id}`}
                 onClick={(e) => e.stopPropagation()} // Prevent interfering with row expansion
                 style={{ textDecoration: 'none' }}
               >
@@ -71,12 +71,12 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
                 variant="light"
                 size="small"
                 label="Not Assigned"
-                sx={{
-                  ':hover': {
-                    backgroundColor: 'rgba(255, 0, 0, 0.3)'
-                    // cursor: 'pointer'
-                  }
-                }}
+                // sx={{
+                //   ':hover': {
+                //     backgroundColor: 'rgba(255, 0, 0, 0.3)'
+                //     // cursor: 'pointer'
+                //   }
+                // }}
                 // onClick={() => handleOpenPendingDialog(row.original)}
               />
             );
@@ -194,7 +194,9 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
         </ScrollX>
         <Box>
           {data.length > 0 && (
-            <PaginationBox pageIndex={page} gotoPage={setPage} pageSize={limit} setPageSize={setLimit} lastPageIndex={lastPageNo} />
+            <div style={{ marginTop: '10px' }}>
+               <PaginationBox pageIndex={page} gotoPage={setPage} pageSize={limit} setPageSize={setLimit} lastPageIndex={lastPageNo} />
+            </div>
           )}
         </Box>
       </Stack>

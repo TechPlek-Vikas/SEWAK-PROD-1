@@ -26,6 +26,7 @@ const AddVendor = Loadable(lazy(() => import('pages/management/vendor/AddVendor'
 
 // Driver
 const Driver = Loadable(lazy(() => import('pages/management/driver')));
+const DriverOverview = Loadable(lazy(() => import('pages/overview/DriverOverview')));
 // const AddDriver = Loadable(lazy(() => import('pages/management/driver/AddDriver')));
 
 // Cab
@@ -141,6 +142,10 @@ const CabProvidorRoutes = {
                   path: '',
                   // element: <Driver />
                   element: <ProtectedRoute element={Driver} moduleName={MODULE.DRIVER} permission={PERMISSIONS.READ} />
+                },
+                {
+                  path: 'overview/:id',
+                  element: <ProtectedRoute element={DriverOverview} moduleName={MODULE.DRIVER} permission={PERMISSIONS.READ} />
                 }
                 // {
                 //   path: 'add-driver',
