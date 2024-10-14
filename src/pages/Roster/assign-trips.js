@@ -652,13 +652,13 @@ const AssignTrips = () => {
         </ScrollX>
       </MainCard>
       <div style={{ marginTop: '10px' }}>
-      <Pagination
-        pageSize={limit}
-        setPageSize={handleLimitChange}
-        pageIndex={page}
-        gotoPage={handlePageChange}
-        lastPageIndex={lastPageNo}
-      />
+        <Pagination
+          pageSize={limit}
+          setPageSize={handleLimitChange}
+          pageIndex={page}
+          gotoPage={handlePageChange}
+          lastPageIndex={lastPageNo}
+        />
       </div>
     </>
   );
@@ -708,6 +708,6 @@ function getCabAmountsByZoneAndType(data, zoneId, zoneTypeId) {
   // Map the cabAmount data to the desired format
   return zoneData.cabAmount.map((cab) => ({
     value: cab.amount,
-    label: `${cab.vehicleTypeID.vehicleTypeName} - ${cab.amount}`
+    label: `${cab.vehicleTypeID?.vehicleTypeName} - ${cab.amount}`
   }));
 }

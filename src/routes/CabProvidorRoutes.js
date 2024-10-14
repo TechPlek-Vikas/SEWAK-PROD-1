@@ -7,10 +7,6 @@ import Loadable from 'components/Loadable';
 import AuthGuard from 'utils/route-guard/AuthGuard';
 import ProtectedRoute from 'components/common/guards/ProtectedRoute';
 import { MODULE, PERMISSIONS } from 'constant';
-import RosterFileList from 'pages/Roster/file-management';
-import MapRosterFile from 'pages/Roster/map-roster';
-import ViewRoster from 'pages/Roster/view-roster';
-import AssignTrips from 'pages/Roster/assign-trips';
 
 const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/error/404')));
 const MaintenanceError500 = Loadable(lazy(() => import('pages/maintenance/error/500')));
@@ -21,6 +17,10 @@ const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/comi
 const Dashboard = Loadable(lazy(() => import('pages')));
 // Roster
 const Roster = Loadable(lazy(() => import('pages/apps/roster')));
+const RosterFileList = Loadable(lazy(() => import('pages/Roster/file-management')));
+const MapRosterFile = Loadable(lazy(() => import('pages/Roster/map-roster')));
+const ViewRoster = Loadable(lazy(() => import('pages/Roster/view-roster')));
+const AssignTrips = Loadable(lazy(() => import('pages/Roster/assign-trips')));
 
 // Management
 const User = Loadable(lazy(() => import('pages/management/user')));
