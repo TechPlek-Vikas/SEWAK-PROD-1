@@ -22,7 +22,7 @@ const Vendor = () => {
     setPage(1);
   }, []);
 
-  if (loading) return <TableSkeleton rows={10} columns={9} />;
+  if (loading) return <TableSkeleton rows={10} columns={6} />;
   if (error) return <Error500 />;
   if (vendors.length === 0) return <EmptyTableDemo />;
 
