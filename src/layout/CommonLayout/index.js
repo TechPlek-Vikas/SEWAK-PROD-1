@@ -4,6 +4,14 @@ import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 
 // material-ui
+import { Container, Toolbar } from '@mui/material';
+
+// project-imports
+import ComponentLayout from './ComponentLayout';
+import { dispatch, useSelector } from 'store';
+import { openComponentDrawer } from 'store/reducers/menu';
+
+// material-ui
 import { styled } from '@mui/material/styles';
 import LinearProgress from '@mui/material/LinearProgress';
 
@@ -31,18 +39,35 @@ const Loader = () => (
 
 // ==============================|| MINIMAL LAYOUT ||============================== //
 
-const CommonLayout = ({ layout = 'blank' }) => (
-  <>
-    {(layout === 'landing' || layout === 'simple') && (
-      <Suspense fallback={<Loader />}>
-        <Header layout={layout} />
-        <Outlet />
-        <FooterBlock isFull={layout === 'landing'} />
-      </Suspense>
-    )}
-    {layout === 'blank' && <Outlet />}
-  </>
-);
+const CommonLayout = ({ layout = 'blank' }) => {
+  const { componentDrawerOpen } = useSelector((state) => state.menu);
+
+  const handleDrawerOpen = () => {
+    dispatch(openComponentDrawer({ componentDrawerOpen: !componentDrawerOpen }));
+  };
+
+  return (
+    <>
+      {(layout === 'landing' || layout === 'simple') && (
+        <Suspense fallback={<Loader />}>
+          <Header layout={layout} />
+          <Outlet />
+          <FooterBlock isFull={layout === 'landing'} />
+        </Suspense>
+      )}
+      {layout === 'component' && (
+        <Suspense fallback={<Loader />}>
+          <Container maxWidth="xl" sx={{ px: { xs: 0, sm: 2 } }}>
+            <Header handleDrawerOpen={handleDrawerOpen} layout="component" />
+            <Toolbar sx={{ mt: 2 }} />
+            <ComponentLayout handleDrawerOpen={handleDrawerOpen} componentDrawerOpen={componentDrawerOpen} />
+          </Container>
+        </Suspense>
+      )}
+      {layout === 'blank' && <Outlet />}
+    </>
+  );
+};
 
 CommonLayout.propTypes = {
   layout: PropTypes.string

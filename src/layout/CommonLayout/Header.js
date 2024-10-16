@@ -24,13 +24,14 @@ import {
 } from '@mui/material';
 
 // project-imports
-import Logo from 'components/logo';
-import { ThemeDirection, APP_DEFAULT_PATH } from 'config';
+import { APP_DEFAULT_PATH } from 'config';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
+import Logo from 'components/logo';
+import { ThemeDirection } from 'config';
 
 // assets
-import { DocumentDownload, ExportSquare, HambergerMenu, Minus } from 'iconsax-react';
+import { ExportSquare, HambergerMenu, Minus } from 'iconsax-react';
 
 // elevation scroll
 function ElevationScroll({ children, window }) {
@@ -107,50 +108,18 @@ const Header = ({ handleDrawerOpen, layout = 'landing', ...others }) => {
               >
                 Dashboard
               </Link>
-              <Link
-                className="header-link"
-                color={handleDrawerOpen ? 'primary' : 'secondary.main'}
-                component={RouterLink}
-                to="/components-overview/buttons"
-                underline="none"
-              >
-                Components
-              </Link>
-              <Link
-                className="header-link"
-                color="secondary.main"
-                href="https://phoenixcoded.gitbook.io/able-pro/v/react/"
-                target="_blank"
-                underline="none"
-              >
-                Documentation
-              </Link>
-              <Link href="https://github.com/phoenixcoded/able-pro-free-admin-dashboard-template" target="_blank" underline="none">
-                <IconButton
-                  size="large"
-                  shape="rounded"
-                  color="secondary"
-                  sx={{
-                    bgcolor: 'secondary.light',
-                    color: 'secondary.darker',
-                    '&:hover': { color: 'secondary.lighter', bgcolor: 'secondary.darker' }
-                  }}
-                >
-                  <DocumentDownload />
-                </IconButton>
-              </Link>
               <Box sx={{ display: 'inline-block' }}>
                 <AnimateButton>
                   <Button
-                    component={Link}
-                    href="https://1.envato.market/c/1289604/275988/4415?subId1=phoenixcoded&u=https%3A%2F%2Fthemeforest.net%2Fitem%2Fable-pro-responsive-bootstrap-4-admin-template%2F19300403"
+                    component={RouterLink}
+                    to="/auth"
                     disableElevation
                     startIcon={<ExportSquare />}
                     color="success"
                     size="large"
                     variant="contained"
                   >
-                    Purchase Now
+                    login
                   </Button>
                 </AnimateButton>
               </Box>
