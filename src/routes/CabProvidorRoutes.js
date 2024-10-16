@@ -7,6 +7,8 @@ import Loadable from 'components/Loadable';
 import AuthGuard from 'utils/route-guard/AuthGuard';
 import ProtectedRoute from 'components/common/guards/ProtectedRoute';
 import { MODULE, PERMISSIONS } from 'constant';
+import List from 'pages/invoice/list/List';
+import Create from 'pages/invoice/create/Create';
 
 const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/error/404')));
 const MaintenanceError500 = Loadable(lazy(() => import('pages/maintenance/error/500')));
@@ -47,7 +49,7 @@ const CompanyOverview = Loadable(lazy(() => import('pages/overview/CompanyOvervi
 // reports
 const Reports = Loadable(lazy(() => import('pages/Reports')));
 // Invoice
-const Invoice = Loadable(lazy(() => import('pages/invoices/Invoice')));
+// const Invoice = Loadable(lazy(() => import('pages/invoices/Invoice')));
 const Loans = Loadable(lazy(() => import('pages/invoices/Loans')));
 const Advance = Loadable(lazy(() => import('pages/invoices/advance')));
 const AdvanceType = Loadable(lazy(() => import('pages/invoices/advance/AdvanceType')));
@@ -210,7 +212,15 @@ const CabProvidorRoutes = {
           children: [
             {
               path: 'invoice',
-              element: <Invoice />
+              element: <List />
+            },
+            {
+              path: 'Create-invoice',
+              element: <Create />
+            },
+            {
+              path: 'invoice',
+              element: <List />
             },
             {
               path: 'loans',

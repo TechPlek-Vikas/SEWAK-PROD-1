@@ -10,10 +10,10 @@ import Drawer from './Drawer';
 import Header from './Header';
 import Footer from './Footer';
 import HorizontalBar from './Drawer/HorizontalBar';
-import Breadcrumbs from 'components/@extended/Breadcrumbs';
+// import Breadcrumbs from 'components/@extended/Breadcrumbs';
 
 import { DRAWER_WIDTH } from 'config';
-import navigation from 'menu-items';
+// import navigation from 'menu-items';
 import useConfig from 'hooks/useConfig';
 import { dispatch } from 'store';
 import { openDrawer } from 'store/reducers/menu';
@@ -56,7 +56,7 @@ const MainLayout = () => {
             flexDirection: 'column'
           }}
         >
-          <Breadcrumbs navigation={navigation} title titleBottom card={false} divider={false} />
+          {/* <Breadcrumbs navigation={navigation} title titleBottom card={false} divider={false} /> */}
           <Outlet />
           <Footer />
         </Container>

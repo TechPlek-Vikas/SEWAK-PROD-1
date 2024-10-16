@@ -32,6 +32,16 @@ const invoice = {
       }
     },
     {
+      id: 'create-invoice',
+      title: <FormattedMessage id="create-invoice" />,
+      type: 'item',
+      url: '/invoices/create-invoice',
+      icon: icons.invoice,
+      permissions: {
+        [MODULE.INVOICE]: PERMISSIONS.READ
+      }
+    },
+    {
       id: 'loans',
       title: <FormattedMessage id="loans" />,
       type: 'item',

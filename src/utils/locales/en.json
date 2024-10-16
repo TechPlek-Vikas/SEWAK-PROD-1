@@ -21,5 +21,7 @@
   "user": "User",
   "add-company": "Add Company",
   "add-company-branch": "Add company branch",
-  "role": "Role"
+  "role": "Role",
+  "create-invoice":"Create Invoice"
+
 }

@@ -10,7 +10,7 @@ const Zone = () => {
   const { zoneNames, metaData, loading, error } = useSelector((state) => state.zoneName);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [lastPageNo, setLastPageNo] = useState(Math.ceil(metaData.totalCount / metaData.limit) || 1);
+  const [lastPageNo, setLastPageNo] = useState(Math.ceil(metaData?.totalCount / metaData?.limit) || 1);
   const [updateKey, setUpdateKey] = useState(0);
 
   useEffect(() => {
