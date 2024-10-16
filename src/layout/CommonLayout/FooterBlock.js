@@ -57,8 +57,7 @@ const FooterBlock = ({ isFull }) => {
                   </Grid>
                   <Grid item xs={12}>
                     <Typography variant="subtitle1" sx={{ fontWeight: 400 }}>
-                      Phoenixcoded has gained the trust of over 5.5K customers since 2015, thanks to our commitment to delivering
-                      high-quality products. Our experienced team players are responsible for managing Able Pro.
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Integer facilisis, ipsum et venenatis sollicitudin, nisl nunc suscipit mi, sit amet suscipit odio est vitae mauris. Donec fermentum, odio a cursus gravida, lacus lorem posuere enim, in luctus justo elit a metus..
                     </Typography>
                   </Grid>
                 </Grid>
@@ -70,16 +69,16 @@ const FooterBlock = ({ isFull }) => {
                   <Stack spacing={3}>
                     <Typography variant="h5">Company</Typography>
                     <Stack spacing={{ xs: 1.5, md: 2.5 }}>
-                      <FooterLink href="https://themeforest.net/user/phoenixcoded" target="_blank" underline="none">
+                      <FooterLink href="" target="_blank" underline="none">
                         Profile
                       </FooterLink>
-                      <FooterLink href="https://themeforest.net/user/phoenixcoded/portfolio" target="_blank" underline="none">
+                      <FooterLink href="" target="_blank" underline="none">
                         Portfolio
                       </FooterLink>
-                      <FooterLink href="https://themeforest.net/user/phoenixcoded/followers" target="_blank" underline="none">
+                      <FooterLink href="" target="_blank" underline="none">
                         Follow Us
                       </FooterLink>
-                      <FooterLink href="https://phoenixcoded.net" target="_blank" underline="none">
+                      <FooterLink href="" target="_blank" underline="none">
                         Website
                       </FooterLink>
                     </Stack>
@@ -89,19 +88,19 @@ const FooterBlock = ({ isFull }) => {
                   <Stack spacing={3}>
                     <Typography variant="h5">Help & Support</Typography>
                     <Stack spacing={{ xs: 1.5, md: 2.5 }}>
-                      <FooterLink href="https://phoenixcoded.gitbook.io/able-pro/v/react/" target="_blank" underline="none">
+                      <FooterLink href="" target="_blank" underline="none">
                         Documentation
                       </FooterLink>
-                      <FooterLink href="https://phoenixcoded.gitbook.io/able-pro/v/react/roadmap/" target="_blank" underline="none">
+                      <FooterLink href="" target="_blank" underline="none">
                         Feature Request
                       </FooterLink>
-                      <FooterLink href="https://phoenixcoded.gitbook.io/able-pro/v/react/roadmap/" target="_blank" underline="none">
+                      <FooterLink href="" target="_blank" underline="none">
                         RoadMap
                       </FooterLink>
-                      <FooterLink href="https://phoenixcoded.authordesk.app/" target="_blank" underline="none">
+                      <FooterLink href="" target="_blank" underline="none">
                         Support
                       </FooterLink>
-                      <FooterLink href="https://themeforest.net/user/phoenixcoded#contact" target="_blank" underline="none">
+                      <FooterLink href="" target="_blank" underline="none">
                         Email Us
                       </FooterLink>
                     </Stack>
@@ -111,10 +110,10 @@ const FooterBlock = ({ isFull }) => {
                   <Stack spacing={3}>
                     <Typography variant="h5">Useful Resources</Typography>
                     <Stack spacing={{ xs: 1.5, md: 2.5 }}>
-                      <FooterLink href="https://themeforest.net/page/item_support_policy" target="_blank" underline="none">
+                      <FooterLink href="" target="_blank" underline="none">
                         Support Policy
                       </FooterLink>
-                      <FooterLink href="https://themeforest.net/licenses/standard" target="_blank" underline="none">
+                      <FooterLink href="" target="_blank" underline="none">
                         Licenses Term
                       </FooterLink>
                     </Stack>
@@ -137,9 +136,9 @@ const FooterBlock = ({ isFull }) => {
             <Grid item xs={12} sm={8}>
               <Typography>
                 © Handcrafted by Team{' '}
-                <Link href="https://themeforest.net/user/phoenixcoded" underline="none">
+                <Link href="https://www.techplek.com/" underline="none">
                   {' '}
-                  Phoenixcoded
+                  TechPlek
                 </Link>
               </Typography>
             </Grid>

@@ -46,23 +46,8 @@ const HeaderPage = () => {
                 >
                   <span>Beta Version 0.4 </span>
                   <br/>
-                  <Box
-                    component="span"
-                    sx={{
-                      background: 'linear-gradient(90deg, rgb(37, 161, 244), rgb(249, 31, 169), rgb(37, 161, 244)) 0 0 / 400% 100%',
-                      color: 'transparent',
-                      WebkitBackgroundClip: 'text',
-                      backgroundClip: 'text',
-                      animation: 'move-bg 24s infinite linear',
-                      '@keyframes move-bg': {
-                        '100%': {
-                          backgroundPosition: '400% 0'
-                        }
-                      }
-                    }}
-                  >
-                    <span>Roster management application</span>
-                  </Box>
+                  <span>Roster management application</span>
+                 
                 </Typography>
               </motion.div>
             </Grid>
@@ -220,7 +205,7 @@ const HeaderPage = () => {
               }}
             >
               <Tooltip title="Click to Preview Bootstrap 5">
-                <Link component={Link} href="https://ableproadmin.com/dashboard/index.html" target="_blank">
+                <Link component={Link} href="/" target="_blank">
                   <CardMedia component="img" image={techBootstrap} sx={{ width: 'auto' }} />
                 </Link>
               </Tooltip>
@@ -238,7 +223,7 @@ const HeaderPage = () => {
               }}
             >
               <Tooltip title="Click to Preview React">
-                <Link component={Link} href="https://ableproadmin.com/react/" target="_blank">
+                <Link component={Link} href="/" target="_blank">
                   <CardMedia component="img" image={techReact} sx={{ width: 'auto' }} />
                 </Link>
               </Tooltip>
@@ -256,7 +241,7 @@ const HeaderPage = () => {
               }}
             >
               <Tooltip title="Click to Preview React Material UI">
-                <Link component={Link} href="https://ableproadmin.com/react/" target="_blank">
+                <Link component={Link} href="/" target="_blank">
                   <CardMedia component="img" image={techMui} sx={{ width: 'auto' }} />
                 </Link>
               </Tooltip>
@@ -274,7 +259,7 @@ const HeaderPage = () => {
               }}
             >
               <Tooltip title="Click to Preview CodeIgniter">
-                <Link component={Link} href="https://ableproadmin.com/codeigniter/default/public/" target="_blank">
+                <Link component={Link} href="" target="_blank">
                   <CardMedia component="img" image={techCodeigniter} sx={{ width: 'auto' }} />
                 </Link>
               </Tooltip>
@@ -292,7 +277,7 @@ const HeaderPage = () => {
               }}
             >
               <Tooltip title="Click to Preview ASP.net">
-                <Link component={Link} href="https://able-pro.azurewebsites.net/" target="_blank">
+                <Link component={Link} href="" target="_blank">
                   <CardMedia component="img" image={techNet} sx={{ width: 'auto' }} />
                 </Link>
               </Tooltip>
@@ -312,7 +297,7 @@ const HeaderPage = () => {
               <Tooltip title="Figma Design System">
                 <Link
                   component={Link}
-                  href="https://www.figma.com/file/6XqmRhRmkr33w0EFD49acY/Able-Pro--v9.0-Figma-Preview?type=design&node-id=46-226114&mode=design&t=4FS2Lw6WxsmJ3RLm-0"
+                  href=""
                   target="_blank"
                 >
                   <CardMedia component="img" image={techFigma} sx={{ width: 'auto' }} />
