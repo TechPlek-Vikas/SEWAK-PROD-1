@@ -161,8 +161,8 @@ export const MODULE = {
   ZONE_TYPE: 'ZoneType',
   CAB_TYPE: 'CabType',
   CAB_RATE: 'CabRate',
-  CAB_RATE_VENDOR: 'CabRateVendor',
-  CAB_RATE_DRIVER: 'CabRateDriver',
+  CAB_RATE_VENDOR: 'vendorCabRate',
+  CAB_RATE_DRIVER: 'driverCabRate',
 
   INVOICE: 'Invoice',
   REPORT: 'Reports',
