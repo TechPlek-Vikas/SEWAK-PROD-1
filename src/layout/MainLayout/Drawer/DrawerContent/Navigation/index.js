@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -7,14 +7,12 @@ import { Box, Typography, useMediaQuery } from '@mui/material';
 
 // project-imports
 import NavGroup from './NavGroup';
-import menuItem from 'menu-items';
 
 import { useSelector } from 'store';
 import useConfig from 'hooks/useConfig';
 import { HORIZONTAL_MAX_ITEM } from 'config';
 import { MenuOrientation } from 'config';
-import cabProviderMenuItems from 'menu-items/cabProvider';
-import { getCaseInsensitiveValue, PERMISSIONS } from 'constant';
+import { getMenuItems } from 'menu-items';
 
 // ==============================|| DRAWER CONTENT - NAVIGATION ||============================== //
 
@@ -25,137 +23,20 @@ const Navigation = () => {
 
   const { menuOrientation } = useConfig();
   const { drawerOpen } = useSelector((state) => state.menu);
-
   const { userSpecificData, userPermissions, user } = useSelector((state) => state.auth);
+  const { userType } = useSelector((state) => state.auth);
 
   const [selectedItems, setSelectedItems] = useState('');
   const [selectedLevel, setSelectedLevel] = useState(0);
   const [menuItems, setMenuItems] = useState({ items: [] });
-  const { userType } = useSelector((state) => state.auth);
-
-  // Helper function to check if a user has the required permissions
-  const hasPermissionItem = (itemId, permissions, userPermissions, requiredPermission) => {
-    const modifiedUserPermissions = Object.keys(userPermissions).reduce((acc, key) => {
-      if (Array.isArray(userPermissions[key])) {
-        acc[key] = userPermissions[key]; // Add the key-value pair where the value is an array
-      }
-      return acc;
-    }, {});
-
-    // return hasPermissionForItem(modifiedUserPermissions, itemId, requiredPermission);
-    return isPermissionGranted(modifiedUserPermissions, permissions);
-  };
-
-  const hasPermissionCheckForGroup = (itemId, children, userPermissions, requiredPermission) => {
-    const modifiedUserPermissions = Object.keys(userPermissions).reduce((acc, key) => {
-      if (Array.isArray(userPermissions[key])) {
-        acc[key] = userPermissions[key]; // Add the key-value pair where the value is an array
-      }
-      return acc;
-    }, {});
-    console.log(`🚀 ~ modifiedUserPermissions ~ modifiedUserPermissions:`, modifiedUserPermissions);
-
-    const permissionObjForGroup = mergePermissionsForGroup(children);
-    console.log(`🚀 ~ hasPermissionCheckForGroup ~ permissionObjForGroup:`, permissionObjForGroup);
-
-    const result = isPermissionGranted(modifiedUserPermissions, permissionObjForGroup);
-
-    return result;
-  };
-
-  // Recursive function to filter menu items based on permissions
-  const filterMenuItems = (items, userPermissions) => {
-    const result = items.reduce((acc, item) => {
-      const filteredItem = { ...item };
-
-      // If the item has children, filter them first
-      if (item.children) {
-        filteredItem.children = filterMenuItems(item.children, userPermissions);
-      }
-
-      if (item.type === 'group') {
-        if (hasPermissionCheckForGroup(item.id, item.children, userPermissions, PERMISSIONS.READ)) {
-          acc.push(filteredItem);
-        }
-      } else if (item.type === 'item') {
-        if (hasPermissionItem(item.id, item.permissions, userPermissions, PERMISSIONS.READ)) {
-          acc.push(filteredItem);
-        }
-      }
-
-      return acc;
-    }, []);
-
-    return result;
-  };
 
   useLayoutEffect(() => {
-    let menu;
-
-    switch (userType) {
-      case 0:
-        menu = menuItem;
-        break;
-      case 1:
-        menu = cabProviderMenuItems;
-        break;
-
-      default:
-        menu = menuItem; // Default case if userType is not recognized
-        break;
-    }
-    setMenuItems(menu);
+    console.log('userType', userType);
+    const menuItem = getMenuItems(userType);
+    console.log(`🚀 ~ useLayoutEffect ~ menuItem:`, menuItem);
+    setMenuItems(menuItem);
     // eslint-disable-next-line
-  }, [menuItem]);
-
-  useLayoutEffect(() => {
-    // APPROACH 1
-    // const menu = menuItem; // This is your static menu data
-
-    // if (!userPermissions) {
-    //   const filteredMenu = {
-    //     ...menu,
-    //     items: []
-    //   };
-
-    //   if (JSON.stringify(filteredMenu.items) !== JSON.stringify(menuItems.items)) {
-    //     setMenuItems(filteredMenu);
-    //   }
-    //   return;
-    // }
-
-    // // Filter menu items based on permissions
-    // const filteredMenu = {
-    //   ...menu,
-    //   items: filterMenuItems(menu.items, userPermissions)
-    // };
-
-    // // Only update state if filtered menu is different from current state
-    // if (JSON.stringify(filteredMenu.items) !== JSON.stringify(menuItems.items)) {
-    //   setMenuItems(filteredMenu);
-    // }
-
-    // APPROACH 2
-    const menu = menuItem; // Static menu data
-
-    const updateMenuItems = (newMenuItems) => {
-      if (JSON.stringify(newMenuItems.items) !== JSON.stringify(menuItems.items)) {
-        setMenuItems(newMenuItems);
-      }
-    };
-
-    // Create a filtered menu based on user permissions
-    const createFilteredMenu = (menu, userPermissions) => {
-      const filteredMenu = {
-        ...menu,
-        items: userPermissions ? filterMenuItems(menu.items, userPermissions) : []
-      };
-      return filteredMenu;
-    };
-
-    const filteredMenu = createFilteredMenu(menu, userPermissions);
-    updateMenuItems(filteredMenu);
-  }, [userPermissions, menuItems.items]); // Run effect when permissions change or menuItems change
+  }, []);
 
   const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downLG;
 
