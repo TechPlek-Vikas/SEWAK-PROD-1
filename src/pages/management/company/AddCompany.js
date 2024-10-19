@@ -15,6 +15,8 @@ import { useNavigate } from 'react-router-dom';
 import { addCompany } from 'store/slice/cabProvidor/companySlice';
 import MultiFileUpload from 'components/third-party/dropzone/MultiFile';
 import { useState } from 'react';
+import { LoadingButton } from '@mui/lab';
+import { Save2 } from 'iconsax-react';
 
 // ==============================|| LAYOUTS -  COLUMNS ||============================== //
 const taxOptions = {
@@ -28,6 +30,7 @@ function AddCompany() {
   const navigate = useNavigate();
   const [companyData] = useState(null);
   const [list] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleCancel = () => {
     navigate(-1);
@@ -164,6 +167,7 @@ function AddCompany() {
     },
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
+      setLoading(true);
       try {
         const formData = new FormData();
         formData.append('company_name', values.company_name);
@@ -516,12 +520,22 @@ function AddCompany() {
         <Grid item xs={12}>
           <Stack direction="row" justifyContent="flex-end">
             <DialogActions>
-              <Button variant="outlined" color="error" onClick={handleCancel}>
-                Cancel
-              </Button>
-              <Button variant="contained" sx={{ my: 3, ml: 1 }} type="submit">
-                {'Save'}
-              </Button>
+              {!loading && (
+                <Button variant="outlined" color="error" onClick={handleCancel}>
+                  Cancel
+                </Button>
+              )}
+              <LoadingButton
+                variant="contained"
+                loading={loading}
+                loadingPosition="start"
+                startIcon={<Save2 />}
+                sx={{ my: 3, ml: 1 }}
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? 'Saving...' : 'Save'}
+              </LoadingButton>
             </DialogActions>
           </Stack>
         </Grid>

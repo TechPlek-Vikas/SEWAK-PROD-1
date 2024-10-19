@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet, useLocation, useParams } from 'react-router-dom';
 // material-ui
 import { Box, CircularProgress, Tab, Tabs } from '@mui/material';
 
@@ -23,10 +23,15 @@ import AttachedDriver from 'sections/cabprovidor/companyManagement/companyOvervi
 import Statement from 'sections/cabprovidor/companyManagement/companyOverview/Statement';
 import Transaction from 'sections/cabprovidor/companyManagement/companyOverview/Transaction';
 import ViewRoster from 'sections/cabprovidor/companyManagement/companyOverview/ViewRoster';
+import CompanyRate from 'sections/cabprovidor/companyManagement/companyOverview/CompanyRate1';
+// import CompanyRates from 'sections/cabprovidor/companyManagement/companyOverview/CompanyRate';
 
 const CompanyOverview = () => {
-  const { id } = useParams(); // used to extract companyId to fetch company Data
+  const { id } = useParams();
   const companyId = id;
+  const location = useLocation(); // Access location to get query parameters
+  const searchParams = new URLSearchParams(location.search); // Parse the query string
+  const companyName = searchParams.get('companyName'); // Get the companyName from the query string
 
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true); // Set loading to true initially
@@ -106,7 +111,14 @@ const CompanyOverview = () => {
       ) : (
         <MainCard border={false}>
           <Box>
-            <Tabs value={activeTab} onChange={handleChange} aria-label="Profile Tabs">
+            <Tabs
+              value={activeTab}
+              onChange={handleChange}
+              aria-label="Profile Tabs"
+              variant="scrollable"
+              scrollButtons="auto"
+              allowScrollButtonsMobile
+            >
               <Tab label="Overview" icon={<Book />} iconPosition="start" />
               <Tab label="Transaction" icon={<WalletMoney />} iconPosition="start" />
               <Tab label="Mails" icon={<TableDocument />} iconPosition="start" />
@@ -114,6 +126,7 @@ const CompanyOverview = () => {
               <Tab label="Attached Vendors" icon={<Profile2User />} iconPosition="start" />
               <Tab label="Attached Drivers" icon={<Car />} iconPosition="start" />
               <Tab label="View Roster" icon={<Card />} iconPosition="start" />
+              <Tab label="Company Rate" icon={<Card />} iconPosition="start" />
             </Tabs>
 
             <Box sx={{ p: 3 }}>
@@ -124,6 +137,7 @@ const CompanyOverview = () => {
               {activeTab === 4 && <AttachedVendor data={companiesVendor} loading={loading} />}
               {activeTab === 5 && <AttachedDriver data={companiesDriver} loading={loading} />}
               {activeTab === 6 && <ViewRoster id={companyId} />}
+              {activeTab === 7 && <CompanyRate id={companyId} companyName={companyName} />}
             </Box>
           </Box>
           <Box sx={{ mt: 2.5 }}>

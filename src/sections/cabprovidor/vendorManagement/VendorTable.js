@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Box, Button, Chip, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import { Box, Button, Chip, CircularProgress, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { Fragment, useMemo } from 'react';
@@ -10,8 +10,10 @@ import Header from 'components/tables/genericTable/Header';
 import { Add } from 'iconsax-react';
 import WrapperButton from 'components/common/guards/WrapperButton';
 import { MODULE, PERMISSIONS } from 'constant';
+import EmptyTableDemo from 'components/tables/EmptyTable';
+import TableSkeleton from 'components/tables/TableSkeleton';
 
-const VendorTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
+const VendorTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading }) => {
   const columns = useMemo(
     () => [
       {
@@ -26,6 +28,7 @@ const VendorTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
         Header: 'Name',
         accessor: 'vendorCompanyName',
         Cell: ({ row, value }) => {
+          const formattedValue = value.charAt(0).toUpperCase() + value.slice(1);
           return (
             <Typography>
               <Link
@@ -33,7 +36,7 @@ const VendorTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
                 onClick={(e) => e.stopPropagation()} // Prevent interfering with row expansion
                 style={{ textDecoration: 'none' }}
               >
-                {value}
+                {formattedValue}
               </Link>
             </Typography>
           );
@@ -76,10 +79,16 @@ const VendorTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
   return (
     <>
       <Stack gap={1} spacing={1}>
-        <Header OtherComp={() => <ButtonComponent />} />
+        <Header OtherComp={({ loading }) => <ButtonComponent loading={loading} />} />
         <MainCard content={false}>
           <ScrollX>
-            <ReactTable columns={columns} data={data} />
+            {loading ? (
+              <TableSkeleton rows={10} columns={6} />
+            ) : data?.length === 0 ? (
+              <EmptyTableDemo />
+            ) : (
+              <ReactTable columns={columns} data={data} />
+            )}
           </ScrollX>
         </MainCard>
         <Box>
@@ -157,14 +166,20 @@ ReactTable.propTypes = {
   renderRowSubComponent: PropTypes.any
 };
 
-const ButtonComponent = () => {
+const ButtonComponent = ({ loading }) => {
   const navigate = useNavigate();
   return (
     <>
       <Stack direction="row" spacing={1} alignItems="center">
         <WrapperButton moduleName={MODULE.VENDOR} permission={PERMISSIONS.CREATE}>
-          <Button variant="contained" startIcon={<Add />} onClick={() => navigate('add-vendor')} size="small">
-            Add Vendor
+          <Button
+            variant="contained"
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
+            onClick={() => navigate('add-vendor')}
+            size="small"
+            disabled={loading} // Disable button while loading
+          >
+            {loading ? 'Loading...' : 'Add Vendor'}
           </Button>
         </WrapperButton>
       </Stack>

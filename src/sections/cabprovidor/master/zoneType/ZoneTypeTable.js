@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Button, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, useTheme } from '@mui/material';
+import { Button, CircularProgress, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, useTheme } from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { Fragment, useMemo, useState } from 'react';
@@ -16,8 +16,10 @@ import ZonetypeAddForm from './ZonetypeAddForm';
 import { deleteZoneType } from 'store/slice/cabProvidor/zoneTypeSlice';
 import WrapperButton from 'components/common/guards/WrapperButton';
 import { MODULE, PERMISSIONS } from 'constant';
+import TableSkeleton from 'components/tables/TableSkeleton';
+import EmptyTableDemo from 'components/tables/EmptyTable';
 
-const ZoneTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo, updateKey, setUpdateKey }) => {
+const ZoneTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo, updateKey, setUpdateKey,loading }) => {
   const theme = useTheme();
   const mode = theme.palette.mode;
   const [, setAdvanceData] = useState(null);
@@ -247,14 +249,26 @@ const ZoneTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo, updat
     <>
       <Stack direction={'row'} spacing={1} justifyContent="flex-end" alignItems="center" sx={{ p: 0, pb: 3 }}>
         <WrapperButton moduleName={MODULE.ZONE_TYPE} permission={PERMISSIONS.CREATE}>
-          <Button variant="contained" startIcon={<Add />} onClick={() => handleZone('add')} size="small">
-            Add Zone Type
-          </Button>
-        </WrapperButton>
+            <Button
+              variant="contained"
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
+              onClick={() => handleZone('add')}
+              size="small"
+              disabled={loading} // Disable button while loading
+            >
+              {loading ? 'Loading...' : '  Add Zone Type'}
+            </Button>
+          </WrapperButton>
       </Stack>
       <MainCard content={false}>
         <ScrollX>
-          <ReactTable columns={columns} data={data} />
+          {loading ? (
+            <TableSkeleton rows={10} columns={5} />
+          ) : data?.length === 0 ? (
+            <EmptyTableDemo />
+          ) : (
+            <ReactTable columns={columns} data={data} />
+          )}
         </ScrollX>
       </MainCard>
       <div style={{ marginTop: '20px' }}>

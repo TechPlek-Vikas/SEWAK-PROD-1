@@ -24,7 +24,7 @@ const DropzoneWrapper = styled('div')(({ theme }) => ({
 
 // ==============================|| UPLOAD - MULTIPLE FILE ||============================== //
 
-const MultiFileUpload = ({ error, showList = false, files, type, setFieldValue, sx, onUpload }) => {
+const MultiFileUpload = ({ error, showList = false, files, type, setFieldValue, sx }) => {
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     multiple: true,
     onDrop: (acceptedFiles) => {
@@ -99,7 +99,7 @@ const MultiFileUpload = ({ error, showList = false, files, type, setFieldValue, 
         {files && files.length > 0 && <FilesPreview files={files} showList={showList} onRemove={onRemove} type={type} />}
       </Box>
 
-      {type !== DropzopType.standard && files && files.length > 0 && (
+      {/* {type !== DropzopType.standard && files && files.length > 0 && (
         <Stack direction="row" justifyContent="flex-end" spacing={1.5} sx={{ mt: 1.5 }}>
           <Button color="inherit" size="small" onClick={onRemoveAll}>
             Remove all
@@ -108,7 +108,7 @@ const MultiFileUpload = ({ error, showList = false, files, type, setFieldValue, 
             Upload files
           </Button>
         </Stack>
-      )}
+      )} */}
     </>
   );
 };

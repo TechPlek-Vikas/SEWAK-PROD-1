@@ -16,8 +16,10 @@ import { useDispatch } from 'react-redux';
 
 import { handleOpen, setDeletedName, setSelectedID } from 'store/slice/cabProvidor/vehicleTypeSlice';
 import WrapperButton from 'components/common/guards/WrapperButton';
+import EmptyTableDemo from 'components/tables/EmptyTable';
+import TableSkeleton from 'components/tables/TableSkeleton';
 
-const CabTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
+const CabTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo,loading }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   // eslint-disable-next-line no-unused-vars
@@ -152,8 +154,14 @@ const CabTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
       <Stack gap={1} spacing={1}>
         <MainCard content={false}>
           <ScrollX>
+          {loading ? (
+            <TableSkeleton rows={10} columns={5} />
+          ) : data?.length === 0 ? (
+            <EmptyTableDemo />
+          ) : (
             <ReactTable columns={columns} data={data} />
-          </ScrollX>
+          )}
+        </ScrollX>
         </MainCard>
         <Box>
           {data.length > 0 && (
