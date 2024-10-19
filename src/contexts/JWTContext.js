@@ -35,8 +35,11 @@ import { openSnackbar } from 'store/reducers/snackbar';
 // };
 
 // eslint-disable-next-line no-unused-vars
+
+/** */
+
 const x = {
-  [MODULE.ROSTER]: [PERMISSIONS.READ],
+  [MODULE.ROSTER]: [PERMISSIONS.CREATE],
 
   [MODULE.USER]: [PERMISSIONS.READ],
   [MODULE.COMPANY]: [PERMISSIONS.READ, PERMISSIONS.CREATE],
@@ -58,6 +61,8 @@ const x = {
   [MODULE.ADVANCE]: [PERMISSIONS.READ, PERMISSIONS.CREATE],
   [MODULE.ADVANCE_TYPE]: [PERMISSIONS.READ, PERMISSIONS.CREATE, PERMISSIONS.UPDATE]
 };
+
+// const x = null;
 
 const chance = new Chance();
 

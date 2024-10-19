@@ -8,11 +8,11 @@ import { MODULE, PERMISSIONS } from 'constant';
 // icons
 const icons = {
   samplePage: Calendar1,
-  user:User,
-  company:Buliding,
-  driver:Profile,
-  vehicle:Car,
-  vendor:Profile2User
+  user: User,
+  company: Buliding,
+  driver: Profile,
+  vehicle: Car,
+  vendor: Profile2User
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //

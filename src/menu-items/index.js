@@ -11,7 +11,7 @@ import roster from './cabProvider/roster';
 
 const menuItems = {
   items: [roster, management, invoice, reports, master]
-  // items: [roster, management]
+  // items: [roster]
 };
 
 export default menuItems;
