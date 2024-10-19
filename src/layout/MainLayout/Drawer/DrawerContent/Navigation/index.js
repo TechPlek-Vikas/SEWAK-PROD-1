@@ -35,7 +35,6 @@ const Navigation = () => {
 
   // Helper function to check if a user has the required permissions
   const hasPermissionItem = (itemId, permissions, userPermissions, requiredPermission) => {
-
     const modifiedUserPermissions = Object.keys(userPermissions).reduce((acc, key) => {
       if (Array.isArray(userPermissions[key])) {
         acc[key] = userPermissions[key]; // Add the key-value pair where the value is an array
@@ -48,14 +47,12 @@ const Navigation = () => {
   };
 
   const hasPermissionCheckForGroup = (itemId, children, userPermissions, requiredPermission) => {
-
     const modifiedUserPermissions = Object.keys(userPermissions).reduce((acc, key) => {
       if (Array.isArray(userPermissions[key])) {
         acc[key] = userPermissions[key]; // Add the key-value pair where the value is an array
       }
       return acc;
     }, {});
-
 
     const permissionObjForGroup = mergePermissionsForGroup(children);
 

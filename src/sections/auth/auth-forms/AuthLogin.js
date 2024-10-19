@@ -5,16 +5,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 // material-ui
-import {
-  Button,
-  FormHelperText,
-  Grid,
-  Link,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  Stack
-} from '@mui/material';
+import { Button, FormHelperText, Grid, Link, InputAdornment, InputLabel, OutlinedInput, Stack } from '@mui/material';
 
 // third-party
 import { ArrowRight, Eye, EyeSlash, Sms } from 'iconsax-react';
@@ -29,7 +20,6 @@ import useAuth from 'hooks/useAuth';
 // ============================|| JWT - LOGIN ||============================ //
 
 const AuthLogin = () => {
-
   const { login } = useAuth();
   const scriptedRef = useScriptRef();
 
@@ -75,7 +65,9 @@ const AuthLogin = () => {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login" style={{ color: 'black', fontWeight: "600" }}>What is your Email?</InputLabel>
+                  <InputLabel htmlFor="email-login" style={{ color: 'black', fontWeight: '600' }}>
+                    What is your Email?
+                  </InputLabel>
                   <OutlinedInput
                     id="email-login"
                     type="email"
@@ -84,7 +76,7 @@ const AuthLogin = () => {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     placeholder="Enter email address"
-                    color='secondary'
+                    color="secondary"
                     fullWidth
                     startAdornment={
                       <InputAdornment position="start">
@@ -101,14 +93,16 @@ const AuthLogin = () => {
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="password-login" style={{ color: 'black', fontWeight: "600" }}>Password</InputLabel>
+                  <InputLabel htmlFor="password-login" style={{ color: 'black', fontWeight: '600' }}>
+                    Password
+                  </InputLabel>
                   <OutlinedInput
                     fullWidth
                     id="password-login"
                     type={showPassword ? 'text' : 'password'}
                     value={values.password}
                     name="password"
-                    color='secondary'
+                    color="secondary"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     endAdornment={
@@ -141,7 +135,15 @@ const AuthLogin = () => {
               )}
               <Grid item xs={9}>
                 <AnimateButton>
-                  <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" style={{ backgroundColor: "black" }}>
+                  <Button
+                    disableElevation
+                    disabled={isSubmitting}
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                    style={{ backgroundColor: 'black' }}
+                  >
                     Login to your account <ArrowRight />
                   </Button>
                 </AnimateButton>
@@ -149,11 +151,11 @@ const AuthLogin = () => {
 
               <Grid item xs={12} sx={{ mt: -1 }}>
                 <Stack direction="column" justifyContent="space-between" alignItems="left" spacing={1}>
-                  <Link variant="h6" component={RouterLink} to="/register" color="#959595" fontWeight={"500"}>
+                  <Link variant="h6" component={RouterLink} to="/auth/register" color="#959595" fontWeight={'500'}>
                     Create an account?
                   </Link>
 
-                  <Link variant="h6" component={RouterLink} to="/auth/forgot-password" color="#959595" fontWeight={"500"}>
+                  <Link variant="h6" component={RouterLink} to="/auth/forgot-password" color="#959595" fontWeight={'500'}>
                     Forgot Password?
                   </Link>
                 </Stack>
