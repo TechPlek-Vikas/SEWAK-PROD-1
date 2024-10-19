@@ -53,10 +53,12 @@ const Navigation = () => {
       }
       return acc;
     }, {});
+    console.log(`🚀 ~ modifiedUserPermissions ~ modifiedUserPermissions:`, modifiedUserPermissions);
 
     const permissionObjForGroup = mergePermissionsForGroup(children);
+    console.log(`🚀 ~ hasPermissionCheckForGroup ~ permissionObjForGroup:`, permissionObjForGroup);
 
-    const result = isPermissionGranted(permissionObjForGroup, permissionObjForGroup);
+    const result = isPermissionGranted(modifiedUserPermissions, permissionObjForGroup);
 
     return result;
   };
@@ -107,20 +109,52 @@ const Navigation = () => {
   }, [menuItem]);
 
   useLayoutEffect(() => {
-    const menu = menuItem; // This is your static menu data
+    // APPROACH 1
+    // const menu = menuItem; // This is your static menu data
 
-    if (!userPermissions) return;
+    // if (!userPermissions) {
+    //   const filteredMenu = {
+    //     ...menu,
+    //     items: []
+    //   };
 
-    // Filter menu items based on permissions
-    const filteredMenu = {
-      ...menu,
-      items: filterMenuItems(menu.items, userPermissions)
+    //   if (JSON.stringify(filteredMenu.items) !== JSON.stringify(menuItems.items)) {
+    //     setMenuItems(filteredMenu);
+    //   }
+    //   return;
+    // }
+
+    // // Filter menu items based on permissions
+    // const filteredMenu = {
+    //   ...menu,
+    //   items: filterMenuItems(menu.items, userPermissions)
+    // };
+
+    // // Only update state if filtered menu is different from current state
+    // if (JSON.stringify(filteredMenu.items) !== JSON.stringify(menuItems.items)) {
+    //   setMenuItems(filteredMenu);
+    // }
+
+    // APPROACH 2
+    const menu = menuItem; // Static menu data
+
+    const updateMenuItems = (newMenuItems) => {
+      if (JSON.stringify(newMenuItems.items) !== JSON.stringify(menuItems.items)) {
+        setMenuItems(newMenuItems);
+      }
     };
 
-    // Only update state if filtered menu is different from current state
-    if (JSON.stringify(filteredMenu.items) !== JSON.stringify(menuItems.items)) {
-      setMenuItems(filteredMenu);
-    }
+    // Create a filtered menu based on user permissions
+    const createFilteredMenu = (menu, userPermissions) => {
+      const filteredMenu = {
+        ...menu,
+        items: userPermissions ? filterMenuItems(menu.items, userPermissions) : []
+      };
+      return filteredMenu;
+    };
+
+    const filteredMenu = createFilteredMenu(menu, userPermissions);
+    updateMenuItems(filteredMenu);
   }, [userPermissions, menuItems.items]); // Run effect when permissions change or menuItems change
 
   const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downLG;
