@@ -15,6 +15,8 @@ import MultiFileUpload from 'components/third-party/dropzone/MultiFile';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { addBranch, fetchCompanies } from 'store/slice/cabProvidor/companySlice';
 import ConfigurableAutocomplete from 'components/autocomplete/ConfigurableAutocomplete';
+import { LoadingButton } from '@mui/lab';
+import { Save2 } from 'iconsax-react';
 
 // ==============================|| LAYOUTS -  COLUMNS ||============================== //
 
@@ -25,7 +27,8 @@ function AddBranch() {
   const [list] = useState(false);
   const [, setPdf] = useState([]);
   const location = useLocation();
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [, setSelectedOption] = useState(null);
+  const [loading, setLoading] = useState(false);
   const rowOriginal = location.state;
 
   const handleCancel = () => {
@@ -180,6 +183,7 @@ function AddBranch() {
     validationSchema,
     enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
+      setLoading(true);
       try {
         const formData = new FormData();
         formData.append('parentCompanyID', values.parentCompanyID);
@@ -290,12 +294,12 @@ function AddBranch() {
                     />
                   </FormControl>
 
-                  {selectedOption && (
+                  {/* {selectedOption && (
                     <div>
                       <h3>Selected Option:</h3>
                       <p>{selectedOption.company_name}</p>
                     </div>
-                  )}
+                  )} */}
                 </Stack>
               </Grid>
               <Grid item xs={12} lg={4}>
@@ -583,12 +587,22 @@ function AddBranch() {
         <Grid item xs={12}>
           <Stack direction="row" justifyContent="flex-end">
             <DialogActions>
-              <Button variant="outlined" color="error" onClick={handleCancel}>
-                Cancel
-              </Button>
-              <Button variant="contained" sx={{ my: 3, ml: 1 }} type="submit">
-                Add
-              </Button>
+              {!loading && (
+                <Button variant="outlined" color="error" onClick={handleCancel}>
+                  Cancel
+                </Button>
+              )}
+              <LoadingButton
+                variant="contained"
+                loading={loading}
+                loadingPosition="start"
+                startIcon={<Save2 />} 
+                sx={{ my: 3, ml: 1 }}
+                type="submit"
+                disabled={loading} // Disable button while loading
+              >
+                {loading ? 'Saving...' : 'Save'}
+              </LoadingButton>
             </DialogActions>
           </Stack>
         </Grid>

@@ -24,8 +24,6 @@ import {
   setSelectedID
 } from 'store/slice/cabProvidor/vehicleTypeSlice';
 import CabTypeForm from 'sections/cabprovidor/master/cabType/CabTypeForm';
-import EmptyTableDemo from 'components/tables/EmptyTable';
-import TableSkeleton from 'components/tables/TableSkeleton';
 import Error500 from 'pages/maintenance/error/500';
 import CabTypeTable from 'sections/cabprovidor/master/cabType/CabTypeTable';
 import Header from 'components/tables/genericTable/Header';
@@ -139,14 +137,14 @@ const CabType = () => {
     }
   };
 
-  if (loading) return <TableSkeleton rows={10} columns={5} />;
+  // if (loading) return <TableSkeleton rows={10} columns={5} />;
   if (error) return <Error500 />;
-  if (vehicleTypes.length === 0) return <EmptyTableDemo />;
+  // if (vehicleTypes.length === 0) return <EmptyTableDemo />;
 
   return (
     <>
       <Stack gap={1} spacing={1}>
-        <Header OtherComp={() => <ButtonComponent handleAdd={handleAdd} />} />
+        <Header OtherComp={({loading}) => <ButtonComponent handleAdd={handleAdd} loading={loading}/>} />
 
         <CabTypeTable
           data={vehicleTypes}
@@ -155,6 +153,7 @@ const CabType = () => {
           limit={limit}
           setLimit={handleLimitChange}
           lastPageNo={lastPageIndex}
+          loading={loading}
         />
       </Stack>
 
@@ -178,16 +177,21 @@ const CabType = () => {
 
 export default CabType;
 
-const ButtonComponent = ({ handleAdd }) => {
-  const navigate = useNavigate();
+const ButtonComponent = ({ handleAdd,loading }) => {
   return (
     <>
       <Stack direction="row" spacing={1} alignItems="center">
         <WrapperButton moduleName={MODULE.CAB_TYPE} permission={PERMISSIONS.CREATE}>
-          <Button variant="contained" startIcon={<Add />} size="small" onClick={handleAdd}>
-            Add Cab Type
-          </Button>
-        </WrapperButton>
+            <Button
+              variant="contained"
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
+              onClick={handleAdd}
+              size="small"
+              disabled={loading} // Disable button while loading
+            >
+              {loading ? 'Loading...' : ' Add Cab Type'}
+            </Button>
+          </WrapperButton>
       </Stack>
     </>
   );

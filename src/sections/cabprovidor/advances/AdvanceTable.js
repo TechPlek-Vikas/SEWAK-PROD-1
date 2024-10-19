@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Button, Chip, Dialog, Stack, Switch, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, useTheme } from '@mui/material';
+import { Button, Chip, CircularProgress, Dialog, Stack, Switch, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, useTheme } from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { Fragment, useMemo, useState } from 'react';
@@ -12,8 +12,10 @@ import { Add } from 'iconsax-react';
 import { useNavigate } from 'react-router';
 import WrapperButton from 'components/common/guards/WrapperButton';
 import { MODULE, PERMISSIONS } from 'constant';
+import TableSkeleton from 'components/tables/TableSkeleton';
+import EmptyTableDemo from 'components/tables/EmptyTable';
 
-const AdvanceTable = ({ data, page, setPage, limit, setLimit, lastPageNo, key, setKey }) => {
+const AdvanceTable = ({ data, page, setPage, limit, setLimit, lastPageNo, key, setKey, loading }) => {
   const theme = useTheme();
   const mode = theme.palette.mode;
   const [advanceData, setAdvanceData] = useState(null);
@@ -155,15 +157,27 @@ const AdvanceTable = ({ data, page, setPage, limit, setLimit, lastPageNo, key, s
       <Stack direction={'row'} spacing={1} justifyContent="flex-end" alignItems="center" sx={{ p: 0, pb: 3 }}>
         <Stack direction={'row'} alignItems="center" spacing={2}>
           <WrapperButton moduleName={MODULE.ADVANCE_TYPE} permission={PERMISSIONS.READ}>
-            <Button variant="contained" startIcon={<Add />} onClick={handleAdvanceType} size="small">
-              View Advance Type
+            <Button
+              variant="contained"
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
+              onClick={handleAdvanceType}
+              size="small"
+              disabled={loading} // Disable button while loading
+            >
+              {loading ? 'Loading...' : ' View Advance Type'}
             </Button>
           </WrapperButton>
         </Stack>
       </Stack>
       <MainCard content={false}>
         <ScrollX>
-          <ReactTable columns={columns} data={data} />
+          {loading ? (
+            <TableSkeleton rows={10} columns={8} />
+          ) : data?.length === 0 ? (
+            <EmptyTableDemo />
+          ) : (
+            <ReactTable columns={columns} data={data} />
+          )}
         </ScrollX>
       </MainCard>
       <div style={{ marginTop: '20px' }}>
