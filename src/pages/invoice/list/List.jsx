@@ -230,56 +230,55 @@ const List = () => {
   const [invoiceId, setInvoiceId] = useState(0);
   const [getInvoiceId, setGetInvoiceId] = useState(0);
 
-
   const dummyData = [
     {
       id: 1,
-      customer_name: "John Doe",
-      email: "john.doe@example.com",
-      date: "2024-09-01",
-      due_date: "2024-10-01",
+      customer_name: 'John Doe',
+      email: 'john.doe@example.com',
+      date: '2024-09-01',
+      due_date: '2024-10-01',
       quantity: 10,
-      status: "Paid",
-      avatar: 1 
+      status: 'Paid',
+      avatar: 1
     },
     {
       id: 2,
-      customer_name: "Jane Smith",
-      email: "jane.smith@example.com",
-      date: "2024-09-05",
-      due_date: "2024-10-05",
+      customer_name: 'Jane Smith',
+      email: 'jane.smith@example.com',
+      date: '2024-09-05',
+      due_date: '2024-10-05',
       quantity: 5,
-      status: "Unpaid",
+      status: 'Unpaid',
       avatar: 2
     },
     {
       id: 3,
-      customer_name: "Bob Johnson",
-      email: "bob.johnson@example.com",
-      date: "2024-09-10",
-      due_date: "2024-10-10",
+      customer_name: 'Bob Johnson',
+      email: 'bob.johnson@example.com',
+      date: '2024-09-10',
+      due_date: '2024-10-10',
       quantity: 20,
-      status: "Cancelled",
+      status: 'Cancelled',
       avatar: 3
     },
     {
       id: 4,
-      customer_name: "Alice Williams",
-      email: "alice.williams@example.com",
-      date: "2024-09-12",
-      due_date: "2024-10-12",
+      customer_name: 'Alice Williams',
+      email: 'alice.williams@example.com',
+      date: '2024-09-12',
+      due_date: '2024-10-12',
       quantity: 8,
-      status: "Paid",
+      status: 'Paid',
       avatar: 4
     },
     {
       id: 5,
-      customer_name: "Steve Brown",
-      email: "steve.brown@example.com",
-      date: "2024-09-15",
-      due_date: "2024-10-15",
+      customer_name: 'Steve Brown',
+      email: 'steve.brown@example.com',
+      date: '2024-09-15',
+      due_date: '2024-10-15',
       quantity: 12,
-      status: "Unpaid",
+      status: 'Unpaid',
       avatar: 5
     }
   ];
