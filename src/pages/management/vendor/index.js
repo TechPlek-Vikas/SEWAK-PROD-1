@@ -1,5 +1,5 @@
-import EmptyTableDemo from 'components/tables/EmptyTable';
-import TableSkeleton from 'components/tables/TableSkeleton';
+// import EmptyTableDemo from 'components/tables/EmptyTable';
+// import TableSkeleton from 'components/tables/TableSkeleton';
 import Error500 from 'pages/maintenance/error/500';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,11 +22,11 @@ const Vendor = () => {
     setPage(1);
   }, []);
 
-  if (loading) return <TableSkeleton rows={10} columns={6} />;
+  // if (loading) return <TableSkeleton rows={10} columns={6} />;
   if (error) return <Error500 />;
-  if (vendors.length === 0) return <EmptyTableDemo />;
+  // if (vendors.length === 0) return <EmptyTableDemo />;
 
-  return <VendorTable data={vendors} page={page} setPage={setPage} limit={limit} setLimit={handleLimitChange} lastPageNo={lastPageIndex} />;
+  return <VendorTable data={vendors} page={page} setPage={setPage} limit={limit} setLimit={handleLimitChange} lastPageNo={lastPageIndex} loading={loading}/>;
 };
 
 export default Vendor;

@@ -1,18 +1,18 @@
 // eslint-disable-next-line no-unused-vars
-import { Box, Chip, IconButton, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, Chip, Stack, Typography } from '@mui/material';
 import ScrollX from 'components/ScrollX';
 import PaginationBox from 'components/tables/Pagination';
 import ReactTable from 'components/tables/reactTable/ReactTable';
-// eslint-disable-next-line no-unused-vars
-import { Edit, Eye, Trash } from 'iconsax-react';
 import PropTypes from 'prop-types';
 import { useMemo } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { formattedDate } from 'utils/helper';
 import MainCard from 'components/MainCard';
 import { Link } from 'react-router-dom';
+import TableSkeleton from 'components/tables/TableSkeleton';
+import EmptyTableDemo from 'components/tables/EmptyTable';
 
-const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
+const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading }) => {
   const theme = useTheme();
   // eslint-disable-next-line no-unused-vars
   const mode = theme.palette.mode;
@@ -34,6 +34,7 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
         Header: 'Driver Name',
         accessor: 'userName',
         Cell: ({ row, value }) => {
+          const formattedValue = value.charAt(0).toUpperCase() + value.slice(1);
           return (
             <Typography>
               <Link
@@ -41,7 +42,7 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
                 onClick={(e) => e.stopPropagation()} // Prevent interfering with row expansion
                 style={{ textDecoration: 'none' }}
               >
-                {value}
+               {formattedValue}
               </Link>
             </Typography>
           );
@@ -188,14 +189,21 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
       <Stack gap={1} spacing={1}>
         <ScrollX>
           <MainCard content={false}>
-            {/* <ReactTable columns={columns} data={data} hiddenColumns={['userName']} /> */}
-            <ReactTable columns={columns} data={data} />
+            <ScrollX>
+              {loading ? (
+                <TableSkeleton rows={10} columns={6} />
+              ) : data?.length === 0 ? (
+                <EmptyTableDemo />
+              ) : (
+                <ReactTable columns={columns} data={data} />
+              )}
+            </ScrollX>
           </MainCard>
         </ScrollX>
         <Box>
           {data.length > 0 && (
             <div style={{ marginTop: '10px' }}>
-               <PaginationBox pageIndex={page} gotoPage={setPage} pageSize={limit} setPageSize={setLimit} lastPageIndex={lastPageNo} />
+              <PaginationBox pageIndex={page} gotoPage={setPage} pageSize={limit} setPageSize={setLimit} lastPageIndex={lastPageNo} />
             </div>
           )}
         </Box>

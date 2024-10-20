@@ -6,6 +6,7 @@
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
+    "@faker-js/faker": "^9.0.3",
     "@mui/base": "^5.0.0-beta.2",
     "@mui/lab": "^5.0.0-alpha.131",
     "@mui/material": "^5.13.2",

@@ -53,6 +53,7 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
         Header: 'User Name',
         accessor: 'userName',
         Cell: ({ row }) => {
+          const formattedUserName = userName?.charAt(0).toUpperCase() + userName?.slice(1);
           const val = KEYS?.[userType].CREATED_AT;
           const key = row.original[val];
           const userName = key?.['userName'];
@@ -65,7 +66,7 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
                 onClick={(e) => e.stopPropagation()} // Prevent interfering with row expansion
                 style={{ textDecoration: 'none' }}
               >
-                {userName}
+                {formattedUserName}
               </Link>
             </Typography>
           );

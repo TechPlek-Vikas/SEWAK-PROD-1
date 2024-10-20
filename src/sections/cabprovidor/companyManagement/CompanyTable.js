@@ -12,7 +12,8 @@ import {
   Box,
   Typography,
   Stack,
-  Button
+  Button,
+  CircularProgress
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
@@ -23,8 +24,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import PaginationBox from 'components/tables/Pagination';
 import WrapperButton from 'components/common/guards/WrapperButton';
 import { MODULE, PERMISSIONS } from 'constant';
+import TableSkeleton from 'components/tables/TableSkeleton';
+import EmptyTableDemo from 'components/tables/EmptyTable';
 
-const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
+const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading }) => {
   const navigate = useNavigate();
   const handleAddCompany = () => {
     navigate('add-company');
@@ -58,14 +61,20 @@ const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
         Header: 'Company Name',
         accessor: 'company_name',
         Cell: ({ row, value }) => {
+          // Capitalize the first letter of the company name
+          const formattedValue = value.charAt(0).toUpperCase() + value.slice(1);
+
           return (
             <Typography>
               <Link
-                to={`/management/company/overview/${row.original._id}`}
+                to={{
+                  pathname: `/management/company/overview/${row.original._id}`,
+                  search: `?companyName=${encodeURIComponent(value)}` // Correct way to add query parameters
+                }}
                 onClick={(e) => e.stopPropagation()} // Prevent interfering with row expansion
                 style={{ textDecoration: 'none', color: 'rgb(70,128,255)' }}
               >
-                {value}
+                {formattedValue}
               </Link>
             </Typography>
           );
@@ -83,7 +92,6 @@ const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
         Header: 'State',
         accessor: 'state'
       },
-
       {
         Header: 'Amount Receivable',
         accessor: 'stateTaxAmount'
@@ -111,23 +119,41 @@ const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
   return (
     <>
       <Stack direction={'row'} spacing={1} justifyContent="flex-end" alignItems="center" sx={{ p: 0, pb: 3 }}>
-        <Stack direction={'row'} alignItems="center" spacing={2}>
+        <Stack direction="row" alignItems="center" spacing={2}>
           <WrapperButton moduleName={MODULE.COMPANY} permission={PERMISSIONS.CREATE}>
-            <Button variant="contained" startIcon={<Add />} onClick={handleAddCompanyBranch} size="small" color="success">
-              Add Branch
+            <Button
+              variant="contained"
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
+              onClick={handleAddCompany}
+              size="small"
+              disabled={loading} // Disable button while loading
+            >
+              {loading ? 'Loading...' : 'Add Company'}
             </Button>
           </WrapperButton>
-
           <WrapperButton moduleName={MODULE.COMPANY} permission={PERMISSIONS.CREATE}>
-            <Button variant="contained" startIcon={<Add />} onClick={handleAddCompany} size="small">
-              Add Company
+            <Button
+              variant="contained"
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
+              onClick={handleAddCompanyBranch}
+              size="small"
+              color="success"
+              disabled={loading} // Disable button while loading
+            >
+              {loading ? 'Loading...' : 'Add Branch'}
             </Button>
           </WrapperButton>
         </Stack>
       </Stack>
       <MainCard content={false}>
         <ScrollX>
-          <ReactTable columns={columns} data={data} renderRowSubComponent={renderRowSubComponent} />
+          {loading ? (
+            <TableSkeleton rows={10} columns={6} />
+          ) : data?.length === 0 ? (
+            <EmptyTableDemo />
+          ) : (
+            <ReactTable columns={columns} data={data} renderRowSubComponent={renderRowSubComponent} />
+          )}
         </ScrollX>
       </MainCard>
       <div style={{ marginTop: '20px' }}>

@@ -2,11 +2,8 @@ import Error500 from 'pages/maintenance/error/500';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCompanies } from 'store/slice/cabProvidor/companySlice';
-
 import PropTypes from 'prop-types';
 import CompanyTable from 'sections/cabprovidor/companyManagement/CompanyTable';
-import TableSkeleton from 'components/tables/TableSkeleton';
-import EmptyTableDemo from 'components/tables/EmptyTable';
 
 const Company = () => {
   const dispatch = useDispatch();
@@ -20,9 +17,7 @@ const Company = () => {
     dispatch(fetchCompanies({ page: page, limit: limit }));
   }, [dispatch, page, limit]);
 
-  if (loading) return <TableSkeleton rows={10} columns={6} />;
-  if (error) return <EmptyTableDemo />;
-  if (companies?.length === 0) return <EmptyTableDemo />;
+  if (error) return <Error500 />;
   return (
     <CompanyTable
       data={companies}
@@ -33,6 +28,7 @@ const Company = () => {
       setLimit={setLimit}
       lastPageNo={lastPageNo}
       setLastPageNo={setLastPageNo}
+      loading={loading}
     />
   );
 };

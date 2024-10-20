@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Button, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, useTheme } from '@mui/material';
+import { Button, CircularProgress, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, useTheme } from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { Fragment, useMemo, useState } from 'react';
@@ -17,8 +17,10 @@ import ZoneAddForm from './ZoneAddForm';
 import { deleteZoneName } from 'store/slice/cabProvidor/ZoneNameSlice';
 import WrapperButton from 'components/common/guards/WrapperButton';
 import { MODULE, PERMISSIONS } from 'constant';
+import EmptyTableDemo from 'components/tables/EmptyTable';
+import TableSkeleton from 'components/tables/TableSkeleton';
 
-const ZoneTable = ({ data, page, setPage, limit, setLimit, lastPageNo, updateKey, setUpdateKey }) => {
+const ZoneTable = ({ data, page, setPage, limit, setLimit, lastPageNo, updateKey, setUpdateKey,loading }) => {
   const theme = useTheme();
   const mode = theme.palette.mode;
   const [advanceData, setAdvanceData] = useState(null);
@@ -210,21 +212,40 @@ const ZoneTable = ({ data, page, setPage, limit, setLimit, lastPageNo, updateKey
     <>
       <Stack direction={'row'} spacing={1} justifyContent="flex-end" alignItems="center" sx={{ p: 0, pb: 3 }}>
         <WrapperButton moduleName={MODULE.ZONE} permission={PERMISSIONS.CREATE}>
-          <Button variant="contained" startIcon={<Add />} onClick={() => handleZone('add')} size="small">
-            Add Zone
-          </Button>
-        </WrapperButton>
+            <Button
+              variant="contained"
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
+              onClick={() => handleZone('add')}
+              size="small"
+              disabled={loading} // Disable button while loading
+            >
+              {loading ? 'Loading...' : '  Add Zone'}
+            </Button>
+          </WrapperButton>
         <Stack direction={'row'} alignItems="center" spacing={2}>
           <WrapperButton moduleName={MODULE.ZONE_TYPE} permission={PERMISSIONS.READ}>
-            <Button variant="contained" startIcon={<Eye />} onClick={handleZoneType} size="small" color="success">
-              View Zone Type
+            <Button
+              variant="contained"
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Eye />} // Show loading spinner if loading
+              onClick={handleZoneType}
+              size="small"
+              color="success"
+              disabled={loading} // Disable button while loading
+            >
+              {loading ? 'Loading...' : ' View Zone Type'}
             </Button>
           </WrapperButton>
         </Stack>
       </Stack>
       <MainCard content={false}>
         <ScrollX>
-          <ReactTable columns={columns} data={data} />
+          {loading ? (
+            <TableSkeleton rows={10} columns={5} />
+          ) : data?.length === 0 ? (
+            <EmptyTableDemo />
+          ) : (
+            <ReactTable columns={columns} data={data} />
+          )}
         </ScrollX>
       </MainCard>
       <div style={{ marginTop: '20px' }}>

@@ -2,12 +2,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDrivers, handleClose, handleOpen, registerDriver } from 'store/slice/cabProvidor/driverSlice';
-import EmptyTableDemo from 'components/tables/EmptyTable';
-import TableSkeleton from 'components/tables/TableSkeleton';
+// import EmptyTableDemo from 'components/tables/EmptyTable';
+// import TableSkeleton from 'components/tables/TableSkeleton';
 import Error500 from 'pages/maintenance/error/500';
 import DriverTable from 'sections/cabprovidor/driverManagement/DriverTable';
 import MainCard from 'components/MainCard';
-import { Autocomplete, Box, Button, Stack, TextField } from '@mui/material';
+import { Autocomplete, Box, Button, CircularProgress, Stack, TextField } from '@mui/material';
 import Header from 'components/tables/genericTable/Header';
 import { Add } from 'iconsax-react';
 import { useNavigate } from 'react-router';
@@ -59,7 +59,6 @@ const Driver = () => {
   const lastPageIndex = metaData.lastPageNo;
 
   useEffect(() => {
-    // dispatch(fetchDrivers({ page, limit, driverType: 3, vendorID: '66962b9805fcb5644057d61c' }));
     dispatch(fetchDrivers({ page, limit, driverType }));
   }, [page, limit, dispatch, driverType]);
 
@@ -146,15 +145,15 @@ const Driver = () => {
     }
   };
 
-  if (loading) return <TableSkeleton rows={10} columns={5} />;
+  // if (loading) return <TableSkeleton rows={10} columns={5} />;
   if (error) return <Error500 />;
-  if (drivers.length === 0) return <EmptyTableDemo />;
+  // if (drivers.length === 0) return <EmptyTableDemo />;
 
   return (
     <>
       <Stack gap={1} spacing={1}>
-        <Header OtherComp={() => <ButtonComponent driverType={driverType} handleDriverTypeChange={handleDriverTypeChange} />} />
-        <DriverTable data={drivers} page={page} setPage={setPage} limit={limit} setLimit={handleLimitChange} lastPageNo={lastPageIndex} />
+        <Header OtherComp={({loading}) => <ButtonComponent driverType={driverType} handleDriverTypeChange={handleDriverTypeChange} loading={loading}/>} />
+        <DriverTable data={drivers} page={page} setPage={setPage} limit={limit} setLimit={handleLimitChange} lastPageNo={lastPageIndex} loading={loading}/>
       </Stack>
 
       {open && (
@@ -177,7 +176,7 @@ const Driver = () => {
 
 export default Driver;
 
-const ButtonComponent = ({ driverType, handleDriverTypeChange }) => {
+const ButtonComponent = ({ driverType, handleDriverTypeChange,loading }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleAdd = useCallback(() => {
@@ -222,8 +221,14 @@ const ButtonComponent = ({ driverType, handleDriverTypeChange }) => {
         {/* <Button variant="contained" startIcon={<Add />} onClick={() => navigate('add-driver')}> */}
 
         <WrapperButton moduleName={MODULE.DRIVER} permission={PERMISSIONS.CREATE}>
-          <Button variant="contained" startIcon={<Add />} onClick={handleAdd} size="small">
-            Add Driver
+          <Button
+            variant="contained"
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
+            onClick={handleAdd}
+            size="small"
+            disabled={loading} // Disable button while loading
+          >
+            {loading ? 'Loading...' : 'Add Driver'}
           </Button>
         </WrapperButton>
       </Stack>

@@ -1,5 +1,5 @@
-import EmptyTableDemo from 'components/tables/EmptyTable';
-import TableSkeleton from 'components/tables/TableSkeleton';
+// import EmptyTableDemo from 'components/tables/EmptyTable';
+// import TableSkeleton from 'components/tables/TableSkeleton';
 import Error500 from 'pages/maintenance/error/500';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,9 +17,9 @@ const Advance = () => {
     dispatch(fetchAdvances());
   }, [dispatch, key]);
 
-  if (loading) return <TableSkeleton rows={10} columns={5} />;
+  // if (loading) return <TableSkeleton rows={10} columns={5} />;
   if (error) return <Error500 />;
-  if (advances.length === 0) return <EmptyTableDemo />;
+  // if (advances.length === 0) return <EmptyTableDemo />;
 
   return (
     <AdvanceTable
@@ -32,6 +32,7 @@ const Advance = () => {
       setLastPageNo={setLastPageNo}
       key={key}
       setKey={setKey}
+      loading={loading}
     />
   );
 };

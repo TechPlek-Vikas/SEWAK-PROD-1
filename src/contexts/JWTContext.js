@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import { createContext, useEffect } from 'react';
 
@@ -13,6 +14,7 @@ import axios from 'utils/axios';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from 'components/Loader';
 import { MODULE, PERMISSIONS } from 'constant';
+import { openSnackbar } from 'store/reducers/snackbar';
 
 // const x = {
 //   company: ['CREATE', 'edit'],
@@ -33,8 +35,11 @@ import { MODULE, PERMISSIONS } from 'constant';
 // };
 
 // eslint-disable-next-line no-unused-vars
+
+/** */
+
 const x = {
-  [MODULE.ROSTER]: [PERMISSIONS.READ],
+  [MODULE.ROSTER]: [PERMISSIONS.CREATE],
 
   [MODULE.USER]: [PERMISSIONS.READ],
   [MODULE.COMPANY]: [PERMISSIONS.READ, PERMISSIONS.CREATE],
@@ -56,6 +61,8 @@ const x = {
   [MODULE.ADVANCE]: [PERMISSIONS.READ, PERMISSIONS.CREATE],
   [MODULE.ADVANCE_TYPE]: [PERMISSIONS.READ, PERMISSIONS.CREATE, PERMISSIONS.UPDATE]
 };
+
+// const x = null;
 
 const chance = new Chance();
 
@@ -168,42 +175,19 @@ export const JWTProvider = ({ children }) => {
     });
   };
 
-  const register = async (email, password, firstName, lastName) => {
-    // Recode this flow to ensure user verification logic
-    const id = chance.bb_pin();
-    const response = await axios.post('/api/account/register', {
-      id,
-      email,
-      password,
-      firstName,
-      lastName
-    });
-    let users = response.data;
-
-    // Handle local storage 'users'
-    const localUsers = localStorage.getItem('users');
-    if (localUsers) {
-      users = [
-        ...JSON.parse(localUsers),
-        {
-          id,
-          email,
-          password,
-          name: `${firstName} ${lastName}`
+  const register = async (formData) => {
+    try {
+      // Recode this flow to ensure user verification logic
+      await axios.post('/user/register', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
         }
-      ];
-    } else {
-      users = [
-        {
-          id,
-          email,
-          password,
-          name: `${firstName} ${lastName}`
-        }
-      ];
+      });
+    } catch (error) {
+      console.log('Error registering user:', error);
+      throw error;
+      // dispatch(openSnackbar({ message: 'Error registering user', variant: 'error', open: true, close: true }));
     }
-
-    localStorage.setItem('users', JSON.stringify(users));
   };
 
   const logout = () => {

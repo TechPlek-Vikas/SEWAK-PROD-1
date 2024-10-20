@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Button, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, useTheme } from '@mui/material';
+import { Button, CircularProgress, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, useTheme } from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { Fragment, useMemo, useState } from 'react';
@@ -15,8 +15,10 @@ import { openSnackbar } from 'store/reducers/snackbar';
 import { deleteAdvanceType } from 'store/slice/cabProvidor/advanceTypeSlice';
 import WrapperButton from 'components/common/guards/WrapperButton';
 import { MODULE, PERMISSIONS } from 'constant';
+import TableSkeleton from 'components/tables/TableSkeleton';
+import EmptyTableDemo from 'components/tables/EmptyTable';
 
-const AdvanceTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo, updateKey, setUpdateKey }) => {
+const AdvanceTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo, updateKey, setUpdateKey,loading }) => {
   const theme = useTheme();
   const mode = theme.palette.mode;
   const [add, setAdd] = useState(false);
@@ -192,8 +194,14 @@ const AdvanceTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo, up
       <Stack direction={'row'} spacing={1} justifyContent="flex-end" alignItems="center" sx={{ p: 0, pb: 3 }}>
         <Stack direction={'row'} alignItems="center" spacing={2}>
           <WrapperButton moduleName={MODULE.ADVANCE_TYPE} permission={PERMISSIONS.CREATE}>
-            <Button variant="contained" startIcon={<Add />} onClick={() => handleAdvanceType('add')} size="small">
-              Add Advance Type
+            <Button
+              variant="contained"
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
+              onClick={() => handleAdvanceType('add')}
+              size="small"
+              disabled={loading} // Disable button while loading
+            >
+              {loading ? 'Loading...' : '  Add Advance Type'}
             </Button>
           </WrapperButton>
         </Stack>
@@ -201,7 +209,13 @@ const AdvanceTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo, up
 
       <MainCard content={false}>
         <ScrollX>
-          <ReactTable columns={columns} data={data} />
+          {loading ? (
+            <TableSkeleton rows={10} columns={5} />
+          ) : data?.length === 0 ? (
+            <EmptyTableDemo />
+          ) : (
+            <ReactTable columns={columns} data={data} />
+          )}
         </ScrollX>
       </MainCard>
 

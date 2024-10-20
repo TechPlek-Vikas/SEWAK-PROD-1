@@ -3,16 +3,16 @@ import { Box, Chip, IconButton, Stack, Tooltip, Typography } from '@mui/material
 import ScrollX from 'components/ScrollX';
 import PaginationBox from 'components/tables/Pagination';
 import ReactTable from 'components/tables/reactTable/ReactTable';
-// eslint-disable-next-line no-unused-vars
-import { Edit, Eye, Trash } from 'iconsax-react';
 import PropTypes from 'prop-types';
 import { useMemo } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { formattedDate } from 'utils/helper';
 import MainCard from 'components/MainCard';
 import { Link } from 'react-router-dom';
+import EmptyTableDemo from 'components/tables/EmptyTable';
+import TableSkeleton from 'components/tables/TableSkeleton';
 
-const CabTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
+const CabTable = ({ data, page, setPage, limit, setLimit, lastPageNo,loading }) => {
   const theme = useTheme();
   // eslint-disable-next-line no-unused-vars
   const mode = theme.palette.mode;
@@ -36,6 +36,7 @@ const CabTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
         accessor: 'vehicleName',
         disableSortBy: true,
         Cell: ({ value }) => {
+          const formattedValue = value.charAt(0).toUpperCase() + value.slice(1);
           return (
             <Typography>
               <Link
@@ -43,7 +44,7 @@ const CabTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
                 // onClick={(e) => e.stopPropagation()} // Prevent interfering with row expansion
                 style={{ textDecoration: 'none' }}
               >
-                {value}
+                {formattedValue}
               </Link>
             </Typography>
           );
@@ -163,8 +164,14 @@ const CabTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
       <Stack gap={1} spacing={1}>
         <MainCard content={false}>
           <ScrollX>
-            <ReactTable columns={columns} data={data} />
-          </ScrollX>
+              {loading ? (
+                <TableSkeleton rows={10} columns={5} />
+              ) : data?.length === 0 ? (
+                <EmptyTableDemo />
+              ) : (
+                <ReactTable columns={columns} data={data} />
+              )}
+            </ScrollX>
         </MainCard>
         <Box>
           {data.length > 0 && (

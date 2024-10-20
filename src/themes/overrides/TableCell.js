@@ -20,7 +20,7 @@ export default function TableCell(theme) {
     MuiTableCell: {
       styleOverrides: {
         root: {
-          fontSize: '0.875rem',
+          fontSize: '0.855rem',
           padding: 12,
           borderColor: theme.palette.divider
         },
