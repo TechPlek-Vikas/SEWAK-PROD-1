@@ -88,7 +88,7 @@ const Navigation = () => {
     }, []);
 
     return result;
-  };
+  }; 
 
   useLayoutEffect(() => {
     let menu;

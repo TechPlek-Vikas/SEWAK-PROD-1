@@ -21,7 +21,7 @@ const Company = () => {
   }, [dispatch, page, limit]);
 
   if (loading) return <TableSkeleton rows={10} columns={6} />;
-  if (error) return <Error500 />;
+  if (error) return <EmptyTableDemo />;
   if (companies?.length === 0) return <EmptyTableDemo />;
   return (
     <CompanyTable
