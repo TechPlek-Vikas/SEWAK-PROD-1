@@ -2,12 +2,15 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { MenuBoard } from 'iconsax-react';
+import { Bill, MenuBoard, Setting2, Wallet } from 'iconsax-react';
 import { MODULE, PERMISSIONS } from 'constant';
 
 // icons
 const icons = {
-  samplePage: MenuBoard
+  samplePage: MenuBoard,
+  setting:Setting2,
+  invoice: Bill,
+  account:Wallet
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -22,14 +25,14 @@ const setting = {
       id: 'setting',
       title: <FormattedMessage id="setting" />,
       type: 'collapse',
-      icon: icons.samplePage,
+      icon: icons.setting,
       children: [
         // Account
         {
           id: 'account-setting',
           title: <FormattedMessage id="account setting" />,
           type: 'item',
-          icon: icons.samplePage,
+          icon: icons.account,
           url: '/settings/account'
         },
 
@@ -47,7 +50,7 @@ const setting = {
           id: 'invoice-setting',
           title: <FormattedMessage id="invoice setting" />,
           type: 'item',
-          icon: icons.samplePage,
+          icon: icons.invoice,
           url: '/settings/invoice'
         }
       ]

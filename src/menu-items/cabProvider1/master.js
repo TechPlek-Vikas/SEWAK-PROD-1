@@ -2,12 +2,16 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { MenuBoard } from 'iconsax-react';
+import { AddCircle, Eye, Location, MenuBoard, Profile2User } from 'iconsax-react';
 import { MODULE, PERMISSIONS } from 'constant';
 
 // icons
 const icons = {
-  samplePage: MenuBoard
+  samplePage: MenuBoard,
+  zone:Location,
+  role:Profile2User,
+  view:Eye,
+  add:AddCircle
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -23,14 +27,14 @@ const master = {
       id: 'role',
       title: <FormattedMessage id="role" />,
       type: 'collapse',
-      icon: icons.samplePage,
+      icon: icons.role,
       children: [
         {
           id: 'view',
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/master/role',
-          icon: icons.samplePage
+          icon: icons.view
         }
       ]
     },
@@ -39,14 +43,14 @@ const master = {
       id: 'zone',
       title: <FormattedMessage id="zone" />,
       type: 'collapse',
-      icon: icons.samplePage,
+      icon: icons.zone,
       children: [
         {
           id: 'view',
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/master/zone',
-          icon: icons.samplePage
+          icon: icons.view
         }
       ]
     },
@@ -55,14 +59,14 @@ const master = {
       id: 'zone-type',
       title: <FormattedMessage id="zone type" />,
       type: 'collapse',
-      icon: icons.samplePage,
+      icon: icons.zone,
       children: [
         {
           id: 'view',
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/master/zone-type',
-          icon: icons.samplePage
+          icon: icons.view
         }
       ]
     }

@@ -16,6 +16,8 @@ import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
 import { credentials } from 'constant';
 import useAuth from 'hooks/useAuth';
+import { dispatch } from 'store';
+import { openSnackbar } from 'store/reducers/snackbar';
 
 // ============================|| JWT - LOGIN ||============================ //
 
@@ -52,6 +54,22 @@ const AuthLogin = () => {
             }
           } catch (err) {
             console.error(err);
+            console.log("error",err);
+            
+            if(err.response.status === 400){
+ 
+              dispatch(
+                openSnackbar({
+                  open: true,
+                  message: err.response.data.message,
+                  variant: 'alert',
+                  alert: {
+                    color: 'error'
+                  },
+                  close: true
+                })
+              );
+            }
             if (scriptedRef.current) {
               setStatus({ success: false });
               setErrors({ submit: err.message });
