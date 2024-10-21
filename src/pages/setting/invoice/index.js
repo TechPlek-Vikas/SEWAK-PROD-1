@@ -1,12 +1,14 @@
+import PropTypes from 'prop-types';
 import MainCard from 'components/MainCard';
 import { useFormik, FormikProvider, Form } from 'formik';
 import { useEffect, useMemo, useState } from 'react';
 import InvoiceSettingsFormContent from './InvoiceSettingsFormContent';
-import { Box, Button, CircularProgress, Stack } from '@mui/material';
+import { Box, Button, CircularProgress, DialogActions, DialogContent, DialogTitle, Grid, Stack } from '@mui/material';
 import CustomCircularLoader from 'components/CustomCircularLoader';
 import { useNavigate } from 'react-router';
 import { dispatch } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
+import { width } from '@mui/system';
 
 export const TAX_TYPE = {
   INDIVIDUAL: 'Individual',
@@ -29,6 +31,11 @@ export const STATUS = {
 };
 
 const SETTINGS = {
+  invoice: {
+    preFix: 'INV',
+    invoiceNumber: 1
+  },
+
   tax: {
     // apply: TAX_TYPE.INDIVIDUAL,
     apply: TAX_TYPE.GROUP
@@ -40,7 +47,8 @@ const SETTINGS = {
 
     by: DISCOUNT_BY.AMOUNT
   },
-  additionalCharges: STATUS.YES
+  additionalCharges: STATUS.YES,
+  roundOff: STATUS.YES
 };
 
 const getInitialValues = (data) => {
@@ -48,7 +56,10 @@ const getInitialValues = (data) => {
     taxType: data?.tax?.apply || TAX_TYPE.INDIVIDUAL,
     discountType: data?.discount?.apply || DISCOUNT_TYPE.NO,
     discountBy: data?.discount?.by || DISCOUNT_BY.PERCENTAGE,
-    additionalCharges: data?.additionalCharges || STATUS.NO
+    additionalCharges: data?.additionalCharges || STATUS.NO,
+    roundOff: data?.roundOff || STATUS.NO,
+    invoicePrefix: data?.invoice?.preFix || 'INV',
+    invoiceNumber: data?.invoice?.invoiceNumber || 1
   };
 };
 
@@ -139,6 +150,8 @@ const InvoiceSetting = ({ redirect, onClose }) => {
     onSubmit: handleFormikSubmit
   });
 
+  console.log('formik val = ', formik.values);
+
   // Memoized helper function for button label
   const buttonLabel = useMemo(() => {
     if (formik.isSubmitting) {
@@ -164,10 +177,10 @@ const InvoiceSetting = ({ redirect, onClose }) => {
         </>
       ) : (
         <FormikProvider value={formik}>
-          <Form autoComplete="off" noValidate>
+          <Form autoComplete="off" noValidate onSubmit={formik.handleSubmit}>
             <MainCard title={redirect ? 'Set Your Transaction Preferences' : 'Create Invoice Settings'}>
               <Stack gap={3}>
-                <InvoiceSettingsFormContent />
+                <InvoiceSettingsFormContent redirect={redirect} />
 
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <Stack direction="row" spacing={2} justifyContent={'flex-end'}>
@@ -177,7 +190,6 @@ const InvoiceSetting = ({ redirect, onClose }) => {
                       disabled={formik.isSubmitting}
                       startIcon={formik.isSubmitting && <CircularProgress size={20} />}
                     >
-                      {/* {redirect ? 'Save & Continue' : 'Save'} */}
                       {buttonLabel}
                     </Button>
                   </Stack>
@@ -189,6 +201,11 @@ const InvoiceSetting = ({ redirect, onClose }) => {
       )}
     </>
   );
+};
+
+InvoiceSetting.propTypes = {
+  redirect: PropTypes.string,
+  onClose: PropTypes.func
 };
 
 export default InvoiceSetting;
