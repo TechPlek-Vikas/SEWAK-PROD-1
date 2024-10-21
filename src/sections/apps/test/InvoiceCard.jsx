@@ -8,19 +8,24 @@ import MainCard from 'components/MainCard';
 import Avatar from 'components/@extended/Avatar';
 
 // assets
-import { ArchiveBook, CloseCircle, DocumentText, DocumentUpload, DollarCircle, FilterSquare, ShoppingBag } from 'iconsax-react';
+import { ArchiveBook, CloseCircle, DocumentText, DocumentUpload, DollarCircle, Folder2, ShoppingBag } from 'iconsax-react';
 import { Box } from '@mui/material';
+import { useDrawer } from 'contexts/DrawerContext';
+import { useNavigate } from 'react-router';
 
 // ==============================|| INVOICE - CARD ||============================== //
 
 export default function InvoiceCard({ handleFileUploadDialogue }) {
+  const { isOpen, openDrawer } = useDrawer();
+  const navigate=useNavigate();
   return (
     <MainCard sx={{ height: '100%' }}>
       <Grid container spacing={3}>
         <Grid item xs={4} sm={2} lg={6}>
           <Box
             onClick={() => {
-              console.log('navigate Button');
+              console.log('drawer', isOpen);
+              openDrawer();
             }}
             sx={{ cursor: 'pointer' }}
           >
@@ -61,16 +66,24 @@ export default function InvoiceCard({ handleFileUploadDialogue }) {
           </MainCard>
         </Grid>
         <Grid item xs={4} sm={2} lg={6}>
-          <MainCard>
-            <Stack alignItems="center" spacing={2}>
-              <Avatar size="md" type="filled" color="warning">
-                <FilterSquare variant="Bold" />
-              </Avatar>
-              <Typography variant="subtitle1" color="text.secondary">
-                Pending
-              </Typography>
-            </Stack>
-          </MainCard>
+          <Box
+            onClick={() => {
+              console.log('handleuploadclick');
+              navigate('/apps/roster/file-management')
+            }}
+            sx={{ cursor: 'pointer' }}
+          >
+            <MainCard>
+              <Stack alignItems="center" spacing={2}>
+                <Avatar size="md" type="filled" color="warning">
+                  <Folder2 variant="Bold" />
+                </Avatar>
+                <Typography variant="subtitle1" color="text.secondary">
+                  Files
+                </Typography>
+              </Stack>
+            </MainCard>
+          </Box>
         </Grid>
         <Grid item xs={4} sm={2} lg={6}>
           <MainCard>

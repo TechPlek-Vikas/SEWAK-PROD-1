@@ -44,6 +44,16 @@ const application = {
           permissions: {
             [MODULE.ROSTER]: PERMISSIONS.CREATE
           }
+        },
+        {
+          id: 'test',
+          title: <FormattedMessage id="test" />,
+          type: 'item',
+          url: '/apps/roster/test',
+          icon: icons.samplePage,
+          permissions: {
+            [MODULE.ROSTER]: PERMISSIONS.CREATE
+          }
         }
       ]
     },

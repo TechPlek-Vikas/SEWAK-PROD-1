@@ -18,6 +18,7 @@ import InvoiceWidgetCard from 'sections/apps/test/InvoiceWidgetCard';
 import { Dialog } from '@mui/material';
 import { PopupTransition } from 'components/@extended/Transitions';
 import AddRosterFileForm from './AddRosterFileForm';
+import CreateRosterTemplate from './MapRosterData';
 // ==============================|| INVOICE - DASHBOARD ||============================== //
 
 export default function RosterDashboard() {
@@ -188,6 +189,8 @@ export default function RosterDashboard() {
         >
           <AddRosterFileForm handleClose={handleFileUploadDialogue}  />
         </Dialog>
+
+        <CreateRosterTemplate/>
     </>
   );
 }

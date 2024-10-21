@@ -1,5 +1,33 @@
 export const MandatoryFields = [
     {
+        name: 'zoneName',
+        headerName: 'Zone Name',
+        required: true
+      },
+      {
+        name: 'zoneType',
+        headerName: 'Zone Type',
+        required: true
+      },
+      {
+        name: 'vehicleType',
+        headerName: 'Vehicle Type',
+        required: true
+      },
+      {
+        name: 'tripType',
+        headerName: 'Trip Type',
+        required: true
+      },
+      {
+        name: 'location',
+        headerName: 'Location',
+        required: false,
+        defaultValue: ''
+      },
+      
+
+    {
       name: 'tripDate',
       headerName: 'Trip Date',
       required: true,
@@ -10,32 +38,10 @@ export const MandatoryFields = [
       headerName: 'Trip Time',
       required: true
     },
-    {
-      name: 'tripType',
-      headerName: 'Trip Type',
-      required: true
-    },
-    {
-      name: 'zoneName',
-      headerName: 'Zone Name',
-      required: true
-    },
-    {
-      name: 'zoneType',
-      headerName: 'Zone Type',
-      required: true
-    },
-    {
-      name: 'vehicleType',
-      headerName: 'Vehicle Type',
-      required: true
-    },
-    {
-      name: 'location',
-      headerName: 'Location',
-      required: false,
-      defaultValue: ''
-    },
+  
+    
+  
+   
     {
       name: 'guard',
       headerName: 'Guard',
