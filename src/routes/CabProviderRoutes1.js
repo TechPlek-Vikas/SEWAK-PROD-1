@@ -77,6 +77,12 @@ const VendorDashboard = Loadable(lazy(() => import('pages/dashboard/vendorDashbo
 const CompanyDashboard = Loadable(lazy(() => import('pages/dashboard/companyDashboard/CompanyDashboard')));
 const UserDashboard = Loadable(lazy(() => import('pages/dashboard/userDashboard/UserDashboard')));
 const InvoiceDashboard = Loadable(lazy(() => import('pages/dashboard/invoiceDashboard/InvoiceDashboard')));
+
+// Dashboard
+const RosterDashboard = Loadable(lazy(() => import('pages/apps/test/dashboard')));
+
+// Settings
+const InvoiceSettings = Loadable(lazy(() => import('pages/setting/invoice')));
 // ==============================|| MAIN ROUTES ||============================== //
 
 const CabProvidorRoutes = {
@@ -368,6 +374,25 @@ const CabProvidorRoutes = {
             {
               path: 'invoice',
               element: <UnderConstruction title="Invoice Settings" />
+            }
+          ]
+        },
+
+        // Settings
+        {
+          path: 'settings',
+          children: [
+            {
+              path: 'account',
+              element: <UnderConstruction title="Account Settings" />
+            },
+            {
+              path: 'roster',
+              element: <UnderConstruction title="Roster Settings" />
+            },
+            {
+              path: 'invoice',
+              element: <InvoiceSettings />
             }
           ]
         }
