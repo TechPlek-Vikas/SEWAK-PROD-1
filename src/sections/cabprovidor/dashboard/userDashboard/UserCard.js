@@ -19,7 +19,7 @@ export default function UserCard({ handleFileUploadDialogue }) {
   const { isOpen, openDrawer } = useDrawer();
   const navigate=useNavigate();
   return (
-    <MainCard sx={{ height: '100%' }}>
+    <MainCard>{/*sx={{ height: '100%' }} -> for height */}
       <Grid container spacing={3}>
         <Grid item xs={4} sm={2} lg={6}>
           <Box
@@ -30,19 +30,19 @@ export default function UserCard({ handleFileUploadDialogue }) {
             }}
             sx={{ cursor: 'pointer' }}
           >
-            <MainCard content={false} sx={{ py: 2.5 }}>
+            <MainCard>
               <Stack alignItems="center" spacing={2}>
                 <Avatar size="md" type="filled">
                   <DocumentText variant="Bold" />
                 </Avatar>
                 <Typography variant="subtitle1" color="text.secondary">
-                  All Users
+                  All
                 </Typography>
               </Stack>
             </MainCard>
           </Box>
         </Grid>
-        <Grid item xs={4} sm={2} lg={6}>
+        {/* <Grid item xs={4} sm={2} lg={6}>
           <MainCard>
             <Stack alignItems="center" spacing={2}>
               <Avatar size="md" type="filled" color="info">
@@ -65,12 +65,11 @@ export default function UserCard({ handleFileUploadDialogue }) {
               </Typography>
             </Stack>
           </MainCard>
-        </Grid>
+        </Grid> */}
         <Grid item xs={4} sm={2} lg={6}>
           <Box
             onClick={() => {
-              console.log('handleuploadclick');
-              // navigate('/apps/roster/file-management')
+              navigate('/management/user/add-user')
             }}
             sx={{ cursor: 'pointer' }}
           >
@@ -80,13 +79,13 @@ export default function UserCard({ handleFileUploadDialogue }) {
                   <Folder2 variant="Bold" />
                 </Avatar>
                 <Typography variant="subtitle1" color="text.secondary">
-                  Files
+                  Create
                 </Typography>
               </Stack>
             </MainCard>
           </Box>
         </Grid>
-        <Grid item xs={4} sm={2} lg={6}>
+        {/* <Grid item xs={4} sm={2} lg={6}>
           <MainCard>
             <Stack alignItems="center" spacing={2}>
               <Avatar size="md" type="filled" color="error">
@@ -117,7 +116,7 @@ export default function UserCard({ handleFileUploadDialogue }) {
               </Stack>
             </MainCard>
           </Box>
-        </Grid>
+        </Grid> */}
       </Grid>
     </MainCard>
   );

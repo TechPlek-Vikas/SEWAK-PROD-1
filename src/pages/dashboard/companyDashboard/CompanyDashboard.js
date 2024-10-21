@@ -16,7 +16,7 @@ import AddCompanyFileForm from 'sections/cabprovidor/dashboard/companyDashboard/
 import CompanyCard from 'sections/cabprovidor/dashboard/companyDashboard/CompanyCard';
 import CreateCompanyTemplate from 'sections/cabprovidor/dashboard/companyDashboard/MapCompanyData';
 import CompanyIncomeAreaChart from 'sections/cabprovidor/dashboard/companyDashboard/CompanyIncomeAreaChart';
-// ==============================|| User - DASHBOARD ||============================== //
+// ==============================|| COMPANY - DASHBOARD ||============================== //
 
 export default function CompanyDashboard() {
   const theme = useTheme();
@@ -24,35 +24,35 @@ export default function CompanyDashboard() {
 
   const widgetData = [
     {
-      title: 'Total Companies',
-      count: '3000',
-      percentage: 20.3,
+      title: 'Companies',
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      company: '3',
+      company: '-',
       color: theme.palette.warning
     },
     {
-      title: 'Total Trips',
-      count: '2500',
-      percentage: -8.73,
+      title: 'Trips',
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      company: '5',
+      company: '-',
       color: theme.palette.error
     },
     {
       title: 'Pending',
-      count: '200',
-      percentage: 10.73,
+      count: '-',
+      percentage:'-',
       isLoss: false,
-      company: '20',
+      company: '-',
       color: theme.palette.success
     },
     {
       title: 'Completed',
-      count: '300',
-      percentage: -4.73,
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      company: '5',
+      company: '-',
       color: theme.palette.primary
     }
   ];

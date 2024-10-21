@@ -24,35 +24,35 @@ export default function RosterDashboard() {
 
   const widgetData = [
     {
-      title: 'Total Roster',
-      count: '3000',
-      percentage: 20.3,
+      title: 'Roster',
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      roster: '3',
+      roster: '-',
       color: theme.palette.warning
     },
     {
-      title: 'Total Trips',
-      count: '2500',
-      percentage: -8.73,
+      title: 'Trips',
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      roster: '5',
+      roster: '-',
       color: theme.palette.error
     },
     {
       title: 'Pending',
-      count: '200',
-      percentage: 10.73,
+      count: '-',
+      percentage:'-',
       isLoss: false,
-      roster: '20',
+      roster: '-',
       color: theme.palette.success
     },
     {
       title: 'Completed',
-      count: '300',
-      percentage: -4.73,
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      roster: '5',
+      roster: '-',
       color: theme.palette.primary
     }
   ];

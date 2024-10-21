@@ -29,7 +29,8 @@ function TableWidgetCard({ color, title, count, percentage, isLoss, cab, isActiv
                 {!isLoss && <ArrowUp2 variant="Bold" size={16} style={{ color }} />}
                 {isLoss && <ArrowDown2 variant="Bold" size={16} style={{ color }} />}
                 <Typography color="secondary" sx={{ fontWeight: 500 }}>
-                  {percentage}%
+                  {/* {percentage}% */}
+                  {percentage}
                 </Typography>
               </Stack>
             )}
@@ -40,7 +41,7 @@ function TableWidgetCard({ color, title, count, percentage, isLoss, cab, isActiv
             <Typography variant="h5">{count}</Typography>
             <Stack direction="row" spacing={1} alignItems="center">
               <Typography variant="h5">{cab}</Typography>
-              <Typography color="secondary">cabs</Typography>
+              {/* <Typography color="secondary">cabs</Typography> */}
             </Stack>
           </Stack>
         </Grid>

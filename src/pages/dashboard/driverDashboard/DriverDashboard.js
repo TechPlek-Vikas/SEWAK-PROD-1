@@ -24,35 +24,35 @@ export default function DriverDashboard() {
 
   const widgetData = [
     {
-      title: 'Total Drivers',
-      count: '3000',
-      percentage: 20.3,
+      title: 'Drivers',
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      driver: '3',
+      driver: '-',
       color: theme.palette.warning
     },
     {
-      title: 'Total Trips',
-      count: '2500',
-      percentage: -8.73,
+      title: 'Trips',
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      driver: '5',
+      driver: '-',
       color: theme.palette.error
     },
     {
       title: 'Pending',
-      count: '200',
-      percentage: 10.73,
+      count: '-',
+      percentage:'-',
       isLoss: false,
-      driver: '20',
+      driver: '-',
       color: theme.palette.success
     },
     {
       title: 'Completed',
-      count: '300',
-      percentage: -4.73,
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      driver: '5',
+      driver: '-',
       color: theme.palette.primary
     }
   ];

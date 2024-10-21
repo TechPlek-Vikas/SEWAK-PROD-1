@@ -79,7 +79,7 @@ const UserDashboard = Loadable(lazy(() => import('pages/dashboard/userDashboard/
 const InvoiceDashboard = Loadable(lazy(() => import('pages/dashboard/invoiceDashboard/InvoiceDashboard')));
 
 // Dashboard
-const RosterDashboard = Loadable(lazy(() => import('pages/apps/test/dashboard')));
+// const RosterDashboard = Loadable(lazy(() => import('pages/apps/test/dashboard')));
 
 // Settings
 const InvoiceSettings = Loadable(lazy(() => import('pages/setting/invoice')));
