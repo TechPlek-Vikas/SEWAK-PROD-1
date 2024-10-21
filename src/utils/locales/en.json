@@ -37,5 +37,10 @@
   "add driver rate": "Add Driver Rate",
   "cab": "Cab",
   "add cab": "Add Cab",
-  "zone type": "Zone Type"
+  "zone type": "Zone Type",
+  "application": "Application",
+  "setting": "Setting",
+  "account setting": "Account Setting",
+  "roster setting": "Roster Setting",
+  "invoice setting": "Invoice Setting"
 }
