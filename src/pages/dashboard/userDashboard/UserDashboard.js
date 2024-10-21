@@ -24,35 +24,35 @@ export default function UserDashboard() {
 
   const widgetData = [
     {
-      title: 'Total Users',
-      count: '3000',
-      percentage: 20.3,
+      title: 'Users',
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      user: '3',
+      user: '-',
       color: theme.palette.warning
     },
     {
-      title: 'Total Trips',
-      count: '2500',
-      percentage: -8.73,
+      title: 'Trips',
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      user: '5',
+      user: '-',
       color: theme.palette.error
     },
     {
       title: 'Pending',
-      count: '200',
-      percentage: 10.73,
+      count: '-',
+      percentage:'-',
       isLoss: false,
-      user: '20',
+      user: '-',
       color: theme.palette.success
     },
     {
       title: 'Completed',
-      count: '300',
-      percentage: -4.73,
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      invoice: '5',
+      user: '-',
       color: theme.palette.primary
     }
   ];

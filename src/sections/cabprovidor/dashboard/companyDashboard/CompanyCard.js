@@ -8,7 +8,7 @@ import MainCard from 'components/MainCard';
 import Avatar from 'components/@extended/Avatar';
 
 // assets
-import { ArchiveBook, CloseCircle, DocumentText, DocumentUpload, DollarCircle, Folder2, ShoppingBag } from 'iconsax-react';
+import { AddCircle, ArchiveBook, CloseCircle, DocumentText, DocumentUpload, DollarCircle, Folder2, ShoppingBag } from 'iconsax-react';
 import { Box } from '@mui/material';
 import { useDrawer } from 'contexts/DrawerContext';
 import { useNavigate } from 'react-router';
@@ -19,7 +19,7 @@ export default function CompanyCard({ handleFileUploadDialogue }) {
   const { isOpen, openDrawer } = useDrawer();
   const navigate=useNavigate();
   return (
-    <MainCard sx={{ height: '100%' }}>
+    <MainCard>
       <Grid container spacing={3}>
         <Grid item xs={4} sm={2} lg={6}>
           <Box
@@ -30,19 +30,19 @@ export default function CompanyCard({ handleFileUploadDialogue }) {
             }}
             sx={{ cursor: 'pointer' }}
           >
-            <MainCard content={false} sx={{ py: 2.5 }}>
+            <MainCard>
               <Stack alignItems="center" spacing={2}>
                 <Avatar size="md" type="filled">
                   <DocumentText variant="Bold" />
                 </Avatar>
                 <Typography variant="subtitle1" color="text.secondary">
-                  All Companies
+                  All
                 </Typography>
               </Stack>
             </MainCard>
           </Box>
         </Grid>
-        <Grid item xs={4} sm={2} lg={6}>
+        {/* <Grid item xs={4} sm={2} lg={6}>
           <MainCard>
             <Stack alignItems="center" spacing={2}>
               <Avatar size="md" type="filled" color="info">
@@ -65,28 +65,28 @@ export default function CompanyCard({ handleFileUploadDialogue }) {
               </Typography>
             </Stack>
           </MainCard>
-        </Grid>
+        </Grid> */}
         <Grid item xs={4} sm={2} lg={6}>
           <Box
             onClick={() => {
-              console.log('handleuploadclick');
-              // navigate('/apps/roster/file-management')
+              // console.log('handleuploadclick');
+              navigate('/management/company/add-company')
             }}
             sx={{ cursor: 'pointer' }}
           >
             <MainCard>
               <Stack alignItems="center" spacing={2}>
                 <Avatar size="md" type="filled" color="warning">
-                  <Folder2 variant="Bold" />
+                  <AddCircle variant="Bold" />
                 </Avatar>
                 <Typography variant="subtitle1" color="text.secondary">
-                  Files
+                 Add
                 </Typography>
               </Stack>
             </MainCard>
           </Box>
         </Grid>
-        <Grid item xs={4} sm={2} lg={6}>
+        {/* <Grid item xs={4} sm={2} lg={6}>
           <MainCard>
             <Stack alignItems="center" spacing={2}>
               <Avatar size="md" type="filled" color="error">
@@ -97,22 +97,42 @@ export default function CompanyCard({ handleFileUploadDialogue }) {
               </Typography>
             </Stack>
           </MainCard>
-        </Grid>
+        </Grid> */}
         <Grid item xs={4} sm={2} lg={6}>
           <Box
             onClick={() => {
-              console.log('handleuploadclick');
-              // handleFileUploadDialogue();
+              navigate('/management/company/add-company-branch');
             }}
             sx={{ cursor: 'pointer' }}
           >
             <MainCard>
               <Stack alignItems="center" spacing={2}>
-                <Avatar size="md" type="filled">
-                  <DocumentUpload variant="Bold" />
+              <Avatar size="md" type="filled" color="success">
+                  <AddCircle variant="Bold" />
                 </Avatar>
                 <Typography variant="subtitle1" color="text.secondary">
-                  Upload
+                 Add Branch
+                </Typography>
+              </Stack>
+            </MainCard>
+          </Box>
+        </Grid>
+        <Grid item xs={4} sm={2} lg={6}>
+          <Box
+            onClick={() => {
+              // console.log('handleuploadclick');
+              // handleFileUploadDialogue();
+              navigate('/management/company/add-company-rate');
+            }}
+            sx={{ cursor: 'pointer' }}
+          >
+            <MainCard>
+              <Stack alignItems="center" spacing={2}>
+              <Avatar size="md" type="filled" color="info">
+                  <AddCircle variant="Bold" />
+                </Avatar>
+                <Typography variant="subtitle1" color="text.secondary">
+                 Add Rate
                 </Typography>
               </Stack>
             </MainCard>

@@ -24,35 +24,35 @@ export default function CabDashBoard() {
 
   const widgetData = [
     {
-      title: 'Total Cabs',
-      count: '3000',
-      percentage: 20.3,
+      title: 'Cabs',
+      count: '-',
+      percentage: '-',
       isLoss: true,
-      cab: '3',
+      cab: '-',
       color: theme.palette.warning
     },
     {
-      title: 'Total Trips',
-      count: '2500',
-      percentage: -8.73,
+      title: 'Trips',
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      cab: '5',
+      cab: '-',
       color: theme.palette.error
     },
     {
       title: 'Pending',
-      count: '200',
-      percentage: 10.73,
+      count: '-',
+      percentage: '-',
       isLoss: false,
-      cab: '20',
+      cab: '-',
       color: theme.palette.success
     },
     {
       title: 'Completed',
-      count: '300',
-      percentage: -4.73,
+      count: '-',
+      percentage: '-',
       isLoss: true,
-      cab: '5',
+      cab: '-',
       color: theme.palette.primary
     }
   ];

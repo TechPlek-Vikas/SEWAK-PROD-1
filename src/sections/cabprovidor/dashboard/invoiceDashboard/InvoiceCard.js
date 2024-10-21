@@ -19,7 +19,7 @@ export default function InvoiceCard({ handleFileUploadDialogue }) {
   const { isOpen, openDrawer } = useDrawer();
   const navigate=useNavigate();
   return (
-    <MainCard sx={{ height: '100%' }}>
+    <MainCard>
       <Grid container spacing={3}>
         <Grid item xs={4} sm={2} lg={6}>
           <Box
@@ -30,19 +30,19 @@ export default function InvoiceCard({ handleFileUploadDialogue }) {
             }}
             sx={{ cursor: 'pointer' }}
           >
-            <MainCard content={false} sx={{ py: 2.5 }}>
+            <MainCard>
               <Stack alignItems="center" spacing={2}>
                 <Avatar size="md" type="filled">
                   <DocumentText variant="Bold" />
                 </Avatar>
                 <Typography variant="subtitle1" color="text.secondary">
-                  All Invoices
+                  All
                 </Typography>
               </Stack>
             </MainCard>
           </Box>
         </Grid>
-        <Grid item xs={4} sm={2} lg={6}>
+        {/* <Grid item xs={4} sm={2} lg={6}>
           <MainCard>
             <Stack alignItems="center" spacing={2}>
               <Avatar size="md" type="filled" color="info">
@@ -65,8 +65,8 @@ export default function InvoiceCard({ handleFileUploadDialogue }) {
               </Typography>
             </Stack>
           </MainCard>
-        </Grid>
-        <Grid item xs={4} sm={2} lg={6}>
+        </Grid> */}
+        {/* <Grid item xs={4} sm={2} lg={6}>
           <Box
             onClick={() => {
               console.log('handleuploadclick');
@@ -85,8 +85,8 @@ export default function InvoiceCard({ handleFileUploadDialogue }) {
               </Stack>
             </MainCard>
           </Box>
-        </Grid>
-        <Grid item xs={4} sm={2} lg={6}>
+        </Grid> */}
+        {/* <Grid item xs={4} sm={2} lg={6}>
           <MainCard>
             <Stack alignItems="center" spacing={2}>
               <Avatar size="md" type="filled" color="error">
@@ -97,18 +97,19 @@ export default function InvoiceCard({ handleFileUploadDialogue }) {
               </Typography>
             </Stack>
           </MainCard>
-        </Grid>
+        </Grid> */}
         <Grid item xs={4} sm={2} lg={6}>
           <Box
             onClick={() => {
-              console.log('handleuploadclick');
+              // console.log('handleuploadclick');
               // handleFileUploadDialogue();
+              navigate('/apps/invoices/create');
             }}
             sx={{ cursor: 'pointer' }}
           >
             <MainCard>
               <Stack alignItems="center" spacing={2}>
-                <Avatar size="md" type="filled">
+                <Avatar size="md" type="filled" color="warning">
                   <DocumentUpload variant="Bold" />
                 </Avatar>
                 <Typography variant="subtitle1" color="text.secondary">

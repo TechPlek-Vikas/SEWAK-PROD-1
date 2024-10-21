@@ -24,35 +24,35 @@ export default function VendorDashboard() {
 
   const widgetData = [
     {
-      title: 'Total Vendors',
-      count: '3000',
-      percentage: 20.3,
+      title: 'Vendors',
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      vendor: '3',
+      vendor: '-',
       color: theme.palette.warning
     },
     {
-      title: 'Total Trips',
-      count: '2500',
-      percentage: -8.73,
+      title: 'Trips',
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      vendor: '5',
+      vendor: '-',
       color: theme.palette.error
     },
     {
       title: 'Pending',
-      count: '200',
-      percentage: 10.73,
+      count: '-',
+      percentage:'-',
       isLoss: false,
-      vendor: '20',
+      vendor: '-',
       color: theme.palette.success
     },
     {
       title: 'Completed',
-      count: '300',
-      percentage: -4.73,
+      count: '-',
+      percentage:'-',
       isLoss: true,
-      vendor: '5',
+      vendor: '-',
       color: theme.palette.primary
     }
   ];

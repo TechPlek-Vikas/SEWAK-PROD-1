@@ -50,7 +50,9 @@ const ZoneTable = ({ data, page, setPage, limit, setLimit, lastPageNo, updateKey
     try {
       const resultAction = await dispatch(
         deleteZoneName({
-          _id: deleteId
+          data:{
+            _id: deleteId
+          }
         })
       );
       setAlertOpen(false);
@@ -191,6 +193,8 @@ const ZoneTable = ({ data, page, setPage, limit, setLimit, lastPageNo, updateKey
                     color="error"
                     onClick={(e) => {
                       e.stopPropagation();
+                      console.log("row.values",row.values);
+                      
                       setDeleteId(row.values._id);
                       setAlertOpen(true);
                     }}
