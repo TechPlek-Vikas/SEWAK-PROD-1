@@ -11,7 +11,6 @@ import { MODULE, PERMISSIONS } from 'constant';
 import List from 'pages/invoice/list/List';
 import Create from 'pages/invoice/create/Create';
 import { element } from 'prop-types';
-import RosterDashboard from 'pages/apps/test/dashboard';
 import MapRosterFileTest from 'pages/apps/test/MapRosterData';
 
 const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/error/404')));
@@ -69,6 +68,12 @@ const CabType = Loadable(lazy(() => import('pages/master/CabType')));
 const CabRate = Loadable(lazy(() => import('pages/master/CabRate')));
 const AddCabRateVendor = Loadable(lazy(() => import('pages/master/CabRate/Vendor')));
 const AddCabRateDriver = Loadable(lazy(() => import('pages/master/CabRate/Driver')));
+
+// Dashboard
+const RosterDashboard = Loadable(lazy(() => import('pages/apps/test/dashboard')));
+
+// Settings
+const InvoiceSettings = Loadable(lazy(() => import('pages/setting/invoice')));
 // ==============================|| MAIN ROUTES ||============================== //
 
 const CabProvidorRoutes = {
@@ -99,7 +104,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <UnderConstruction title="Roster Dashboard" />
+                  element: <RosterDashboard />
                 },
                 {
                   path: 'view',
@@ -342,6 +347,25 @@ const CabProvidorRoutes = {
               path: 'cab-type',
               element: <CabType />
               //   element: <ProtectedRoute element={CabType} moduleName={MODULE.CAB_TYPE} permission={PERMISSIONS.READ} />
+            }
+          ]
+        },
+
+        // Settings
+        {
+          path: 'settings',
+          children: [
+            {
+              path: 'account',
+              element: <UnderConstruction title="Account Settings" />
+            },
+            {
+              path: 'roster',
+              element: <UnderConstruction title="Roster Settings" />
+            },
+            {
+              path: 'invoice',
+              element: <InvoiceSettings />
             }
           ]
         }
