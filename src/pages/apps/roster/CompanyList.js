@@ -14,7 +14,7 @@ function CompanyList({ setCompany, search, selectedUser }) {
   const { companies, loading } = useSelector((state) => state.companies);
   // eslint-disable-next-line no-unused-vars
   const [data, setData] = useState([companies]);
-
+console.log(companies)
   const [companySearchLoading, setCompanySearchLoading] = useState(false);
 
   const fetchCompanyListSearchAPi = async () => {

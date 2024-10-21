@@ -27,6 +27,16 @@ const roster = {
       permissions: {
         [MODULE.ROSTER]: PERMISSIONS.READ
       }
+    },
+    {
+      id: 'test',
+      title: <FormattedMessage id="test" />,
+      type: 'item',
+      url: '/roster/test',
+      icon: icons.samplePage,
+      permissions: {
+        [MODULE.ROSTER]: PERMISSIONS.READ
+      }
     }
   ]
 };

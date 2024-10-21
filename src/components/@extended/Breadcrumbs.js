@@ -1,70 +1,77 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Divider, Grid, Typography } from '@mui/material';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import MuiBreadcrumbs from '@mui/material/Breadcrumbs';
 
 // project-imports
 import MainCard from 'components/MainCard';
+import navigation from 'menu-items';
+import { ThemeDirection } from 'config';
 
 // assets
 import { ArrowRight2, Buildings2, Home3 } from 'iconsax-react';
 
 // ==============================|| BREADCRUMBS ||============================== //
 
-const Breadcrumbs = ({
-  card,
-  divider = true,
+export default function Breadcrumbs({
+  card = false,
+  custom = false,
+  divider = false,
+  heading,
   icon,
   icons,
+  links,
   maxItems,
-  navigation,
   rightAlign,
   separator,
-  title,
-  titleBottom,
+  title = true,
+  titleBottom = true,
   sx,
   ...others
-}) => {
+}) {
   const theme = useTheme();
   const location = useLocation();
   const [main, setMain] = useState();
   const [item, setItem] = useState();
+
   const iconSX = {
-    marginRight: theme.spacing(0.75),
-    marginTop: `-${theme.spacing(0.25)}`,
+    marginRight: theme.direction === ThemeDirection.RTL ? 0 : theme.spacing(0.75),
+    marginLeft: theme.direction === ThemeDirection.RTL ? theme.spacing(0.75) : 0,
     width: '1rem',
     height: '1rem',
     color: theme.palette.secondary.main
   };
 
+  let customLocation = location.pathname;
+
+  // only used for component demo breadcrumbs
+  if (customLocation.includes('/components-overview/breadcrumbs')) {
+    customLocation = '/apps/customer/customer-card';
+  }
+
   useEffect(() => {
     navigation?.items?.map((menu) => {
       if (menu.type && menu.type === 'group') {
-        getCollapse(menu);
+        if (menu?.url && menu.url === customLocation) {
+          setMain(menu);
+          setItem(menu);
+        } else {
+          getCollapse(menu);
+        }
       }
       return false;
     });
   });
 
-  let customLocation = location.pathname;
-
-  if (customLocation.includes('/management/company/add-company')) {
-    customLocation = '/management/company/add-company';
-  }
-
-  useEffect(() => {
-    if (customLocation.includes('/apps/profiles/user/payment')) {
-      setItem(undefined);
-    }
-  }, [item, customLocation]);
-
   // set active item state
   const getCollapse = (menu) => {
-    if (menu.children) {
+    if (!custom && menu.children) {
       menu.children.filter((collapse) => {
         if (collapse.type && collapse.type === 'collapse') {
           getCollapse(collapse);
@@ -95,15 +102,15 @@ const Breadcrumbs = ({
   let ItemIcon;
 
   // collapse item
-  if (main && main.type === 'collapse' && main.breadcrumbs === true) {
+  if (!custom && main && main.type === 'collapse' && main.breadcrumbs === true) {
     CollapseIcon = main.icon ? main.icon : Buildings2;
     mainContent = (
       <Typography
         component={Link}
         to={document.location.pathname}
-        variant="h6"
+        variant="body1"
         sx={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
-        color="secondary"
+        color={window.location.pathname === main.url ? 'text.secondary' : 'text.primary'}
       >
         {icons && <CollapseIcon style={iconSX} />}
         {main.title}
@@ -128,10 +135,10 @@ const Breadcrumbs = ({
             <MuiBreadcrumbs aria-label="breadcrumb" maxItems={maxItems || 8} separator={separatorIcon}>
               <Typography
                 component={Link}
-                to="/dashboard"
-                variant="h6"
+                to="/"
+                variant="body1"
                 sx={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
-                color="textPrimary"
+                color="text.primary"
               >
                 {icons && <Home3 style={iconSX} />}
                 {icon && !icons && <Home3 variant="Bold" style={{ ...iconSX, marginRight: 0 }} />}
@@ -154,19 +161,60 @@ const Breadcrumbs = ({
   }
 
   // items
-  if (item && item.type === 'item') {
-    itemTitle = item.title;
+  if ((item && item.type === 'item') || (item?.type === 'group' && item?.url) || custom) {
+    itemTitle = item?.title;
 
-    ItemIcon = item.icon ? item.icon : Buildings2;
+    ItemIcon = item?.icon ? item.icon : Buildings2;
     itemContent = (
-      <Typography variant="h6" color="secondary" sx={{ display: 'flex', alignItems: 'center' }}>
+      <Typography variant="body1" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
         {icons && <ItemIcon style={iconSX} />}
         {itemTitle}
       </Typography>
     );
 
+    let tempContent = (
+      <MuiBreadcrumbs aria-label="breadcrumb" maxItems={maxItems || 8} separator={separatorIcon}>
+        <Typography
+          component={Link}
+          to="/"
+          color="text.secondary"
+          variant="h6"
+          sx={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+        >
+          {icons && <Home3 style={iconSX} />}
+          {icon && !icons && <Home3 variant="Bold" style={{ ...iconSX, marginRight: 0 }} />}
+          {(!icon || icons) && 'Home'}
+        </Typography>
+        {mainContent}
+        {itemContent}
+      </MuiBreadcrumbs>
+    );
+
+    if (custom && links && links?.length > 0) {
+      tempContent = (
+        <MuiBreadcrumbs aria-label="breadcrumb" maxItems={maxItems || 8} separator={separatorIcon}>
+          {links?.map((link, index) => {
+            CollapseIcon = link.icon ? link.icon : Buildings2;
+
+            return (
+              <Typography
+                key={index}
+                {...(link.to && { component: Link, to: link.to })}
+                variant="body1"
+                sx={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+                color={link.to ? 'text.primary' : 'text.secondary'}
+              >
+                {link.icon && <CollapseIcon style={iconSX} />}
+                {link.title}
+              </Typography>
+            );
+          })}
+        </MuiBreadcrumbs>
+      );
+    }
+
     // main
-    if (item.breadcrumbs !== false) {
+    if (item?.breadcrumbs !== false || custom) {
       breadcrumbContent = (
         <MainCard
           border={card}
@@ -185,31 +233,15 @@ const Breadcrumbs = ({
             {title && !titleBottom && (
               <Grid item>
                 <Typography variant="h2" sx={{ fontWeight: 700 }}>
-                  {item.title}
+                  {custom ? heading : item?.title}
                 </Typography>
               </Grid>
             )}
-            <Grid item>
-              <MuiBreadcrumbs aria-label="breadcrumb" maxItems={maxItems || 8} separator={separatorIcon}>
-                <Typography
-                  component={Link}
-                  to="/dashboard"
-                  color="textPrimary"
-                  variant="h6"
-                  sx={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
-                >
-                  {icons && <Home3 style={iconSX} />}
-                  {icon && !icons && <Home3 variant="Bold" style={{ ...iconSX, marginRight: 0 }} />}
-                  {(!icon || icons) && 'Home'}
-                </Typography>
-                {mainContent}
-                {itemContent}
-              </MuiBreadcrumbs>
-            </Grid>
+            <Grid item>{tempContent}</Grid>
             {title && titleBottom && (
               <Grid item sx={{ mt: card === false ? 0 : 1 }}>
                 <Typography variant="h2" sx={{ fontWeight: 700 }}>
-                  {item.title}
+                  {custom ? heading : item?.title}
                 </Typography>
               </Grid>
             )}
@@ -221,20 +253,21 @@ const Breadcrumbs = ({
   }
 
   return breadcrumbContent;
-};
+}
 
 Breadcrumbs.propTypes = {
   card: PropTypes.bool,
+  custom: PropTypes.bool,
   divider: PropTypes.bool,
+  heading: PropTypes.string,
   icon: PropTypes.bool,
   icons: PropTypes.bool,
+  links: PropTypes.array,
   maxItems: PropTypes.number,
-  navigation: PropTypes.object,
   rightAlign: PropTypes.bool,
-  separator: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
+  separator: PropTypes.any,
   title: PropTypes.bool,
   titleBottom: PropTypes.bool,
-  sx: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
+  sx: PropTypes.any,
+  others: PropTypes.any
 };
-
-export default Breadcrumbs;

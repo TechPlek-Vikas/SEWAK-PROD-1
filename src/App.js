@@ -10,6 +10,7 @@ import Notistack from 'components/third-party/Notistack';
 
 // auth-provider
 import { JWTProvider as AuthProvider } from 'contexts/JWTContext';
+import { DrawerProvider } from 'contexts/DrawerContext';
 // import { FirebaseProvider as AuthProvider } from 'contexts/FirebaseContext';
 // import { AWSCognitoProvider as AuthProvider } from 'contexts/AWSCognitoContext';
 // import { Auth0Provider as AuthProvider } from 'contexts/Auth0Context';
@@ -25,7 +26,9 @@ const App = () => {
             <AuthProvider>
               <>
                 <Notistack>
-                  <Routes />
+                  <DrawerProvider>
+                    <Routes />
+                  </DrawerProvider>
                   <Snackbar />
                 </Notistack>
               </>

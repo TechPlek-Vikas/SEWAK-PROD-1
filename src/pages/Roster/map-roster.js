@@ -22,6 +22,7 @@ const MapRosterFile = () => {
   const navigate = useNavigate(); // Initialize useNavigate
   const { fileData } = location.state || {};
 
+  console.log('filedata', fileData);
   const [loading, setLoading] = useState(true);
   const [excelSheetHeaders, setExcelSheetHeaders] = useState(null);
   const [openMappingDialoge, setOpenMappingDialoge] = useState(false); // Initially false
@@ -164,6 +165,7 @@ const MapRosterFile = () => {
       setLoading(false);
     }
   }, []);
+
 
   const uploadTRoasterDB = async () => {
     if (value.length > 0 && fileData) {

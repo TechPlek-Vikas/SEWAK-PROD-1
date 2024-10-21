@@ -11,6 +11,8 @@ import { MODULE, PERMISSIONS } from 'constant';
 import List from 'pages/invoice/list/List';
 import Create from 'pages/invoice/create/Create';
 import { element } from 'prop-types';
+import RosterDashboard from 'pages/apps/test/dashboard';
+import MapRosterFileTest from 'pages/apps/test/MapRosterData';
 
 const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/error/404')));
 const MaintenanceError500 = Loadable(lazy(() => import('pages/maintenance/error/500')));
@@ -23,7 +25,7 @@ const UnderConstruction = Loadable(lazy(() => import('components/maintenance/Und
 const Dashboard = Loadable(lazy(() => import('pages')));
 // Roster
 const Roster = Loadable(lazy(() => import('pages/apps/roster')));
-const RosterFileList = Loadable(lazy(() => import('pages/Roster/file-management')));
+const RosterFileList = Loadable(lazy(() => import('pages/apps/test/RosterFileManagement')));
 const MapRosterFile = Loadable(lazy(() => import('pages/Roster/map-roster')));
 const ViewRoster = Loadable(lazy(() => import('pages/Roster/view-roster')));
 const AssignTrips = Loadable(lazy(() => import('pages/Roster/assign-trips')));
@@ -122,6 +124,14 @@ const CabProvidorRoutes = {
                 {
                   path: 'assign-trips',
                   element: <AssignTrips />
+                },
+                {
+                  path: 'test',
+                  element: <RosterDashboard />
+                },
+                {
+                  path: 'test-map',
+                  element: <MapRosterFileTest />
                 }
               ]
             },

@@ -9,6 +9,9 @@ import ProtectedRoute from 'components/common/guards/ProtectedRoute';
 import { MODULE, PERMISSIONS } from 'constant';
 import List from 'pages/invoice/list/List';
 import Create from 'pages/invoice/create/Create';
+import RosterTest from 'pages/test/Roster';
+import RosterDashboard from 'pages/apps/test/dashboard';
+import MapRosterFileTest from 'pages/apps/test/MapRosterData';
 
 const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/error/404')));
 const MaintenanceError500 = Loadable(lazy(() => import('pages/maintenance/error/500')));
@@ -89,7 +92,15 @@ const CabProvidorRoutes = {
           children: [
             {
               path: '',
-              element: <Roster /> // Render Company only for base path
+              element: <Dashboard /> // Render Company only for base path
+            },
+            {
+              path: 'test',
+              element: <RosterDashboard /> // Render Company only for base path
+            },
+            {
+              path: 'test-map',
+              element: <MapRosterFileTest /> // Render Company only for base path
             },
             {
               path: 'file-management',
