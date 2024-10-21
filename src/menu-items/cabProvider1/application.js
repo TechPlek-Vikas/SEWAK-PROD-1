@@ -24,36 +24,21 @@ const application = {
       title: <FormattedMessage id="roster" />,
       type: 'collapse',
       icon: icons.samplePage,
+      url: '/apps/roster/dashboard',
       children: [
         {
           id: 'view',
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/apps/roster/view',
-          icon: icons.samplePage,
-          permissions: {
-            [MODULE.ROSTER]: PERMISSIONS.READ
-          }
+          icon: icons.samplePage
         },
         {
           id: 'upload',
           title: <FormattedMessage id="upload" />,
           type: 'item',
           url: '/apps/roster/create',
-          icon: icons.samplePage,
-          permissions: {
-            [MODULE.ROSTER]: PERMISSIONS.CREATE
-          }
-        },
-        {
-          id: 'test',
-          title: <FormattedMessage id="test" />,
-          type: 'item',
-          url: '/apps/roster/test',
-          icon: icons.samplePage,
-          permissions: {
-            [MODULE.ROSTER]: PERMISSIONS.CREATE
-          }
+          icon: icons.samplePage
         }
       ]
     },
@@ -71,20 +56,14 @@ const application = {
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/apps/invoices/view',
-          icon: icons.samplePage,
-          permissions: {
-            [MODULE.INVOICE]: PERMISSIONS.READ
-          }
+          icon: icons.samplePage
         },
         {
           id: 'upload',
           title: <FormattedMessage id="upload" />,
           type: 'item',
           url: '/apps/invoices/create',
-          icon: icons.samplePage,
-          permissions: {
-            [MODULE.INVOICE]: PERMISSIONS.CREATE
-          }
+          icon: icons.samplePage
         }
       ]
     }

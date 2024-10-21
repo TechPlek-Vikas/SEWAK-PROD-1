@@ -98,6 +98,10 @@ const CabProvidorRoutes = {
               path: 'roster',
               children: [
                 {
+                  path: 'dashboard',
+                  element: <UnderConstruction title="Roster Dashboard" />
+                },
+                {
                   path: 'view',
                   element: <Roster />
                 },
