@@ -31,20 +31,14 @@ const management = {
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/management/user/view',
-          icon: icons.samplePage,
-          permissions: {
-            [MODULE.USER]: PERMISSIONS.READ
-          }
+          icon: icons.samplePage
         },
         {
           id: 'create',
           title: <FormattedMessage id="create user" />,
           type: 'item',
           url: '/management/user/add-user',
-          icon: icons.samplePage,
-          permissions: {
-            [MODULE.USER]: PERMISSIONS.CREATE
-          }
+          icon: icons.samplePage
         }
       ]
     },
@@ -62,10 +56,7 @@ const management = {
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/management/company/view',
-          icon: icons.samplePage,
-          permissions: {
-            [MODULE.COMPANY]: PERMISSIONS.READ
-          }
+          icon: icons.samplePage
         }
       ]
     },
@@ -83,10 +74,7 @@ const management = {
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/management/driver/view',
-          icon: icons.samplePage,
-          permissions: {
-            [MODULE.DRIVER]: PERMISSIONS.READ
-          }
+          icon: icons.samplePage
         }
       ]
     },
@@ -104,20 +92,14 @@ const management = {
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/management/cab/view',
-          icon: icons.samplePage,
-          permissions: {
-            [MODULE.CAB]: PERMISSIONS.READ
-          }
+          icon: icons.samplePage
         },
         {
           id: 'create-cab',
           title: <FormattedMessage id="add cab" />,
           type: 'item',
           url: '/management/cab/add-cab',
-          icon: icons.samplePage,
-          permissions: {
-            [MODULE.CAB]: PERMISSIONS.CREATE
-          }
+          icon: icons.samplePage
         }
       ]
     }

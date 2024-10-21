@@ -1,4 +1,4 @@
-import { getCaseInsensitiveValue } from 'constant';
+import { getCaseInsensitiveValue, USERTYPE } from 'constant';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
@@ -11,7 +11,17 @@ import { useSelector } from 'react-redux';
  * @returns {React.ReactNode|null} - The children component if permission exists, or null if not.
  */
 const WrapperButton = ({ children, moduleName, permission }) => {
-  const { userPermissions } = useSelector((state) => state.auth);
+  const { userPermissions, userType } = useSelector((state) => state.auth);
+
+  // Display button for cab provider or vendor
+  if ([USERTYPE.iscabProvider, USERTYPE.isVendor].includes(userType)) {
+    return children;
+  }
+
+  // If user permissions are not available, then don't show the button
+  if (!userPermissions) {
+    return null;
+  }
 
   const hasPermission = checkPermission(userPermissions, moduleName, permission);
 

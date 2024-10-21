@@ -30,10 +30,7 @@ const master = {
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/master/role',
-          icon: icons.samplePage,
-          permissions: {
-            [MODULE.ROLE]: PERMISSIONS.READ
-          }
+          icon: icons.samplePage
         }
       ]
     },
@@ -49,10 +46,7 @@ const master = {
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/master/zone',
-          icon: icons.samplePage,
-          permissions: {
-            [MODULE.ZONE]: PERMISSIONS.READ
-          }
+          icon: icons.samplePage
         }
       ]
     },
@@ -68,10 +62,7 @@ const master = {
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/master/zone-type',
-          icon: icons.samplePage,
-          permissions: {
-            [MODULE.ZONE_TYPE]: PERMISSIONS.READ
-          }
+          icon: icons.samplePage
         }
       ]
     }

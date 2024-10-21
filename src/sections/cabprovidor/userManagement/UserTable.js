@@ -53,10 +53,14 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
         Header: 'User Name',
         accessor: 'userName',
         Cell: ({ row }) => {
-          const formattedUserName = userName?.charAt(0).toUpperCase() + userName?.slice(1);
+          console.log(row.original);
+          // const formattedUserName = userName?.charAt(0).toUpperCase() + userName?.slice(1);
           const val = KEYS?.[userType].CREATED_AT;
+          console.log(`🚀 ~ UserTable ~ val:`, val);
           const key = row.original[val];
+          console.log(`🚀 ~ UserTable ~ key:`, key);
           const userName = key?.['userName'];
+          console.log(`🚀 ~ UserTable ~ userName:`, userName);
 
           //   return <>{userName}</>;
           return (
@@ -66,7 +70,7 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
                 onClick={(e) => e.stopPropagation()} // Prevent interfering with row expansion
                 style={{ textDecoration: 'none' }}
               >
-                {formattedUserName}
+                {userName}
               </Link>
             </Typography>
           );
