@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { lazy } from 'react';
 
 // project-imports
@@ -71,6 +70,21 @@ const CabType = Loadable(lazy(() => import('pages/master/CabType')));
 const CabRate = Loadable(lazy(() => import('pages/master/CabRate')));
 const AddCabRateVendor = Loadable(lazy(() => import('pages/master/CabRate/Vendor')));
 const AddCabRateDriver = Loadable(lazy(() => import('pages/master/CabRate/Driver')));
+
+// Dashboard
+// const RosterDashboard = Loadable(lazy(() => import('pages/dashboard/rosterDashboard/RosterDashboard')));
+const CabDashBoard = Loadable(lazy(() => import('pages/dashboard/cabDashboard/CabDashBoard')));
+const DriverDashboard = Loadable(lazy(() => import('pages/dashboard/driverDashboard/DriverDashboard')));
+const VendorDashboard = Loadable(lazy(() => import('pages/dashboard/vendorDashboard/VendorDashboard')));
+const CompanyDashboard = Loadable(lazy(() => import('pages/dashboard/companyDashboard/CompanyDashboard')));
+const UserDashboard = Loadable(lazy(() => import('pages/dashboard/userDashboard/UserDashboard')));
+const InvoiceDashboard = Loadable(lazy(() => import('pages/dashboard/invoiceDashboard/InvoiceDashboard')));
+
+// Dashboard
+// const RosterDashboard = Loadable(lazy(() => import('pages/apps/test/dashboard')));
+
+// Settings
+const InvoiceSettings = Loadable(lazy(() => import('pages/setting/invoice')));
 // ==============================|| MAIN ROUTES ||============================== //
 
 const CabProvidorRoutes = {
@@ -99,6 +113,10 @@ const CabProvidorRoutes = {
             {
               path: 'roster',
               children: [
+                {
+                  path: 'dashboard',
+                  element: <RosterDashboard />
+                },
                 {
                   path: 'view',
                   element: <Roster />
@@ -144,7 +162,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <UnderConstruction title="Invoice Dashboard" />
+                  element: <InvoiceDashboard/>
                 },
                 {
                   path: 'view',
@@ -187,7 +205,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <UnderConstruction title="User Dashboard" />
+                  element: <UserDashboard/>
                 },
                 {
                   path: 'view',
@@ -207,7 +225,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <UnderConstruction title="Company Dashboard" />
+                  element: <CompanyDashboard/>
                 },
                 {
                   path: 'view',
@@ -241,7 +259,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <UnderConstruction title="Vendor Dashboard" />
+                  element: <VendorDashboard/>
                 },
                 {
                   path: 'view',
@@ -270,7 +288,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <UnderConstruction title="Driver Dashboard" />
+                  element: <DriverDashboard/>
                 },
                 {
                   path: 'view',
@@ -298,7 +316,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <UnderConstruction title="Cab Dashboard" />
+                  element: <CabDashBoard/>
                 },
                 {
                   path: 'view',
@@ -344,6 +362,43 @@ const CabProvidorRoutes = {
               path: 'cab-type',
               element: <CabType />
               //   element: <ProtectedRoute element={CabType} moduleName={MODULE.CAB_TYPE} permission={PERMISSIONS.READ} />
+            }
+          ]
+        },
+
+        {
+          path: 'settings',
+          children: [
+            {
+              path: 'account',
+              element: <UnderConstruction title="Account Settings" />
+            },
+            {
+              path: 'roster',
+              element: <UnderConstruction title="Roster Settings" />
+            },
+            {
+              path: 'invoice',
+              element: <UnderConstruction title="Invoice Settings" />
+            }
+          ]
+        },
+
+        // Settings
+        {
+          path: 'settings',
+          children: [
+            {
+              path: 'account',
+              element: <UnderConstruction title="Account Settings" />
+            },
+            {
+              path: 'roster',
+              element: <UnderConstruction title="Roster Settings" />
+            },
+            {
+              path: 'invoice',
+              element: <InvoiceSettings />
             }
           ]
         }

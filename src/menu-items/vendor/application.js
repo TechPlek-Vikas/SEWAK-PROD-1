@@ -31,9 +31,6 @@ const application = {
           type: 'item',
           url: '/apps/roster/view',
           icon: icons.samplePage,
-          permissions: {
-            [MODULE.ROSTER]: PERMISSIONS.READ
-          }
         }
       ]
     },
@@ -52,9 +49,6 @@ const application = {
           type: 'item',
           url: '/apps/invoices/view',
           icon: icons.samplePage,
-          permissions: {
-            [MODULE.INVOICE]: PERMISSIONS.READ
-          }
         },
         {
           id: 'upload',
@@ -62,9 +56,6 @@ const application = {
           type: 'item',
           url: '/apps/invoices/create',
           icon: icons.samplePage,
-          permissions: {
-            [MODULE.INVOICE]: PERMISSIONS.CREATE
-          }
         }
       ]
     }
