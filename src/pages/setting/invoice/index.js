@@ -150,7 +150,6 @@ const InvoiceSetting = ({ redirect, onClose }) => {
     onSubmit: handleFormikSubmit
   });
 
-  console.log('formik val = ', formik.values);
 
   // Memoized helper function for button label
   const buttonLabel = useMemo(() => {

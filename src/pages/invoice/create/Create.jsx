@@ -223,6 +223,10 @@ const Create = () => {
     console.log(dialogOpen);
   }, [dialogOpen]);
 
+  useEffect(() => {
+    console.log('useEffect of invoice settings');
+  }, []);
+
   return (
     <>
       {/* <CustomDialog open={dialogOpen} onSave={handleDialogSave} /> */}
