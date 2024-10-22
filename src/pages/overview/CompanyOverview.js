@@ -132,7 +132,7 @@ const CompanyOverview = () => {
             <Box sx={{ p: 3 }}>
               {activeTab === 0 && <Overview data={companyDetails} />}
               {activeTab === 1 && <Transaction data={data} />}
-              {activeTab === 2 && <Mails data={companyDetails} />}
+              {activeTab === 2 && <Mails />}
               {activeTab === 3 && <Statement />}
               {activeTab === 4 && <AttachedVendor data={companiesVendor} loading={loading} />}
               {activeTab === 5 && <AttachedDriver data={companiesDriver} loading={loading} />}
