@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Box, Button, Drawer, Grid, Select, MenuItem, Typography, Stack, TextField } from '@mui/material';
 import * as XLSX from 'xlsx';
 import { useDrawer } from 'contexts/DrawerContext';
+import MainCard from 'components/MainCard';
+import axiosServices from 'utils/axios';
 
 const MandatoryFields = [
   { name: 'zoneName', headerName: 'Zone Name', required: true },
@@ -9,7 +11,7 @@ const MandatoryFields = [
   { name: 'vehicleType', headerName: 'Vehicle Type', required: true },
   { name: 'tripType', headerName: 'Trip Type', required: true },
   { name: 'location', headerName: 'Location', required: false, defaultValue: '' },
-  { name: 'tripDate', headerName: 'Trip Date', required: true, defaultValue: '2022-12-12T00:00:00.000' },
+  { name: 'tripDate', headerName: 'Trip Date', required: true, defaultValue: 'DD/MM/YYYY' },
   { name: 'tripTime', headerName: 'Trip Time', required: true },
   { name: 'guard', headerName: 'Guard', required: false, defaultValue: 0 },
   { name: 'guardPrice', headerName: 'Guard Price', required: false, defaultValue: 0 },
@@ -21,7 +23,7 @@ const MandatoryFields = [
 ];
 
 export default function CreateRosterTemplate() {
-    const { isOpen, closeDrawer } = useDrawer();
+  const { isOpen, closeDrawer } = useDrawer();
 
   // State for form data
   const [formData, setFormData] = useState({
@@ -78,11 +80,20 @@ export default function CreateRosterTemplate() {
   };
 
   // Create final template object
-  const createTemplate = () => {
+  const createTemplate = async () => {
     const templateData = {
       ...formData, // Include form data
-      mappedHeader: mappedHeaders // Include mapped headers
+      mappedData: mappedHeaders // Include mapped headers
     };
+
+    const response = await axiosServices.post('tripData/add/roster/setting', {
+      data: {
+        CabproviderId: '66a3373468199b3e5b2ffeab',
+        RosterTemplates: [templateData ]
+      }
+    });
+
+    console.log(response.data);
 
     // Save to local storage or handle as needed
     localStorage.setItem('template', JSON.stringify(templateData));
@@ -108,104 +119,106 @@ export default function CreateRosterTemplate() {
   return (
     <>
       <Drawer anchor={'bottom'} open={isOpen} onClose={closeDrawer}>
-        <Box sx={{ width: '100%' }} role="presentation">
-          <Grid container spacing={2} sx={{ p: 2 }}>
-            <Grid item xs={12} md={3}>
-              <TextField
-                label="Template Name"
-                variant="outlined"
-                value={formData.templateName}
-                onChange={(e) => handleInputChange(e, 'templateName')}
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <TextField
-                label="Date Format"
-                variant="outlined"
-                value={formData.dateFormat}
-                onChange={(e) => handleInputChange(e, 'dateFormat')}
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <TextField
-                label="Time Format"
-                variant="outlined"
-                value={formData.timeFormat}
-                onChange={(e) => handleInputChange(e, 'timeFormat')}
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item xs={12} md={3} container spacing={2} alignItems="flex-end">
-              <Grid item xs={6}>
+        <MainCard content={false} title={'Create Excel Template'}>
+          <Box sx={{ width: '100%' }} role="presentation">
+            <Grid container spacing={2} sx={{ p: 2 }}>
+              <Grid item xs={12} md={3}>
                 <TextField
-                  label="Pickup Type"
+                  label="Template Name"
                   variant="outlined"
-                  value={formData.pickupType}
-                  onChange={(e) => handleInputChange(e, 'pickupType')}
+                  value={formData.templateName}
+                  onChange={(e) => handleInputChange(e, 'templateName')}
                   fullWidth
+                  required
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12} md={3}>
                 <TextField
-                  label="Drop Type"
+                  label="Date Format (DD-MM-YYYY)"
                   variant="outlined"
-                  value={formData.dropType}
-                  onChange={(e) => handleInputChange(e, 'dropType')}
+                  value={formData.dateFormat}
+                  onChange={(e) => handleInputChange(e, 'dateFormat')}
                   fullWidth
+                  required
                 />
               </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Time Format (HH:MM:SS)"
+                  variant="outlined"
+                  value={formData.timeFormat}
+                  onChange={(e) => handleInputChange(e, 'timeFormat')}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} md={3} container spacing={2} alignItems="flex-end">
+                <Grid item xs={6}>
+                  <TextField
+                    label="Pickup Type(Login)"
+                    variant="outlined"
+                    value={formData.pickupType}
+                    onChange={(e) => handleInputChange(e, 'pickupType')}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    label="Drop Type(Logout)"
+                    variant="outlined"
+                    value={formData.dropType}
+                    onChange={(e) => handleInputChange(e, 'dropType')}
+                    fullWidth
+                  />
+                </Grid>
+              </Grid>
+              {/* Upload Excel File */}
+              <Grid item xs={12}>
+                <Button variant="outlined" component="label" fullWidth>
+                  Upload File
+                  <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} hidden />
+                </Button>
+              </Grid>
             </Grid>
-            {/* Upload Excel File */}
-            <Grid item xs={12}>
-              <Button variant="outlined" component="label" fullWidth>
-                Upload File
-                <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} hidden />
+
+            {/* Mapping Mandatory Fields to Excel Headers */}
+            {excelHeaders.length > 0 && (
+              <Grid container spacing={2} sx={{ p: 2 }}>
+                {MandatoryFields.map((field) => (
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={field.name}>
+                    <Stack>
+                      <Typography>
+                        {field.headerName} {field.required && <span style={{ color: 'red' }}>*</span>}
+                      </Typography>
+                      <Select
+                        value={mappedHeaders[field.name] || ''} // Bind the value to the mapped header
+                        onChange={(e) => handleSelectChange(field.name, e.target.value)} // Update state on change
+                        displayEmpty
+                        fullWidth
+                      >
+                        <MenuItem value="" disabled>
+                          Select Excel Header
+                        </MenuItem>
+                        {excelHeaders.map((header, index) => (
+                          <MenuItem key={index} value={header}>
+                            {header}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </Stack>
+                  </Grid>
+                ))}
+              </Grid>
+            )}
+
+            {/* Create Template Button */}
+            <Grid item xs={12} sx={{ p: 2 }}>
+              <Button variant="contained" onClick={createTemplate} disabled={!isFormValid()}>
+                Create Template
               </Button>
             </Grid>
-          </Grid>
-
-          {/* Mapping Mandatory Fields to Excel Headers */}
-          {excelHeaders.length > 0 && (
-            <Grid container spacing={2} sx={{ p: 2 }}>
-              {MandatoryFields.map((field) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={field.name}>
-                <Stack>
-                  <Typography>
-                    {field.headerName} {field.required && <span style={{ color: 'red' }}>*</span>}
-                  </Typography>
-                  <Select
-                    value={mappedHeaders[field.name] || ''} // Bind the value to the mapped header
-                    onChange={(e) => handleSelectChange(field.name, e.target.value)} // Update state on change
-                    displayEmpty
-                    fullWidth
-                  >
-                    <MenuItem value="" disabled>
-                      Select Excel Header
-                    </MenuItem>
-                    {excelHeaders.map((header, index) => (
-                      <MenuItem key={index} value={header}>
-                        {header}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </Stack>
-              </Grid>
-            ))}
-            </Grid>
-          )}
-
-          {/* Create Template Button */}
-          <Grid item xs={12} sx={{ p: 2 }}>
-            <Button variant="contained" onClick={createTemplate} disabled={!isFormValid()}>
-              Create Template
-            </Button>
-          </Grid>
-        </Box>
+          </Box>
+        </MainCard>
       </Drawer>
     </>
   );

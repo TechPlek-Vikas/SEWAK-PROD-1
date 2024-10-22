@@ -9,10 +9,13 @@ import AuthGuard from 'utils/route-guard/AuthGuard';
 import ProtectedRoute from 'components/common/guards/ProtectedRoute';
 import { MODULE, PERMISSIONS } from 'constant';
 import List from 'pages/invoice/list/List';
+
 import Create from 'pages/invoice/create/Create';
 import Create1 from 'pages/invoice/create/Create1';
 import { element } from 'prop-types';
-import MapRosterFileTest from 'pages/apps/test/MapRosterData';
+import RosterDashboard from 'pages/apps/test/dashboard';
+import MapRosterFileTest from 'pages/apps/test/CreateRosterTemplateDrawer.js';
+import ViewRosterTest from 'pages/apps/test/List';
 
 const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/error/404')));
 const MaintenanceError500 = Loadable(lazy(() => import('pages/maintenance/error/500')));
@@ -71,7 +74,7 @@ const AddCabRateVendor = Loadable(lazy(() => import('pages/master/CabRate/Vendor
 const AddCabRateDriver = Loadable(lazy(() => import('pages/master/CabRate/Driver')));
 
 // Dashboard
-const RosterDashboard = Loadable(lazy(() => import('pages/dashboard/rosterDashboard/RosterDashboard')));
+// const RosterDashboard = Loadable(lazy(() => import('pages/dashboard/rosterDashboard/RosterDashboard')));
 const CabDashBoard = Loadable(lazy(() => import('pages/dashboard/cabDashboard/CabDashBoard')));
 const DriverDashboard = Loadable(lazy(() => import('pages/dashboard/driverDashboard/DriverDashboard')));
 const VendorDashboard = Loadable(lazy(() => import('pages/dashboard/vendorDashboard/VendorDashboard')));
@@ -133,8 +136,8 @@ const CabProvidorRoutes = {
                   element: <MapRosterFile />
                 },
                 {
-                  path: 'view-roster',
-                  element: <ViewRoster />
+                  path: 'test-view',
+                  element: <ViewRosterTest />
                 },
                 {
                   path: 'assign-trips',
@@ -147,7 +150,11 @@ const CabProvidorRoutes = {
                 {
                   path: 'test-map',
                   element: <MapRosterFileTest />
-                }
+                },
+                {
+                  path: 'test-view',
+                  element: <ViewRoster /> // Render Company only for base path
+                },
               ]
             },
 

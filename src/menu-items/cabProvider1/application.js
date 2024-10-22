@@ -8,8 +8,8 @@ import { MODULE, PERMISSIONS } from 'constant';
 // icons
 const icons = {
   samplePage: MenuBoard,
-  view:Eye,
-  upload:DocumentUpload,
+  view: Eye,
+  upload: DocumentUpload,
   invoice: Bill
 };
 
@@ -42,6 +42,14 @@ const application = {
           type: 'item',
           url: '/apps/roster/create',
           icon: icons.upload
+        },
+
+        {
+          id: 'test',
+          title: <FormattedMessage id="test" />,
+          type: 'item',
+          url: '/apps/roster/test',
+          icon: icons.samplePage
         }
       ]
     },
