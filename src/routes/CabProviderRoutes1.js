@@ -1,3 +1,4 @@
+/ eslint-disable no-unused-vars /;
 import { lazy } from 'react';
 
 // project-imports
@@ -10,6 +11,7 @@ import { MODULE, PERMISSIONS } from 'constant';
 import List from 'pages/invoice/list/List';
 
 import Create from 'pages/invoice/create/Create';
+import Create1 from 'pages/invoice/create/Create1';
 import { element } from 'prop-types';
 import RosterDashboard from 'pages/apps/test/dashboard';
 import MapRosterFileTest from 'pages/apps/test/CreateRosterTemplateDrawer.js';
@@ -162,7 +164,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <InvoiceDashboard/>
+                  element: <InvoiceDashboard />
                 },
                 {
                   path: 'view',
@@ -170,7 +172,8 @@ const CabProvidorRoutes = {
                 },
                 {
                   path: 'create',
-                  element: <Create />
+                  // element: <Create />
+                  element: <Create1 />
                 },
                 {
                   path: 'invoice',
@@ -205,7 +208,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <UserDashboard/>
+                  element: <UserDashboard />
                 },
                 {
                   path: 'view',
@@ -225,7 +228,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <CompanyDashboard/>
+                  element: <CompanyDashboard />
                 },
                 {
                   path: 'view',
@@ -259,7 +262,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <VendorDashboard/>
+                  element: <VendorDashboard />
                 },
                 {
                   path: 'view',
@@ -288,7 +291,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <DriverDashboard/>
+                  element: <DriverDashboard />
                 },
                 {
                   path: 'view',
@@ -316,7 +319,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <CabDashBoard/>
+                  element: <CabDashBoard />
                 },
                 {
                   path: 'view',
