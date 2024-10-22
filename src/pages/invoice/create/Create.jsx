@@ -223,12 +223,16 @@ const Create = () => {
     console.log(dialogOpen);
   }, [dialogOpen]);
 
+  useEffect(() => {
+    console.log('useEffect of invoice settings');
+  }, []);
+
   return (
     <>
       {/* <CustomDialog open={dialogOpen} onSave={handleDialogSave} /> */}
       {dialogOpen && (
         <>
-          <Dialog open={dialogOpen} maxWidth="sm" fullWidth keepMounted>
+          <Dialog open={dialogOpen} maxWidth="sm" fullWidth keepMounted scroll="paper">
             <InvoiceSetting redirect="/apps/invoices/create" onClose={handleDialogSave} />
           </Dialog>
         </>
