@@ -1,15 +1,17 @@
-import { Button, Chip, Dialog, MenuItem, Popover, Select, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import { Chip, Dialog, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { PopupTransition } from 'components/@extended/Transitions';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import EmptyTableWithoutButton from 'components/tables/EmptyTableWithoutButton';
 import PaginationBox from 'components/tables/Pagination';
 import PropTypes from 'prop-types';
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useExpanded, useTable } from 'react-table';
 import AddRosterFileForm from './forms/AddRosterFileForm';
 import ViewRosterForm from './forms/ViewRosterForm';
+import RosterTemplateDialog from './dialog/RosterTemplateDialog';
+import axiosServices from 'utils/axios';
 
 const RosterFileTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
   const navigate = useNavigate();
@@ -17,99 +19,85 @@ const RosterFileTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) =
   const queryParams = new URLSearchParams(location.search);
   const companyID = queryParams.get('companyID');
   const companyName = queryParams.get('companyName');
-  
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedTemplate, setSelectedTemplate] = useState('');
-  const [currentRowData, setCurrentRowData] = useState(null); // Hold row data for processing
+  const [templates, setTemplates] = useState([]);
+  const [fileData,setFileData]=useState([]);
+  const [selectedValue, setSelectedValue] = useState(null);
+  const [isReadyToNavigate, setIsReadyToNavigate] = useState(false);
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleTemplateSelect = (event) => {
-    setSelectedTemplate(event.target.value);
-  };
-
-  const handleProcessFile = () => {
-    console.log('Processing file with template:', selectedTemplate);
-    console.log('File data:', currentRowData);
-    handleClose(); // Close the popover after processing
-  };
-
-  const handleMapClick = (event, rowData) => {
-    setAnchorEl(event.currentTarget);
-    setCurrentRowData(rowData); // Store row data for later use
-  };
-
-  const handleViewClick = (rowData) => {
-    navigate('/roster/view-roster', { state: { fileData: rowData } });
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
-
+  console.log(data)
   const columns = useMemo(
-    () => [
-      {
-        Header: '#',
-        className: 'cell-center',
-        accessor: 'id',
-        Cell: ({ row }) => {
-          return <Typography>{row.index + 1}</Typography>;
-        }
-      },
-      {
-        Header: 'Added By',
-        accessor: 'addedBy',
-        Cell: ({ row }) => {
-          return <Typography>{row.original.addedBy?.userName}</Typography>;
-        }
-      },
-      {
-        Header: 'Start Date',
-        accessor: (row) => (row.startDate ? new Date(row.startDate).toLocaleDateString('en-IN') : '')
-      },
-      {
-        Header: 'End Date',
-        accessor: (row) => (row.endDate ? new Date(row.endDate).toLocaleDateString('en-IN') : '')
-      },
-      {
-        Header: 'Roster Url',
-        accessor: 'rosterUrl'
-      },
-      {
-        Header: 'Upload Date',
-        accessor: (row) => (row.createdAt ? new Date(row.createdAt).toLocaleDateString('en-IN') : '')
-      },
-      {
-        Header: 'Action',
-        accessor: 'isVisited',
-        Cell: ({ row }) => {
-          const isVisited = row.original.isVisited;
-          if (isVisited === 1) {
-            return (
-              <Chip
-                color="success"
-                label="View Roster"
-                size="small"
-                variant="light"
-                onClick={() => handleViewClick(row.original)}
-                sx={{
-                  ':hover': {
-                    backgroundColor: 'rgba(0, 255, 5, 0.3)',
-                    cursor: 'pointer'
-                  }
-                }}
-              />
-            );
-          } else if (isVisited === 0) {
-            return (
-              <>
+    () => {
+      const handleMapClick = (rowData) => {
+        handleClickOpen(rowData);
+      };
+
+      const handleViewClick = (rowData) => {
+        navigate('/roster/view-roster', { state: { fileData: rowData } });
+      };
+
+      return [
+        {
+          Header: '#',
+          className: 'cell-center',
+          accessor: 'id',
+          Cell: ({ row }) => {
+            return <Typography>{row.index + 1}</Typography>;
+          }
+        },
+        {
+          Header: 'Company Name',
+          accessor: 'companyId',
+          Cell: ({ row }) => {
+            return <Typography>{row.original.companyId?.company_name}</Typography>;
+          }
+        },
+        {
+          Header: 'Start Date',
+          accessor: (row) => (row.startDate ? new Date(row.startDate).toLocaleDateString('en-IN') : '')
+        },
+        {
+          Header: 'End Date',
+          accessor: (row) => (row.endDate ? new Date(row.endDate).toLocaleDateString('en-IN') : '')
+        },
+        {
+          Header: 'Added By',
+          accessor: 'addedBy',
+          Cell: ({ row }) => {
+            return <Typography>{row.original.addedBy?.userName}</Typography>;
+          }
+        },
+        {
+          Header: 'Upload Date',
+          accessor: (row) => (row.createdAt ? new Date(row.createdAt).toLocaleDateString('en-IN') : '')
+        },
+        {
+          Header: 'Action',
+          accessor: 'isVisited',
+          Cell: ({ row }) => {
+            const isVisited = row.original.isVisited;
+            if (isVisited === 1) {
+              return (
+                <Chip
+                  color="success"
+                  label="view Roster"
+                  size="small"
+                  variant="light"
+                  onClick={() => handleViewClick(row.original)}
+                  sx={{
+                    ':hover': {
+                      backgroundColor: 'rgba(0, 255, 5, 0.3)',
+                      cursor: 'pointer'
+                    }
+                  }}
+                />
+              );
+            } else if (isVisited === 0) {
+              return (
                 <Chip
                   color="error"
                   variant="light"
                   size="small"
-                  onClick={(e) => handleMapClick(e, row.original)} // Pass event and row data
+                  onClick={() => handleMapClick(row.original)}
                   label="Generate Roster"
                   sx={{
                     ':hover': {
@@ -118,49 +106,82 @@ const RosterFileTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) =
                     }
                   }}
                 />
-                <Popover
-                  id={id}
-                  open={open}
-                  anchorEl={anchorEl}
-                  onClose={handleClose}
-                 
-                >
-                  <div style={{ padding: 16 }}>
-                    <Select
-                      value={selectedTemplate}
-                      onChange={handleTemplateSelect}
-                      displayEmpty
-                    >
-                      <MenuItem value="" disabled>
-                        Select Template
-                      </MenuItem>
-                      <MenuItem value="template1">Template 1</MenuItem>
-                      <MenuItem value="template2">Template 2</MenuItem>
-                      {/* Add more templates as needed */}
-                    </Select>
-                    <Button
-                      onClick={handleProcessFile}
-                      variant="contained"
-                      color="primary"
-                      disabled={!selectedTemplate}
-                      style={{ marginTop: 16 }}
-                    >
-                      Process File
-                    </Button>
-                  </div>
-                </Popover>
-              </>
-            );
+              );
+            }
           }
         }
-      },
-    ],
-    [navigate, anchorEl, selectedTemplate] // Add dependencies
+      ];
+    },
+    [navigate] // Use 'navigate' as a dependency
   );
+
+  useEffect(() => {
+    const fetchRosterTemplate = async () => {
+      const response = await axiosServices.get('/tripData/list/roster/settings');
+      console.log(response.data.data);
+      setTemplates(response.data.data.RosterTemplates);
+    };
+    fetchRosterTemplate();
+  }, []);
 
   const [fileDialogue, setFileDialogue] = useState(false);
   const [viewDialogue, setViewDialogue] = useState(false);
 
+  const [open, setOpen] = useState(false);
+  // const templates = ['username@gmail.com', 'user02@gmail.com'];
+  // const templates = [
+  //   {
+  //     MappedData: {
+  //       tripDate: 'Date',
+  //       tripTime: 'Time',
+  //       tripType: 'tripType',
+  //       zoneName: 'Zone',
+  //       zoneType: 'ZoneType',
+  //       location: 'area',
+  //       vehicleType: 'vehileClass',
+  //       vehicleNumber: 'vehicleNumber',
+  //       vehicleRate: 'Rate'
+  //     },
+  //     TemplateName: 'Sewak travel',
+  //     DateFormat: 'DD/MM/YYYY',
+  //     TimeFormat: 'HH:mm:ss',
+  //     PickupType: 'Login',
+  //     DropType: 'Logout',
+  //     _id: '671605bfc37fd05876707a5a'
+  //   },
+  //   {
+  //     MappedData: {
+  //       tripDate: 'Date',
+  //       tripTime: 'Time',
+  //       tripType: 'tripType',
+  //       zoneName: 'Zone',
+  //       zoneType: 'ZoneType',
+  //       location: 'area',
+  //       vehicleType: 'vehileClass',
+  //       vehicleNumber: 'vehicleNumber',
+  //       vehicleRate: 'Rate'
+  //     },
+  //     TemplateName: 'Sewak travel',
+  //     DateFormat: 'DD/MM/YYYY',
+  //     TimeFormat: 'HH:mm:ss',
+  //     PickupType: 'Login',
+  //     DropType: 'Logout',
+  //     _id: '671605bfc37fd05876707a5a'
+  //   }
+  // ];
+
+
+
+  const handleClickOpen = (rowData) => {
+    setFileData(rowData)
+    setOpen(true);
+  };
+
+  const handleClose = (value) => {
+    setOpen(false);
+    setSelectedValue(value);
+    setIsReadyToNavigate(true); // trigger navigation once states are updated
+  };
   const handleFileUploadDialogue = () => {
     setFileDialogue(!fileDialogue);
   };
@@ -168,9 +189,17 @@ const RosterFileTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) =
     setViewDialogue(!viewDialogue);
   };
 
+
+  useEffect(() => {
+    if (fileData && selectedValue && isReadyToNavigate) {
+      // Both states are updated, now navigate to the next page
+      navigate('/apps/roster/test-view', { state: { fileData, selectedValue } });
+    }
+  }, [fileData, selectedValue, isReadyToNavigate, navigate]);
+
+
   return (
     <>
-     
       {data.length === 0 ? (
         <EmptyTableWithoutButton />
       ) : (
@@ -181,7 +210,7 @@ const RosterFileTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) =
             </ScrollX>
           </MainCard>
           <div style={{ marginTop: '10px' }}>
-          <PaginationBox pageIndex={page} gotoPage={setPage} pageSize={limit} setPageSize={setLimit} lastPageIndex={lastPageNo} />
+            <PaginationBox pageIndex={page} gotoPage={setPage} pageSize={limit} setPageSize={setLimit} lastPageIndex={lastPageNo} />
           </div>
         </>
       )}
@@ -211,6 +240,8 @@ const RosterFileTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) =
       >
         <AddRosterFileForm handleClose={handleFileUploadDialogue} companyName={companyName} companyID={companyID} />
       </Dialog>
+
+      <RosterTemplateDialog selectedValue={selectedValue} open={open} onClose={handleClose} templates={templates} />
     </>
   );
 };

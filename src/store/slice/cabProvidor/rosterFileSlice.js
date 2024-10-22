@@ -5,10 +5,10 @@ import axios from 'utils/axios';
 // Define the async thunk for fetching rosters by company id
 export const fetchCompaniesRosterFile = createAsyncThunk(
   'rosterFile/fetchCompaniesRosterFile',
-  async ({ id, page, limit }, { rejectWithValue }) => {
+  async ({ page, limit }, { rejectWithValue }) => {
     try {
       // const response = await axios.get(`/cabProvider/roster/data/by?companyId=${id}`);
-      const response = await axios.get(`/cabProvider/roster/data/by?companyId=${id}&page=${page}&limit=${limit}`);
+      const response = await axios.get(`/cabProvider/roster/data/by?page=${page}&limit=${limit}`);
 
       return response.data;
     } catch (error) {

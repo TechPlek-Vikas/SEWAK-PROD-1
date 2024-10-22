@@ -19,7 +19,7 @@ const RosterFileList = () => {
   const lastPageIndex = metaData.lastPageNo;
 
   useEffect(() => {
-    dispatch(fetchCompaniesRosterFile({ id: '66ff8baac007f29a58bdfd8a', page: page, limit: limit }));
+    dispatch(fetchCompaniesRosterFile({ page: page, limit: limit }));
   }, [dispatch, page, limit, companyID]);
 
   const handleLimitChange = useCallback((event) => {

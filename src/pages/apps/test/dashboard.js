@@ -18,7 +18,7 @@ import InvoiceWidgetCard from 'sections/apps/test/InvoiceWidgetCard';
 import { Dialog } from '@mui/material';
 import { PopupTransition } from 'components/@extended/Transitions';
 import AddRosterFileForm from './AddRosterFileForm';
-import CreateRosterTemplate from './MapRosterData';
+import CreateRosterTemplate from './CreateRosterTemplateDrawer.js';
 // ==============================|| INVOICE - DASHBOARD ||============================== //
 
 export default function RosterDashboard() {
@@ -27,7 +27,7 @@ export default function RosterDashboard() {
 
   const widgetData = [
     {
-      title: 'Total Roster',
+      title: 'Roster',
       count: '3000',
       percentage: 20.3,
       isLoss: true,
@@ -35,7 +35,7 @@ export default function RosterDashboard() {
       color: theme.palette.warning
     },
     {
-      title: 'Total Trips',
+      title: 'Trips',
       count: '2500',
       percentage: -8.73,
       isLoss: true,
