@@ -1,3 +1,4 @@
+/ eslint-disable no-unused-vars /;
 import { lazy } from 'react';
 
 // project-imports
@@ -10,6 +11,7 @@ import { MODULE, PERMISSIONS } from 'constant';
 import List from 'pages/invoice/list/List';
 
 import Create from 'pages/invoice/create/Create';
+import Create1 from 'pages/invoice/create/Create1';
 import { element } from 'prop-types';
 import RosterDashboard from 'pages/apps/test/dashboard';
 import MapRosterFileTest from 'pages/apps/test/CreateRosterTemplateDrawer.js';
@@ -25,6 +27,7 @@ const UnderConstruction = Loadable(lazy(() => import('components/maintenance/Und
 
 // Dashboard
 const Dashboard = Loadable(lazy(() => import('pages')));
+const ProfileOverview = Loadable(lazy(() => import('pages/overview/ProfileOverview')));
 // Roster
 const Roster = Loadable(lazy(() => import('pages/apps/roster')));
 const RosterFileList = Loadable(lazy(() => import('pages/apps/test/RosterFileManagement')));
@@ -53,6 +56,7 @@ const Company = Loadable(lazy(() => import('pages/management/company')));
 const AddCompany = Loadable(lazy(() => import('pages/management/company/AddCompany')));
 const AddBranch = Loadable(lazy(() => import('pages/management/company/AddBranch')));
 const CompanyOverview = Loadable(lazy(() => import('pages/overview/CompanyOverview')));
+const CompanyRateListing = Loadable(lazy(() => import('pages/management/company/addCompanyRate/CompanyRate1/CompanyRateListing')));
 
 // reports
 const Reports = Loadable(lazy(() => import('pages/Reports')));
@@ -106,6 +110,11 @@ const CabProvidorRoutes = {
           //   element: <UnderConstruction title="Dashboard" />
         },
 
+        {
+          path: 'profile-overview',
+          element: <ProfileOverview />
+        },
+
         // Application
         {
           path: 'apps',
@@ -157,7 +166,7 @@ const CabProvidorRoutes = {
                 {
                   path: 'test-view',
                   element: <ViewRoster /> // Render Company only for base path
-                },
+                }
               
               ]
             },
@@ -168,7 +177,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <InvoiceDashboard/>
+                  element: <InvoiceDashboard />
                 },
                 {
                   path: 'view',
@@ -176,7 +185,8 @@ const CabProvidorRoutes = {
                 },
                 {
                   path: 'create',
-                  element: <Create />
+                  // element: <Create />
+                  element: <Create1 />
                 },
                 {
                   path: 'invoice',
@@ -211,7 +221,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <UserDashboard/>
+                  element: <UserDashboard />
                 },
                 {
                   path: 'view',
@@ -231,7 +241,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <CompanyDashboard/>
+                  element: <CompanyDashboard />
                 },
                 {
                   path: 'view',
@@ -255,7 +265,7 @@ const CabProvidorRoutes = {
                 },
                 {
                   path: 'add-company-rate',
-                  element: <UnderConstruction title="Add Company Rate" />
+                  element: <CompanyRateListing/>
                 }
               ]
             },
@@ -265,7 +275,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <VendorDashboard/>
+                  element: <VendorDashboard />
                 },
                 {
                   path: 'view',
@@ -294,7 +304,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <DriverDashboard/>
+                  element: <DriverDashboard />
                 },
                 {
                   path: 'view',
@@ -322,7 +332,7 @@ const CabProvidorRoutes = {
               children: [
                 {
                   path: 'dashboard',
-                  element: <CabDashBoard/>
+                  element: <CabDashBoard />
                 },
                 {
                   path: 'view',
@@ -368,24 +378,6 @@ const CabProvidorRoutes = {
               path: 'cab-type',
               element: <CabType />
               //   element: <ProtectedRoute element={CabType} moduleName={MODULE.CAB_TYPE} permission={PERMISSIONS.READ} />
-            }
-          ]
-        },
-
-        {
-          path: 'settings',
-          children: [
-            {
-              path: 'account',
-              element: <UnderConstruction title="Account Settings" />
-            },
-            {
-              path: 'roster',
-              element: <UnderConstruction title="Roster Settings" />
-            },
-            {
-              path: 'invoice',
-              element: <UnderConstruction title="Invoice Settings" />
             }
           ]
         },

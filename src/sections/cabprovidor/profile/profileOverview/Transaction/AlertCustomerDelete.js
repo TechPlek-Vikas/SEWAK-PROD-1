@@ -12,11 +12,11 @@ import { Trash } from 'iconsax-react';
 
 // ==============================|| CUSTOMER - DELETE ||============================== //
 
-export default function AlertDelete({ title, open, handleClose,subtitle }) {
+export default function AlertCustomerDelete({ title, open, handleClose }) {
   return (
     <Dialog
       open={open}
-      onClose={(e) => handleClose(e, false)}
+      onClose={() => handleClose(false)}
       keepMounted
       TransitionComponent={PopupTransition}
       maxWidth="xs"
@@ -38,15 +38,15 @@ export default function AlertDelete({ title, open, handleClose,subtitle }) {
                 {' '}
                 &quot;{title}&quot;{' '}
               </Typography>
-              {subtitle}
+              user, all task assigned to that user will also be deleted.
             </Typography>
           </Stack>
 
           <Stack direction="row" spacing={2} sx={{ width: 1 }}>
-            <Button fullWidth onClick={(e) => handleClose(e, false)} color="secondary" variant="outlined">
+            <Button fullWidth onClick={() => handleClose(false)} color="secondary" variant="outlined">
               Cancel
             </Button>
-            <Button fullWidth color="error" variant="contained" onClick={(e) => handleClose(e, true)} autoFocus>
+            <Button fullWidth color="error" variant="contained" onClick={() => handleClose(true)} autoFocus>
               Delete
             </Button>
           </Stack>
@@ -56,7 +56,7 @@ export default function AlertDelete({ title, open, handleClose,subtitle }) {
   );
 }
 
-AlertDelete.propTypes = {
+AlertCustomerDelete.propTypes = {
   title: PropTypes.string,
   open: PropTypes.bool,
   handleClose: PropTypes.func

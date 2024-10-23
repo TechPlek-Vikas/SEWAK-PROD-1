@@ -55,7 +55,7 @@ const PaginationBox = ({ pageSize, setPageSize = () => {}, pageIndex, gotoPage, 
           <TextField
             size="small"
             type="number"
-            value={pageIndex}
+            value={10}
             onChange={(e) => {
               const page = e.target.value ? Number(e.target.value) : 1;
               gotoPage(page);

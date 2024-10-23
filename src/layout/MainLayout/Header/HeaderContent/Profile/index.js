@@ -79,6 +79,10 @@ const ProfilePage = () => {
     }
   };
 
+  const handleProfileOverview = () => {
+    navigate('/profile-overview');
+  };
+
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const handleToggle = () => {
@@ -205,7 +209,7 @@ const ProfilePage = () => {
                     </Tabs>
                   </Box>
                   <TabPanel value={value} index={0} dir={theme.direction}>
-                    <ProfileTab handleLogout={handleLogout} />
+                    <ProfileTab handleLogout={handleLogout} handleProfileOverview={handleProfileOverview}/>
                   </TabPanel>
                   <TabPanel value={value} index={1} dir={theme.direction}>
                     <SettingTab />

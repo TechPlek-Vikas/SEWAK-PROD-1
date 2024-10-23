@@ -17,10 +17,29 @@ import { ThemeMode } from 'config';
 
 // assets
 import { Trash } from 'iconsax-react';
+import { DISCOUNT_BY } from 'pages/setting/invoice/constant';
 
 // ==============================|| INVOICE - ITEMS ||============================== //
 
-const InvoiceItem = ({ id, name, description, qty, price, tax,code, onDeleteItem, onEditItem, index, Blur, errors, touched }) => {
+const InvoiceItem = ({
+  id,
+  itemName,
+  quantity,
+  rate,
+  itemTax,
+  code,
+  taxIndividual,
+  discountIndividual,
+  itemDiscount,
+  discountBy,
+  settings,
+  onDeleteItem,
+  onEditItem,
+  index,
+  Blur,
+  errors,
+  touched
+}) => {
   const { country } = useSelector((state) => state.invoice);
 
   const theme = useTheme();
@@ -50,30 +69,68 @@ const InvoiceItem = ({ id, name, description, qty, price, tax,code, onDeleteItem
   const touchedName = getIn(touched, Name);
   const errorName = getIn(errors, Name);
 
+  // const textFieldItem = [
+  //   {
+  //     placeholder: 'Item name',
+  //     label: 'Item Name',
+  //     name: `invoice_detail.${index}.itemName`,
+  //     type: 'text',
+  //     id: id + '_itemName',
+  //     value: itemName,
+  //     errors: errorName,
+  //     touched: touchedName
+  //   },
+  //   { placeholder: '', label: 'Qty', type: 'number', name: `invoice_detail.${index}.quantity`, id: id + '_quantity', value: quantity },
+  //   { placeholder: '', label: 'Rate', type: 'number', name: `invoice_detail.${index}.rate`, id: id + '_rate', value: rate },
+  //   { placeholder: '', label: 'code', type: 'string', name: `invoice_detail.${index}.code`, id: id + '_code', value: code },
+  //   { placeholder: '', label: 'tax', type: 'number', name: `invoice_detail.${index}.itemTax`, id: id + '_tax', value: itemTax }
+  // ];
+
+  // Basic fields
   const textFieldItem = [
     {
+      index,
       placeholder: 'Item name',
       label: 'Item Name',
-      name: `invoice_detail.${index}.name`,
+      name: `invoice_detail.${index}.itemName`,
       type: 'text',
-      id: id + '_name',
-      value: name,
+      id: `${id}_itemName`,
+      value: itemName,
       errors: errorName,
       touched: touchedName
     },
+    { index, placeholder: '', label: 'Rate', type: 'number', name: `invoice_detail.${index}.rate`, id: `${id}_rate`, value: rate },
     {
-      placeholder: 'Description',
-      label: 'Description',
-      name: `invoice_detail.${index}.description`,
-      type: 'text',
-      id: id + '_description',
-      value: description
-    },
-    { placeholder: '', label: 'Qty', type: 'number', name: `invoice_detail.${index}.qty`, id: id + '_qty', value: qty },
-    { placeholder: '', label: 'price', type: 'number', name: `invoice_detail.${index}.price`, id: id + '_price', value: price },
-    { placeholder: '', label: 'tax', type: 'number', name: `invoice_detail.${index}.itemTax`, id: id + '_tax', value: tax },
-    { placeholder: '', label: 'code', type: 'string', name: `invoice_detail.${index}.code`, id: id + '_code', value: code }
+      index,
+      placeholder: '',
+      label: 'Qty',
+      type: 'number',
+      name: `invoice_detail.${index}.quantity`,
+      id: `${id}_quantity`,
+      value: quantity
+    }
   ];
+
+  // Add conditionally based on taxIndividual
+  if (taxIndividual) {
+    textFieldItem.push(
+      { index, placeholder: '', label: 'Code', type: 'text', name: `invoice_detail.${index}.code`, id: `${id}_code`, value: code },
+      { index, placeholder: '', label: 'Tax', type: 'number', name: `invoice_detail.${index}.itemTax`, id: `${id}_tax`, value: itemTax }
+    );
+  }
+
+  // Add conditionally based on discountIndividual
+  if (discountIndividual) {
+    textFieldItem.push({
+      index,
+      placeholder: '',
+      label: 'Discount',
+      type: 'number',
+      name: `invoice_detail.${index}.itemDiscount`,
+      id: `${id}_itemDiscount`,
+      value: itemDiscount
+    });
+  }
 
   return (
     <>
@@ -83,6 +140,7 @@ const InvoiceItem = ({ id, name, description, qty, price, tax,code, onDeleteItem
             onEditItem={(event) => onEditItem(event)}
             onBlur={(event) => Blur(event)}
             cellData={{
+              index: item.index,
               placeholder: item.placeholder,
               name: item.name,
               type: item.type,
@@ -92,13 +150,42 @@ const InvoiceItem = ({ id, name, description, qty, price, tax,code, onDeleteItem
               touched: item.touched
             }}
             key={item.label}
+            settings={settings}
           />
         );
       })}
+
+      {/* Tax Amount */}
+      {taxIndividual && (
+        <TableCell>
+          <Stack direction="column" justifyContent="flex-end" alignItems="flex-end" spacing={2}>
+            <Box sx={{ pr: 2, pl: 2 }}>
+              <Typography>{country?.prefix + '' + ((rate * quantity * itemTax) / 100)?.toFixed(2) || 0}</Typography>
+            </Box>
+          </Stack>
+        </TableCell>
+      )}
+
+      {/* Discount Amount */}
+      {discountIndividual && (
+        <TableCell>
+          <Stack direction="column" justifyContent="flex-end" alignItems="flex-end" spacing={2}>
+            <Box sx={{ pr: 2, pl: 2 }}>
+              {discountBy === DISCOUNT_BY.PERCENTAGE ? (
+                <Typography>{country?.prefix + '' + ((rate * quantity * itemDiscount) / 100)?.toFixed(2)}</Typography>
+              ) : (
+                <Typography>{country?.prefix + '' + itemDiscount?.toFixed(2)}</Typography>
+              )}
+            </Box>
+          </Stack>
+        </TableCell>
+      )}
+
+      {/* Total Amount */}
       <TableCell>
         <Stack direction="column" justifyContent="flex-end" alignItems="flex-end" spacing={2}>
           <Box sx={{ pr: 2, pl: 2 }}>
-            <Typography>{country?.prefix + '' + (price * qty + (price * tax * qty) / 100).toFixed(2)}</Typography>
+            <Typography>{country?.prefix + '' + (rate * quantity)?.toFixed(2) || 0}</Typography>
           </Box>
         </Stack>
       </TableCell>
@@ -125,11 +212,15 @@ const InvoiceItem = ({ id, name, description, qty, price, tax,code, onDeleteItem
 };
 
 InvoiceItem.propTypes = {
-  id: PropTypes.number,
-  name: PropTypes.string,
-  description: PropTypes.string,
-  qty: PropTypes.number,
-  price: PropTypes.number,
+  id: PropTypes.string,
+  itemName: PropTypes.string,
+  quantity: PropTypes.number,
+  rate: PropTypes.number,
+  itemTax: PropTypes.number,
+  taxIndividual: PropTypes.bool,
+  discountIndividual: PropTypes.bool,
+  itemDiscount: PropTypes.number,
+  discountBy: PropTypes.string,
   onDeleteItem: PropTypes.func,
   onEditItem: PropTypes.func,
   index: PropTypes.number,

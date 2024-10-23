@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
-import { FormControlLabel, Radio, RadioGroup, Stack, Typography } from '@mui/material';
+import { Box, FormControlLabel, Grid, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
 import { useFormikContext } from 'formik';
 import { DISCOUNT_TYPE, TAX_TYPE, STATUS, DISCOUNT_BY } from './constant';
+import { handleNumericInput } from 'utils/material-ui-helper';
 
 const taxOptions = [
   { value: TAX_TYPE.INDIVIDUAL, label: 'At Line Item Level' },
@@ -25,7 +26,12 @@ const additionalChargesOptions = [
   { value: STATUS.YES, label: 'Yes' }
 ];
 
-const InvoiceSettingsFormContent = () => {
+const roundingOptions = [
+  { value: STATUS.NO, label: 'No' },
+  { value: STATUS.YES, label: 'Yes' }
+];
+
+const InvoiceSettingsFormContent = ({ redirect }) => {
   const formik = useFormikContext();
 
   return (
@@ -85,9 +91,57 @@ const InvoiceSettingsFormContent = () => {
           onChange={formik.handleChange}
           options={additionalChargesOptions}
         />
+
+        <CustomRadioGroup
+          label="Rounding off in Transactions?"
+          name="roundOff"
+          value={formik.values.roundOff}
+          onChange={formik.handleChange}
+          options={roundingOptions}
+        />
+
+        {!redirect && (
+          <>
+            {/* Invoice */}
+            <Stack spacing={2}>
+              <Typography variant="subtitle1">Invoice</Typography>
+
+              <Stack gap={1}>
+                <Grid container spacing={2}>
+                  {/* Invoice Prefix */}
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      label="Invoice Prefix"
+                      name="invoicePrefix"
+                      value={formik.values.invoicePrefix}
+                      onChange={formik.handleChange}
+                      fullWidth
+                    />
+                  </Grid>
+
+                  {/* Invoice Number */}
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      label="Invoice Number"
+                      name="invoiceNumber"
+                      value={formik.values.invoiceNumber}
+                      onChange={formik.handleChange}
+                      onInput={handleNumericInput}
+                      fullWidth
+                    />
+                  </Grid>
+                </Grid>
+              </Stack>
+            </Stack>
+          </>
+        )}
       </Stack>
     </>
   );
+};
+
+InvoiceSettingsFormContent.propTypes = {
+  redirect: PropTypes.string
 };
 
 export default InvoiceSettingsFormContent;
