@@ -90,8 +90,8 @@ const SETTINGS = {
   },
 
   tax: {
-    apply: TAX_TYPE.INDIVIDUAL
-    // apply: TAX_TYPE.GROUP
+    // apply: TAX_TYPE.INDIVIDUAL
+    apply: TAX_TYPE.GROUP
   },
   discount: {
     // apply: DISCOUNT_TYPE.INDIVIDUAL,
@@ -108,7 +108,7 @@ const getItem = (data) => {
   console.log(`🚀 ~ getItem ~ data:`, data);
   return {
     id: UIDV4(),
-    itemName: 'ABCD',
+    itemName: '',
     rate: 0,
     quantity: 0,
     amount: 0,
@@ -157,15 +157,23 @@ const getInitialValues = (data) => {
       IFSCCode: 'SBIN0001234',
       bankName: 'State Bank of India'
     },
+    tax: data?.tax?.by || DISCOUNT_BY.PERCENTAGE,
+    discount: data?.discount?.by,
     groupTaxAmount: 0,
     groupDiscountAmount: 0,
-    ...(data?.tax?.apply === TAX_TYPE.GROUP ? { tax: data?.tax?.by || DISCOUNT_BY.PERCENTAGE, groupTax: 0 } : {}),
+    ...(data?.tax?.apply === TAX_TYPE.GROUP ? { groupTax: 0 } : {}),
 
-    ...(data?.discount?.apply === DISCOUNT_TYPE.GROUP ? { discount: data?.discount?.by, groupDiscount: 0 } : {}),
+    ...(data?.discount?.apply === DISCOUNT_TYPE.GROUP ? { groupDiscount: 0 } : {}),
     notes: '',
     terms: '',
     subTotal: 0,
     total: 0,
+    CGST: 0,
+    SGST: 0,
+    IGST: 0,
+    MCDAmount: 0,
+    tollParkingCharges: 0,
+    penalty: 0,
     additional: {}
   };
 
@@ -238,6 +246,42 @@ const Create1 = () => {
   const handleFormikSubmit = async (values, { resetForm, setSubmitting }) => {
     try {
       console.log('Formik submit', values);
+
+      const cabProviderId = JSON.parse(localStorage.getItem('userInformation'))?.userId || '';
+      const format = 'YYYY-MM-DD';
+
+      const payload = {
+        data: {
+          companyId: values?.customerInfo?._id || '',
+          cabProviderId,
+          invoiceNumber: invoiceId,
+          invoiceDate: formatDateUsingMoment(values?.date, format),
+          dueDate: formatDateUsingMoment(values?.due_date, format),
+          servicePeriod:
+            formatDateUsingMoment(values?.start_date, 'DD-MM-YYYY') + ' to ' + formatDateUsingMoment(values?.end_date, 'DD-MM-YYYY'),
+          invoiceData: values?.invoice_detail || [],
+          taxBy: values?.tax,
+          subTotal: values?.subTotal,
+          discountBy: values.discount,
+          totalAmount: values?.total,
+          groupTaxAmount: values?.groupTaxAmount,
+          groupDiscountAmount: values?.groupDiscountAmount,
+          grandTotal: values?.total,
+          CGST: values?.CGST,
+          SGST: values?.SGST,
+          IGST: values?.IGST,
+          MCDAmount: values?.MCDAmount,
+          tollParkingCharges: values?.tollParkingCharges,
+          penalty: values?.penalty,
+          terms: values?.terms,
+          billedTo: values?.customerInfo,
+          billedBy: values?.cashierInfo,
+          bankDetails: values?.bank_details
+        }
+      };
+
+      console.log('payload', payload);
+      alert(JSON.stringify(payload, null, 2));
     } catch (error) {
       console.log(error);
     }
@@ -327,18 +371,6 @@ const Create1 = () => {
   useEffect(() => {
     setCashierValues(values?.cashierInfo || {});
   }, []);
-
-  const subtotal = values?.invoice_detail.reduce((prev, curr) => {
-    if (curr.itemName.trim().length > 0) return prev + Number(curr.rate * Math.floor(curr.quantity));
-    else return prev;
-  }, 0);
-
-  let taxRate = values.invoice_detail.reduce((accumulator, item) => {
-    return accumulator + item.itemTax;
-  }, 0);
-
-  const discountRate = (values.discount * subtotal) / 100;
-  const total = subtotal - discountRate + taxRate;
 
   const defaultHeader = useMemo(() => {
     console.log('🚀 ~ defaultHeader ~ settings:', settings);
@@ -443,7 +475,7 @@ const Create1 = () => {
     const subTotal = values.subTotal;
     const discountType = settings?.discount?.apply;
     const discountBy = settings?.discount?.by;
-    const discountAmount = values?.groupDiscount;
+    const discountAmount = values?.groupDiscount || 0;
     const groupTaxAmount = values.groupTaxAmount;
 
     let discountAmountValue = 0;
@@ -1282,7 +1314,7 @@ const Create1 = () => {
                                   <Stack spacing={2}>
                                     <Stack direction="row" justifyContent="space-between">
                                       <Typography color={theme.palette.secondary.main}>Sub Total:</Typography>
-                                      <Typography>{country?.prefix + '' + formik.values.subTotal.toFixed(2)}</Typography>
+                                      <Typography>{country?.prefix + '' + formik.values.subTotal?.toFixed(2)}</Typography>
                                     </Stack>
                                     {/* <Stack direction="row" justifyContent="space-between">
                                       <Typography color={theme.palette.secondary.main}>Discount:</Typography>
@@ -1306,7 +1338,7 @@ const Create1 = () => {
                                       <Typography variant="subtitle1">
                                         {' '}
                                         {country?.prefix + '' + settings.roundOff === STATUS.NO
-                                          ? formik.values.total.toFixed(2)
+                                          ? formik.values.total?.toFixed(2) || 0
                                           : Math.ceil(formik.values.total) || 0}
                                       </Typography>
                                     </Stack>
@@ -1511,6 +1543,110 @@ const Create1 = () => {
                       </Stack>
                     </MainCard>
                   </Grid>
+                </Grid>
+
+                {/* Set Currency */}
+                <Grid item xs={12} sm={6}>
+                  <Stack spacing={1}>
+                    <InputLabel>Set Currency*</InputLabel>
+                    <FormControl sx={{ width: { xs: '100%', sm: 250 } }}>
+                      <Autocomplete
+                        id="country-select-demo"
+                        fullWidth
+                        options={countries}
+                        defaultValue={countries[2]}
+                        value={countries.find((option) => option.code === country?.code)}
+                        sx={{
+                          '& .MuiInputBase-input': {
+                            padding: '8px'
+                          }
+                        }}
+                        onChange={(event, value) => {
+                          dispatch(
+                            selectCountry({
+                              country: value
+                            })
+                          );
+                        }}
+                        autoHighlight
+                        getOptionLabel={(option) => option.label}
+                        renderOption={(props, option) => (
+                          <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                            {option.code && (
+                              <img
+                                loading="lazy"
+                                width="20"
+                                src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                                srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                                alt=""
+                              />
+                            )}
+                            {option.label}
+                          </Box>
+                        )}
+                        renderInput={(params) => {
+                          const selected = countries.find((option) => option.code === country?.code);
+                          return (
+                            <TextField
+                              {...params}
+                              name="phoneCode"
+                              placeholder="Select"
+                              InputProps={{
+                                ...params.InputProps,
+                                startAdornment: (
+                                  <>
+                                    {selected && selected.code !== '' && (
+                                      <img
+                                        style={{ marginRight: 6 }}
+                                        loading="lazy"
+                                        width="20"
+                                        src={`https://flagcdn.com/w20/${selected.code.toLowerCase()}.png`}
+                                        srcSet={`https://flagcdn.com/w40/${selected.code.toLowerCase()}.png 2x`}
+                                        alt=""
+                                      />
+                                    )}
+                                  </>
+                                )
+                              }}
+                              inputProps={{
+                                ...params.inputProps,
+                                autoComplete: 'new-password' // disable autocomplete and autofill
+                              }}
+                            />
+                          );
+                        }}
+                      />
+                    </FormControl>
+                  </Stack>
+                </Grid>
+
+                {/* Action Buttons */}
+                <Grid item xs={12} sm={6}>
+                  <Stack direction="row" justifyContent="flex-end" alignItems="flex-end" spacing={2} sx={{ height: '100%' }}>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      disabled={values.status === '' || !isValid}
+                      sx={{ color: 'secondary.dark' }}
+                      onClick={() =>
+                        dispatch(
+                          reviewInvoicePopup({
+                            isOpen: true
+                          })
+                        )
+                      }
+                    >
+                      Preview
+                    </Button>
+                    {/* save data to database */}
+                    {/* <Button variant="outlined" color="secondary" sx={{ color: 'secondary.dark' }}>
+                      Create
+                    </Button> */}
+                    {/* send mail */}
+                    <Button color="primary" variant="contained" type="submit">
+                      Create & Send
+                    </Button>
+                  </Stack>
                 </Grid>
               </Grid>
             </Form>

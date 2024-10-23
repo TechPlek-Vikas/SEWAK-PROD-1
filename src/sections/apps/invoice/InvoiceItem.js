@@ -108,7 +108,7 @@ const InvoiceItem = ({
       name: `invoice_detail.${index}.quantity`,
       id: `${id}_quantity`,
       value: quantity
-    },
+    }
   ];
 
   // Add conditionally based on taxIndividual
@@ -160,7 +160,7 @@ const InvoiceItem = ({
         <TableCell>
           <Stack direction="column" justifyContent="flex-end" alignItems="flex-end" spacing={2}>
             <Box sx={{ pr: 2, pl: 2 }}>
-              <Typography>{country?.prefix + '' + ((rate * quantity * itemTax) / 100).toFixed(2)}</Typography>
+              <Typography>{country?.prefix + '' + ((rate * quantity * itemTax) / 100)?.toFixed(2) || 0}</Typography>
             </Box>
           </Stack>
         </TableCell>
@@ -172,9 +172,9 @@ const InvoiceItem = ({
           <Stack direction="column" justifyContent="flex-end" alignItems="flex-end" spacing={2}>
             <Box sx={{ pr: 2, pl: 2 }}>
               {discountBy === DISCOUNT_BY.PERCENTAGE ? (
-                <Typography>{country?.prefix + '' + ((rate * quantity * itemDiscount) / 100).toFixed(2)}</Typography>
+                <Typography>{country?.prefix + '' + ((rate * quantity * itemDiscount) / 100)?.toFixed(2)}</Typography>
               ) : (
-                <Typography>{country?.prefix + '' + itemDiscount}</Typography>
+                <Typography>{country?.prefix + '' + itemDiscount?.toFixed(2)}</Typography>
               )}
             </Box>
           </Stack>
@@ -185,7 +185,7 @@ const InvoiceItem = ({
       <TableCell>
         <Stack direction="column" justifyContent="flex-end" alignItems="flex-end" spacing={2}>
           <Box sx={{ pr: 2, pl: 2 }}>
-            <Typography>{country?.prefix + '' + (rate * quantity).toFixed(2)}</Typography>
+            <Typography>{country?.prefix + '' + (rate * quantity)?.toFixed(2) || 0}</Typography>
           </Box>
         </Stack>
       </TableCell>
