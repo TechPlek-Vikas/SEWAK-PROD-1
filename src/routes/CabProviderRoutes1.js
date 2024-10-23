@@ -154,7 +154,7 @@ const CabProvidorRoutes = {
                 {
                   path: 'test-view',
                   element: <ViewRoster /> // Render Company only for base path
-                },
+                }
               ]
             },
 
@@ -365,24 +365,6 @@ const CabProvidorRoutes = {
               path: 'cab-type',
               element: <CabType />
               //   element: <ProtectedRoute element={CabType} moduleName={MODULE.CAB_TYPE} permission={PERMISSIONS.READ} />
-            }
-          ]
-        },
-
-        {
-          path: 'settings',
-          children: [
-            {
-              path: 'account',
-              element: <UnderConstruction title="Account Settings" />
-            },
-            {
-              path: 'roster',
-              element: <UnderConstruction title="Roster Settings" />
-            },
-            {
-              path: 'invoice',
-              element: <UnderConstruction title="Invoice Settings" />
             }
           ]
         },

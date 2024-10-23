@@ -62,6 +62,7 @@ import InvoiceSetting from 'pages/setting/invoice';
 import GenericSelect from 'components/select/GenericSelect';
 import { formatDateUsingMoment } from 'utils/helper';
 import axios from 'utils/axios';
+import { getApiResponse } from 'utils/axiosHelper';
 
 export const TAX_TYPE = {
   INDIVIDUAL: 'Individual',
@@ -231,11 +232,34 @@ const Create1 = () => {
 
     async function fetchSettings() {
       // TODO : Get settings from API
-      console.log('Api call for get settings (At Invoice Creation)');
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      try {
+        console.log('Api call for get settings (At Invoice Creation)');
+        // await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      console.log('Api call done get settings ........');
-      setSettings(SETTINGS);
+        const cabProviderId = JSON.parse(localStorage.getItem('userInformation'))?.userId || '';
+        const url = `/invoice/settings/list`;
+        const config = {
+          params: {
+            cabProviderId
+          }
+        };
+
+        const response = await getApiResponse(url, config);
+        console.log(`🚀 ~ response:`, response);
+
+        if (response.success) {
+          const { invoiceSetting } = response.data;
+          console.log(invoiceSetting);
+          setSettings(invoiceSetting);
+          setLoading(false);
+          console.log('Api call done .......');
+        }
+
+        console.log('Api call done get settings ........');
+        // setSettings(SETTINGS);
+      } catch (error) {
+        console.log('Error fetching settings: (Invoice Creation)', error);
+      }
     }
 
     if (!dialogOpen) {
@@ -1314,33 +1338,48 @@ const Create1 = () => {
                                   <Stack spacing={2}>
                                     <Stack direction="row" justifyContent="space-between">
                                       <Typography color={theme.palette.secondary.main}>Sub Total:</Typography>
-                                      <Typography>{country?.prefix + '' + formik.values.subTotal?.toFixed(2)}</Typography>
+                                      {/* <Typography>{country?.prefix + '' + formik.values.subTotal?.toFixed(2)}</Typography> */}
+
+                                      <GenericPriceDisplay
+                                        total={formik.values?.subTotal}
+                                        roundOff={settings.roundOff}
+                                        prefix={country?.prefix}
+                                      />
                                     </Stack>
-                                    {/* <Stack direction="row" justifyContent="space-between">
-                                      <Typography color={theme.palette.secondary.main}>Discount:</Typography>
-                                      <Typography variant="h6" color={theme.palette.success.main}>
-                                        {country?.prefix + '' + discountRate.toFixed(2)}
-                                      </Typography>
-                                    </Stack> */}
 
                                     <Stack direction="row" justifyContent="space-between">
                                       <Typography color={theme.palette.secondary.main}>Tax:</Typography>
-                                      <Typography>{country?.prefix + '' + formik.values?.groupTaxAmount?.toFixed(2) || 0}</Typography>
+                                      {/* <Typography>{country?.prefix + '' + formik.values?.groupTaxAmount?.toFixed(2) || 0}</Typography> */}
+                                      <GenericPriceDisplay
+                                        total={formik.values?.groupTaxAmount}
+                                        roundOff={settings.roundOff}
+                                        prefix={country?.prefix}
+                                      />
                                     </Stack>
 
                                     <Stack direction="row" justifyContent="space-between">
                                       <Typography color={theme.palette.secondary.main}>Discount:</Typography>
-                                      <Typography>{country?.prefix + '' + formik.values?.groupDiscountAmount?.toFixed(2) || 0}</Typography>
+                                      {/* <Typography>{country?.prefix + '' + formik.values?.groupDiscountAmount?.toFixed(2) || 0}</Typography> */}
+                                      <GenericPriceDisplay
+                                        total={formik.values?.groupDiscountAmount}
+                                        roundOff={settings.roundOff}
+                                        prefix={country?.prefix}
+                                      />
                                     </Stack>
 
                                     <Stack direction="row" justifyContent="space-between">
                                       <Typography variant="subtitle1">Grand Total:</Typography>
-                                      <Typography variant="subtitle1">
-                                        {' '}
-                                        {country?.prefix + '' + settings.roundOff === STATUS.NO
-                                          ? formik.values.total?.toFixed(2) || 0
-                                          : Math.ceil(formik.values.total) || 0}
-                                      </Typography>
+                                      {/* <Typography variant="subtitle1">
+                                        {settings.roundOff === STATUS.NO
+                                          ? country?.prefix + '' + formik.values?.total?.toFixed(2) || 0
+                                          : country?.prefix + '' + Math.ceil(formik.values.total) || 0}
+                                      </Typography> */}
+                                      <GenericPriceDisplay
+                                        total={formik.values?.total}
+                                        roundOff={settings.roundOff}
+                                        prefix={country?.prefix}
+                                        variant="subtitle1" // Optional
+                                      />
                                     </Stack>
                                   </Stack>
                                 </Grid>
@@ -1658,6 +1697,14 @@ const Create1 = () => {
 };
 
 export default Create1;
+
+const GenericPriceDisplay = ({ total, roundOff, prefix, variant }) => {
+  return (
+    <Typography {...(variant && { variant })}>
+      {roundOff === STATUS.NO ? prefix + total?.toFixed(2) || 0 : prefix + Math.ceil(total) || 0}
+    </Typography>
+  );
+};
 
 function validateFields(fields) {
   const missingFields = [];

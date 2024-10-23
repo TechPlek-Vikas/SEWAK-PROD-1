@@ -6,9 +6,11 @@ import InvoiceSettingsFormContent from './InvoiceSettingsFormContent';
 import { Box, Button, CircularProgress, DialogActions, DialogContent, DialogTitle, Grid, Stack } from '@mui/material';
 import CustomCircularLoader from 'components/CustomCircularLoader';
 import { useNavigate } from 'react-router';
-import { dispatch } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { width } from '@mui/system';
+import { getApiResponse } from 'utils/axiosHelper';
+import axios from 'utils/axios';
+import { useDispatch } from 'react-redux';
 
 export const TAX_TYPE = {
   INDIVIDUAL: 'Individual',
@@ -68,18 +70,53 @@ const InvoiceSetting = ({ redirect, onClose }) => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     console.log('Api call for get settings');
     (async () => {
-      setLoading(true);
-      // TODO : Get settings from API
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      try {
+        setLoading(true);
+        // TODO : Get settings from API
 
-      setSettings(SETTINGS);
+        const cabProviderId = JSON.parse(localStorage.getItem('userInformation'))?.userId || '';
+        const url = `/invoice/settings/list`;
+        const config = {
+          params: {
+            cabProviderId
+          }
+        };
 
-      setLoading(false);
-      console.log('Api call done .......');
+        const response = await getApiResponse(url, config);
+        console.log(`🚀 ~ response:`, response);
+
+        if (response.success) {
+          const { invoiceSetting } = response.data;
+          console.log(invoiceSetting);
+          setSettings(invoiceSetting);
+          setLoading(false);
+          console.log('Api call done .......');
+        }
+        // await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        // setSettings(SETTINGS);
+
+        // setLoading(false);
+        // console.log('Api call done .......');
+      } catch (error) {
+        console.log('Error fetching settings: (Invoice Setting)', error);
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Error fetching settings: (Invoice Setting)',
+            variant: 'error',
+            alert: {
+              color: 'error'
+            },
+            close: true
+          })
+        );
+      }
     })();
   }, []);
 
@@ -92,24 +129,32 @@ const InvoiceSetting = ({ redirect, onClose }) => {
       await new Promise((resolve) => setTimeout(resolve, 3000));
       console.log('Formik submit done .......');
 
-      const payload = {
-        data: {
-          ...values
-        }
-      };
-      console.log(`🚀 ~ handleFormikSubmit ~ payload:`, payload);
+      let response = 0;
 
       if (redirect) {
         // TODO : Update settings API
         console.log('Update API call');
+        const payload = {
+          data: {
+            invoiceSettingsId: settings?._id,
+            discountApply: values.discountType,
+            discountBy: values.discountBy,
+            additionalCharges: values.additionalCharges,
+            roundOff: values.roundOff,
+            taxApply: values.taxType
+          }
+        };
+        console.log(`🚀 ~ handleFormikSubmit ~ payload:`, payload);
+
+        response = await axios.put('/invoice/settings/update', payload);
       } else {
         // TODO : Create settings API
         console.log('Create API call');
       }
 
-      const response = {
-        status: 200
-      };
+      // const response = {
+      //   status: 200
+      // };
 
       if (response.status === 200) {
         resetForm();
@@ -139,6 +184,17 @@ const InvoiceSetting = ({ redirect, onClose }) => {
       resetForm();
     } catch (error) {
       console.log('Error at handleFormikSubmit: ', error);
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: `Something went wrong while ${redirect ? 'updating' : 'saving'} settings`,
+          variant: 'alert',
+          alert: {
+            color: 'error'
+          },
+          close: true
+        })
+      );
     } finally {
       setSubmitting(false);
     }
@@ -149,7 +205,6 @@ const InvoiceSetting = ({ redirect, onClose }) => {
     enableReinitialize: true,
     onSubmit: handleFormikSubmit
   });
-
 
   // Memoized helper function for button label
   const buttonLabel = useMemo(() => {
