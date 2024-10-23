@@ -55,7 +55,7 @@ const Company = Loadable(lazy(() => import('pages/management/company')));
 const AddCompany = Loadable(lazy(() => import('pages/management/company/AddCompany')));
 const AddBranch = Loadable(lazy(() => import('pages/management/company/AddBranch')));
 const CompanyOverview = Loadable(lazy(() => import('pages/overview/CompanyOverview')));
-const CompanyRate = Loadable(lazy(() => import('sections/cabprovidor/companyManagement/companyOverview/CompanyRate1')));
+const CompanyRateListing = Loadable(lazy(() => import('pages/management/company/addCompanyRate/CompanyRate1/CompanyRateListing')));
 
 // reports
 const Reports = Loadable(lazy(() => import('pages/Reports')));
@@ -259,7 +259,7 @@ const CabProvidorRoutes = {
                 },
                 {
                   path: 'add-company-rate',
-                  element: <UnderConstruction title="Add Company Rate"/>
+                  element: <CompanyRateListing/>
                 }
               ]
             },

@@ -51,7 +51,7 @@ const SearchComponent = ({ setSelectedCompany }) => {
   }, [query]);
 
   return (
-    <Grid item xs={6}>
+    <Grid item xs={12}>
       <Autocomplete
         id="asynchronous-demo"
         open={open}

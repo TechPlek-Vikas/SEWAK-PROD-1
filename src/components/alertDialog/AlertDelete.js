@@ -12,7 +12,7 @@ import { Trash } from 'iconsax-react';
 
 // ==============================|| CUSTOMER - DELETE ||============================== //
 
-export default function AlertDelete({ title, open, handleClose }) {
+export default function AlertDelete({ title, open, handleClose,subtitle }) {
   return (
     <Dialog
       open={open}
@@ -38,7 +38,7 @@ export default function AlertDelete({ title, open, handleClose }) {
                 {' '}
                 &quot;{title}&quot;{' '}
               </Typography>
-              user, all task assigned to that user will also be deleted.
+              {subtitle}
             </Typography>
           </Stack>
 
