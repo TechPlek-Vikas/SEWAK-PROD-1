@@ -84,19 +84,12 @@ const AddRosterFileForm = ({ handleClose }) => {
 
   // Validation schema
   const validationSchema = Yup.object({
-    startDate: Yup.date().required('Start date is required'),
-    endDate: Yup.date()
-      .required('End date is required')
-      .min(Yup.ref('startDate'), 'End date cannot be before start date')
-      .max(endDateLimit, 'End date cannot be after 30 days from today'),
     rosterFiles: Yup.array().required('Roster files are required').min(1, 'file is required')
   });
 
   const formik = useFormik({
     initialValues: {
       parentCompanyID: '',
-      startDate: today, // Set start date to today
-      endDate: endDateLimit, // Set end date to 30 days from today
       rosterFiles: [] // File state
     },
     validationSchema,
@@ -124,10 +117,10 @@ const AddRosterFileForm = ({ handleClose }) => {
         variant="contained"
         onClick={() => {
           // Use data here if needed
-          navigate('/apps/roster/test-map', { state: { fileData: data } });
+          navigate('/apps/roster/file-management', { state: { fileData: data } });
         }}
       >
-        Map Excel Sheet
+       View Excel
       </Button>
       <Button size="small" color="secondary" variant="contained" onClick={() => closeSnackbar(snackbarId)}>
         Dismiss
@@ -150,85 +143,7 @@ const AddRosterFileForm = ({ handleClose }) => {
                 <SearchComponent setSelectedCompany={setSelectedCompany} />
               </Stack>
             </Grid>
-            <Grid container spacing={0}>
-              <Grid item xs={6}>
-                <Stack spacing={1}>
-                  <InputLabel htmlFor="startDate">Start Date</InputLabel>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                      id="startDate"
-                      label="Select Start Date"
-                      value={formik.values.startDate || null}
-                      onChange={(newValue) => formik.setFieldValue('startDate', newValue)}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          error={formik.touched.startDate && Boolean(formik.errors.startDate)}
-                          helperText={formik.touched.startDate && formik.errors.startDate}
-                        />
-                      )}
-                    />
-                    {!!formik.errors.startDate && formik.touched.startDate && (
-                      <Typography
-                        sx={{
-                          color: 'red',
-                          fontSize: '12px',
-                          paddingBlock: '0',
-                          marginTop: '3px !important',
-                          marginBottom: '0 !important'
-                        }}
-                      >
-                        {formik.errors.startDate || ''}
-                      </Typography>
-                    )}
-                  </LocalizationProvider>
-                </Stack>
-              </Grid>
-
-              <Grid item xs={6}>
-                <Stack spacing={1}>
-                  <InputLabel htmlFor="endDate">End Date</InputLabel>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                      id="endDate"
-                      label="Select End Date"
-                      value={formik.values.endDate || null}
-                      onChange={(newValue) => {
-                        if (newValue >= formik.values.startDate) {
-                          formik.setFieldValue('endDate', newValue);
-                        } else {
-                          // Optional: You could show a notification or alert here
-                          console.error('End date cannot be before start date');
-                        }
-                      }}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          error={formik.touched.endDate && Boolean(formik.errors.endDate)}
-                          helperText={formik.touched.endDate && formik.errors.endDate}
-                        />
-                      )}
-                      shouldDisableDate={(date) => date > endDateLimit} // Disable dates beyond 30 days
-                    />
-                    {!!formik.errors.endDate && formik.touched.endDate && (
-                      <Typography
-                        sx={{
-                          color: 'red',
-                          fontSize: '12px',
-                          paddingBlock: '0',
-                          marginTop: '3px !important',
-                          marginBottom: '0 !important'
-                        }}
-                      >
-                        {formik.errors.endDate || ''}
-                      </Typography>
-                    )}
-                  </LocalizationProvider>
-                </Stack>
-              </Grid>
-
-              {/* <TemplateSelector /> */}
-            </Grid>
+         
 
             <Grid item xs={12} sx={{ height: '200px' }}>
               <Stack spacing={1} >

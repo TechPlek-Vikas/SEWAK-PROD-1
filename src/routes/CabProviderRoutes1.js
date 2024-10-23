@@ -14,6 +14,7 @@ import { element } from 'prop-types';
 import RosterDashboard from 'pages/apps/test/dashboard';
 import MapRosterFileTest from 'pages/apps/test/CreateRosterTemplateDrawer.js';
 import ViewRosterTest from 'pages/apps/test/List';
+import ViewRosterTest1 from 'pages/apps/test/ViewRoster';
 
 const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/error/404')));
 const MaintenanceError500 = Loadable(lazy(() => import('pages/maintenance/error/500')));
@@ -138,6 +139,10 @@ const CabProvidorRoutes = {
                   element: <ViewRosterTest />
                 },
                 {
+                  path: 'test-view-1',
+                  element: <ViewRosterTest1 /> // Render Company only for base path
+                },
+                {
                   path: 'assign-trips',
                   element: <AssignTrips />
                 },
@@ -153,6 +158,7 @@ const CabProvidorRoutes = {
                   path: 'test-view',
                   element: <ViewRoster /> // Render Company only for base path
                 },
+              
               ]
             },
 

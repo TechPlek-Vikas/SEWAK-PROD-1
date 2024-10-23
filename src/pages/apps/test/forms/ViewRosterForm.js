@@ -29,7 +29,7 @@ const validationSchema = Yup.object().shape({
   //     })
 });
 
-const ViewRosterForm = ({ handleClose, companyName, companyID }) => {
+const ViewRosterForm = ({ handleClose, companyID }) => {
   const navigate = useNavigate();
   const { loading } = useSelector((state) => state.rosterFile);
 

@@ -7,13 +7,12 @@ import axiosServices from 'utils/axios';
 
 const MandatoryFields = [
   { name: 'zoneName', headerName: 'Zone Name', required: true },
-  { name: 'zoneType', headerName: 'Zone Type', required: true },
+  { name: 'zoneType', headerName: 'Zone Type', required: false },
   { name: 'vehicleType', headerName: 'Vehicle Type', required: true },
   { name: 'tripType', headerName: 'Trip Type', required: true },
   { name: 'location', headerName: 'Location', required: false, defaultValue: '' },
   { name: 'tripDate', headerName: 'Trip Date', required: true, defaultValue: 'DD/MM/YYYY' },
   { name: 'tripTime', headerName: 'Trip Time', required: true },
-  { name: 'guard', headerName: 'Guard', required: false, defaultValue: 0 },
   { name: 'guardPrice', headerName: 'Guard Price', required: false, defaultValue: 0 },
   { name: 'vehicleNumber', headerName: 'Vehicle Number', required: false, defaultValue: '' },
   { name: 'vehicleRate', headerName: 'Vehicle Rate', required: false, defaultValue: 0 },
@@ -86,10 +85,12 @@ export default function CreateRosterTemplate() {
       mappedData: mappedHeaders // Include mapped headers
     };
 
+    console.log('templateData', templateData);
+
     const response = await axiosServices.post('tripData/add/roster/setting', {
       data: {
         CabproviderId: '66a3373468199b3e5b2ffeab',
-        RosterTemplates: [templateData ]
+        RosterTemplates: [templateData]
       }
     });
 

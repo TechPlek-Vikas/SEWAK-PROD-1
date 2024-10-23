@@ -1,13 +1,15 @@
 import PropTypes from 'prop-types';
-import { useMemo, useEffect, Fragment, useState, useRef } from 'react';
+import { useMemo, useEffect, Fragment, useState, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
 // material-ui
 import {
   Box,
   Chip,
+  LinearProgress,
   Tabs,
   Tab,
+  Grid,
   Typography,
   Stack,
   Table,
@@ -28,8 +30,12 @@ import { useExpanded, useFilters, useGlobalFilter, usePagination, useRowSelect, 
 import Loader from 'components/Loader';
 import ScrollX from 'components/ScrollX';
 import MainCard from 'components/MainCard';
+import Avatar from 'components/@extended/Avatar';
 import IconButton from 'components/@extended/IconButton';
-import { HeaderSort, TablePagination } from 'components/third-party/ReactTable';
+import InvoiceCard from 'components/cards/invoice/InvoiceCard';
+import InvoiceChart from 'components/cards/invoice/InvoiceChart';
+import { CSVExport, HeaderSort, IndeterminateCheckbox, TablePagination, TableRowSelection } from 'components/third-party/ReactTable';
+import AlertColumnDelete from 'sections/apps/kanban/Board/AlertColumnDelete';
 
 import { dispatch, useSelector } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
@@ -37,18 +43,17 @@ import { alertPopupToggle, getInvoiceDelete, getInvoiceList } from 'store/reduce
 import { renderFilterTypes, GlobalFilter, DateColumnFilter } from 'utils/react-table';
 
 // assets
-import { Edit, Eye, InfoCircle, Trash } from 'iconsax-react';
-import Breadcrumbs from 'components/@extended/Breadcrumbs';
+import { Edit, Eye, InfoCircle, ProfileTick, Trash } from 'iconsax-react';
 import { APP_DEFAULT_PATH } from 'config';
-import * as XLSX from 'xlsx';
-import moment from 'moment';
+import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import axiosServices from 'utils/axios';
-import { getMergeResult } from './MappingAlgorithem';
+import AssignTripsDialog from './AssignTripsDialog';
+
 const avatarImage = require.context('assets/images/users', true);
 
 // ==============================|| REACT TABLE ||============================== //
 
-function ReactTable({ columns, data, handleSaveRoster }) {
+function ReactTable({ columns, data, selectedData, handleSetSelectedData, handleAssignDialogOpen}) {
   const theme = useTheme();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
   const defaultColumn = useMemo(() => ({ Filter: DateColumnFilter }), []);
@@ -62,7 +67,6 @@ function ReactTable({ columns, data, handleSaveRoster }) {
     }),
     []
   );
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -75,7 +79,8 @@ function ReactTable({ columns, data, handleSaveRoster }) {
     state: { globalFilter, selectedRowIds, pageIndex, pageSize },
     preGlobalFilteredRows,
     setGlobalFilter,
-    setFilter
+    setFilter,
+    selectedFlatRows
   } = useTable(
     {
       columns,
@@ -109,6 +114,11 @@ function ReactTable({ columns, data, handleSaveRoster }) {
     setFilter('status', activeTab === 'All' ? '' : activeTab === 'Unverified' ? 0 : activeTab === 'Verified' ? 1 : 2);
   }, [activeTab]);
 
+  useEffect(() => {
+    const selectedRowsData = selectedFlatRows.map((row) => row.original);
+    handleSetSelectedData(selectedRowsData); // Pass selected rows data to the parent or manage it here
+  }, [selectedFlatRows, handleSetSelectedData]);
+
   return (
     <>
       <Box sx={{ p: 3, pb: 0, width: '100%' }}>
@@ -134,19 +144,25 @@ function ReactTable({ columns, data, handleSaveRoster }) {
           </Tabs>
 
           {/* Button Section */}
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSaveRoster} // Replace this with your actual onClick function
-          >
-            Save Roster
-          </Button>
+          {selectedData.length > 0 && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAssignDialogOpen} // Replace this with your actual onClick function
+            >
+              Assign Trips
+            </Button>
+          )}
         </Stack>
       </Box>
-      <Stack direction={matchDownSM ? 'column' : 'row'} spacing={1} justifyContent="space-between" alignItems="center" sx={{ p: 1 }}>
+      <TableRowSelection selected={Object.keys(selectedRowIds).length} />
+      <Stack direction={matchDownSM ? 'column' : 'row'} spacing={1} justifyContent="space-between" alignItems="center" sx={{ p: 3, pb: 3 }}>
+        <Stack direction={matchDownSM ? 'column' : 'row'} spacing={2}>
+          <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+        </Stack>
         <Stack direction={matchDownSM ? 'column' : 'row'} alignItems="center" spacing={matchDownSM ? 1 : 2}>
           <>
-            {headerGroups.map((group) => (
+            {/* {headerGroups.map((group) => (
               <Stack key={group} direction={matchDownSM ? 'column' : 'row'} spacing={2} {...group.getHeaderGroupProps()}>
                 {group.headers.map(
                   (column) =>
@@ -157,8 +173,9 @@ function ReactTable({ columns, data, handleSaveRoster }) {
                     )
                 )}
               </Stack>
-            ))}
+            ))} */}
           </>
+          <CSVExport data={data} filename={'invoice-list.csv'} />
         </Stack>
       </Stack>
       <Box ref={componentRef}>
@@ -212,213 +229,119 @@ ReactTable.propTypes = {
   data: PropTypes.array
 };
 
-// ==============================|| Roster - LIST ||============================== //
+// ==============================|| INVOICE - LIST ||============================== //
+export function formatIndianDate(isoDateString) {
+  const date = new Date(isoDateString);
 
-const ViewRosterTest = () => {
-  const [loading, setLoading] = useState(true);
+  // Extract day, month, and year
+  const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits for the day
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure two digits for the month (getMonth() is 0-based)
+  const year = date.getFullYear();
+
+  // Format as dd/mm/yyyy
+  return `${day}/${month}/${year}`;
+}
+
+const ViewRosterTest1 = () => {
+  const [loading, setLoading] = useState(false);
+  const { alertPopup } = useSelector((state) => state.invoice);
   const location = useLocation();
-  const { fileData, selectedValue } = location.state || {};
-  const navigate = useNavigate();
-  const [excelData, setExcelData] = useState([]);
-  const [earliestDate, setEarliestDate] = useState(null);
-  const [latestDate, setLatestDate] = useState(null);
-  const [zoneInfo, setZoneInfo] = useState(null);
-  const [vehicleTypeInfo, setVehicleTypeInfo] = useState(null);
-  const [mappedRowData, setMappedRowData] = useState([]);
-  const requiredHeaders = Object.values(selectedValue?.mappedData);
+  const [rosterData, setRosterData] = useState([]);
+  const { rosterData: stateData, fileData } = location.state || {};
+  const [selectedData, setSelectedData] = useState([]);
+
+  const handleAssignTrips = () => {
+    console.log(selectedData);
+  };
+  const handleSetSelectedData = useCallback((selectedRows) => {
+    setSelectedData(selectedRows);
+  }, []);
+
+  console.log('selectedData', selectedData);
 
   useEffect(() => {
-    if (fileData?.rosterUrl) {
-      fetchExcelData(fileData.rosterUrl);
+    if (stateData) {
+      setRosterData(stateData);
     }
-  }, [fileData?.rosterUrl]);
-
-  const fetchExcelData = async (url) => {
-    try {
-      const response = await fetch(url); // Fetch the Excel file
-      const data = await response.arrayBuffer(); // Convert to binary data
-      const workbook = XLSX.read(data, { type: 'array' }); // Read the workbook
-      const sheetName = workbook.SheetNames[0]; // Get the first sheet name
-      const sheet = workbook.Sheets[sheetName]; // Get the sheet by name
-      const headers = XLSX.utils.sheet_to_json(sheet, { header: 1 })[0]; // Extract headers
-
-      checkHeaders(headers, sheet); // Check if required headers are present
-    } catch (error) {
-      console.error('Error fetching or parsing Excel file:', error);
-    }
-  };
-
-  const validateExcelFile = async (fileData) => {
-    await axiosServices.put('/tripData/update/roster/status', {
-      data: {
-        _id: fileData._id,
-        rosterStatus: 2
-      }
-    });
-  };
-
-  const checkHeaders = (headers, sheet) => {
-    const missingHeaders = requiredHeaders.filter((header) => !headers.includes(header)); // Find missing headers
-
-    if (missingHeaders.length > 0) {
-      alert(`Missing headers: ${missingHeaders.join(', ')}`);
-      validateExcelFile(fileData);
-      navigate(-1);
-    } else {
-      mapDataToMappedKeysInBatches(sheet, headers);
-    }
-  };
-
-  const mapDataToMappedKeysInBatches = (sheet, headers, batchSize = 1000) => {
-    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-    const dataRows = rows.slice(1); // Skip header
-    const totalRows = dataRows.length;
-    let batchIndex = 0;
-    let shouldContinue = true; // Flag to determine whether to continue processing
-    let allDates = []; // Store all valid dates
-
-    const processBatch = () => {
-      if (!shouldContinue) return; // If we should stop, don't continue processing
-
-      const batch = dataRows.slice(batchIndex, batchIndex + batchSize);
-
-      const mappedBatch = batch
-        .map((row) => {
-          const isRowEmpty = row.every((cell) => !cell);
-          if (isRowEmpty) {
-            shouldContinue = false; // Stop further processing on empty row
-            return null; // Skip this row
-          }
-
-          const rowObject = {};
-          const mappedData = selectedValue?.mappedData;
-          const dateFormat = selectedValue?.dateFormat || 'DD-MM-YYYY';
-          const timeFormat = selectedValue?.timeFormat || 'HH:mm';
-          const pickupType = selectedValue?.pickupType || 'pickup';
-          const dropType = selectedValue?.dropType || 'drop';
-          let tripDateValue;
-
-          Object.keys(mappedData).forEach((key) => {
-            const excelHeader = mappedData[key];
-            const headerIndex = headers.indexOf(excelHeader);
-
-            if (headerIndex !== -1) {
-              let value = row[headerIndex];
-
-              if (key === 'tripDate' && value) {
-                // Excel date serial to string in 'yyyy-mm-dd' format
-                value = XLSX.SSF.format('yyyy-mm-dd', value);
-                tripDateValue = moment(value, 'YYYY-MM-DD'); // Parse as a moment object
-
-                // Ensure the date is formatted as 'yyyy-mm-dd'
-                value = tripDateValue.format('YYYY-MM-DD');
-              }
-
-              if (key === 'tripTime' && value) {
-                const timeIn24HourFormat = XLSX.SSF.format('h:mm', value); // Excel time serial to string
-                value = moment(timeIn24HourFormat, 'HH:mm').format(timeFormat);
-              }
-
-              if (key === 'tripType' && value) {
-                value = value.toLowerCase() === pickupType ? 1 : value.toLowerCase() === dropType ? 2 : value;
-              }
-
-              rowObject[key] = value;
-            }
-          });
-
-          // Add missing fields with default value 0
-
-          // Add the valid tripDate to allDates array
-          if (tripDateValue && tripDateValue.isValid()) {
-            allDates.push(tripDateValue);
-          }
-
-          Object.keys(rowObject).forEach((key) => {
-            if (!rowObject[key]) {
-              // Use "in" operator to check for property existence
-              rowObject[key] = 0; // Set undefined fields to 0
-            }
-          });
-
-          if (rowObject['guardPrice']) {
-            rowObject['guard'] = 0;
-          } else {
-            rowObject['guard'] = 1;
-          }
-
-          console.log(rowObject);
-          return rowObject;
-        })
-        .filter((row) => row !== null); // Filter out null rows
-
-      setExcelData((prevData) => [...prevData, ...mappedBatch]);
-
-      // Find and set the earliest and latest date
-      if (allDates.length > 0) {
-        const minDate = moment.min(allDates);
-        const maxDate = moment.max(allDates);
-
-        setEarliestDate((prevDate) => (prevDate ? moment.min(prevDate, minDate) : minDate));
-        setLatestDate((prevDate) => (prevDate ? moment.max(prevDate, maxDate) : maxDate));
-      }
-
-      batchIndex += batchSize;
-      if (batchIndex < totalRows && shouldContinue) {
-        setTimeout(processBatch, 0); // Process the next batch after this one
-      } else {
-        setLoading(false); // Data processing complete
-      }
-    };
-
-    processBatch(); // Start processing
-  };
-
-  const fetchAllZoneInfo = async () => {
-    const response = await axiosServices.get('/zoneType/grouped/by/zone');
-    setZoneInfo(response.data.data);
-  };
-
-  const fetchAllVehicleTypeInfo = async () => {
-    const response = await axiosServices.get('/vehicleType');
-    const vehicleTypes = response.data.data.map((vehicle) => ({
-      _id: vehicle._id,
-      vehicleTypeName: vehicle.vehicleTypeName
-    }));
-    setVehicleTypeInfo(vehicleTypes);
-  };
-
-  useEffect(() => {
-    setLoading(true); // Set loading to true when fetching data
-    fetchAllZoneInfo();
-    fetchAllVehicleTypeInfo();
   }, []);
 
   useEffect(() => {
-    if (excelData.length > 0 && zoneInfo && vehicleTypeInfo) {
-      const result = getMergeResult(excelData, zoneInfo, vehicleTypeInfo);
-      console.log(result);
-      setMappedRowData(result);
-      setLoading(false); // Set loading to false after processing is complete
+    const fetchRosterData = async (id) => {
+      const response = await axiosServices.post('/tripData/trip/requests/company', {
+        data: {
+          rosterFileId: id
+        }
+      });
+      console.log('response.data', response.data);
+      setRosterData(response.data.data);
+    };
+
+    if (fileData?._id) {
+      fetchRosterData(fileData._id);
     }
-  }, [excelData, zoneInfo, vehicleTypeInfo]);
+  }, []);
+
+  const [invoiceId, setInvoiceId] = useState(0);
+  const [getInvoiceId, setGetInvoiceId] = useState(0);
+
+  const handleClose = (status) => {
+    if (status) {
+      dispatch(getInvoiceDelete(invoiceId));
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: 'Column deleted successfully',
+          anchorOrigin: { vertical: 'top', horizontal: 'right' },
+          variant: 'alert',
+          alert: {
+            color: 'success'
+          },
+          close: false
+        })
+      );
+    }
+    dispatch(
+      alertPopupToggle({
+        alertToggle: false
+      })
+    );
+  };
 
   const columns = useMemo(
     () => [
       {
-        title: 'Sr No.',
-        Header: 'Sr No.',
-        accessor: (row, i) => i + 1, // Adding 1 to index for SR No. to start from 1 instead of 0
+        title: 'Row Selection',
+        Header: ({ getToggleAllPageRowsSelectedProps }) => <IndeterminateCheckbox indeterminate {...getToggleAllPageRowsSelectedProps()} />,
+        accessor: 'selection',
+        Cell: ({ row }) => <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />,
         disableSortBy: true,
-        disableFilters: true,
-        Cell: ({ row }) => row.index + 1, // Adjusted to display the row number
-        className: 'cell-center'
+        disableFilters: true
       },
+      //   {
+      //     title: 'Row Selection',
+      //     Header: ({ getToggleAllPageRowsSelectedProps }) => (
+      //       <IndeterminateCheckbox indeterminate {...getToggleAllPageRowsSelectedProps()} />
+      //     ),
+      //     accessor: 'selection',
+      //     Cell: ({ row }) => {
+      //       const { status } = row.original; // Access the status value of the row
+      //       return (
+      //         <IndeterminateCheckbox
+      //           {...row.getToggleRowSelectedProps()}
+      //           disabled={status === 0} // Disable the checkbox if the status is Unverified
+      //         />
+      //       );
+      //     },
+      //     disableSortBy: true,
+      //     disableFilters: true
+      //   },
       {
         Header: 'Trip Date',
         accessor: 'tripDate',
         className: 'cell-center',
-        disableFilters: true
+        Cell: ({ value }) => {
+          return formatIndianDate(value); // Adjust as per your type definitions
+        }
       },
       {
         Header: 'Trip Time',
@@ -551,70 +474,53 @@ const ViewRosterTest = () => {
         }
       }
     ],
-    [] // dependencies array can be adjusted based on other states if needed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
-  let breadcrumbLinks = [{ title: 'Home', to: APP_DEFAULT_PATH }, { title: 'Roster', to: '/apps/roster/test' }, { title: 'Create Roster' }];
+  let breadcrumbLinks = [
+    { title: 'Home', to: APP_DEFAULT_PATH },
+    { title: 'Roster', to: '/apps/roster/test' },
+    { title: 'Generate Trips' }
+  ];
 
-  const handleSaveRoster = async () => {
-    const rosterFileId = fileData._id;
-    const companyID = fileData.companyId._id;
-    const startDate = earliestDate._i;
-    const endDate = latestDate._i;
-
-    const payload = {
-      data: {
-        rosterFileId: rosterFileId,
-        companyID: companyID,
-        tripsData: mappedRowData,
-        fileData: {
-          startDate: startDate,
-          endDate: endDate
-        }
-      }
+     const [openAssignTripDialog, setOpenAssignTripDialog] = useState(false);
+  
+    const handleAssignDialogOpen = () => {
+        setOpenAssignTripDialog(true);
     };
-    setLoading(true);
-    try {
-      // First request
-      const response = await axiosServices.post('/tripData/map/roster', payload);
-      console.log('First request response:', response.data); // Log the response
-
-      if (response.status === 201) {
-        // If the first request was successful, proceed with the second request
-        const updateResponse = await axiosServices.put('/tripData/update/roster/status', {
-          data: {
-            _id: fileData._id,
-            rosterStatus: 1
-          }
-        });
-        setLoading(false);
-        console.log('Status update response:', updateResponse.data); // Log the second response
-        if (updateResponse.data.success) {
-          navigate('/apps/roster/test-view-1', { state: { rosterData: response.data.data } });
-        }
-      }
-    } catch (error) {
-      console.error('Error occurred during requests:', error);
-      // Handle error as needed
-    } finally {
-      setLoading(false);
-    }
-  };
+  
+    const handleAssignDialogClose = () => {
+        setOpenAssignTripDialog(false);
+    };
+  
 
   if (loading) return <Loader />;
 
   return (
     <>
-      <Breadcrumbs custom heading="Create Roster" links={breadcrumbLinks} />
-
+      <Breadcrumbs custom links={breadcrumbLinks} />
       <MainCard content={false}>
-        <ScrollX>{mappedRowData && <ReactTable columns={columns} data={mappedRowData} handleSaveRoster={handleSaveRoster} />}</ScrollX>
+        <ScrollX>
+          {rosterData && (
+            <ReactTable
+              columns={columns}
+              data={rosterData}
+              selectedData={selectedData}
+              handleSetSelectedData={handleSetSelectedData}
+              handleAssignTrips={handleAssignTrips}
+              handleAssignDialogOpen={handleAssignDialogOpen}
+            />
+          )}
+        </ScrollX>
       </MainCard>
+      <AssignTripsDialog data={selectedData}  open={openAssignTripDialog}  handleClose={handleAssignDialogClose} handleAssignTrips={handleAssignTrips}/>
+      <AlertColumnDelete title={`${getInvoiceId}`} open={alertPopup} handleClose={handleClose} />
     </>
   );
 };
 
-ViewRosterTest.propTypes = {
+ViewRosterTest1.propTypes = {
   row: PropTypes.object,
   values: PropTypes.object,
   email: PropTypes.string,
@@ -629,4 +535,22 @@ ViewRosterTest.propTypes = {
   getToggleRowSelectedProps: PropTypes.func
 };
 
-export default ViewRosterTest;
+function LinearWithLabel({ value, ...others }) {
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ width: '100%', mr: 1 }}>
+        <LinearProgress color="warning" variant="determinate" value={value} {...others} />
+      </Box>
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="body2" color="white">{`${Math.round(value)}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
+
+LinearWithLabel.propTypes = {
+  value: PropTypes.number,
+  others: PropTypes.any
+};
+
+export default ViewRosterTest1;
