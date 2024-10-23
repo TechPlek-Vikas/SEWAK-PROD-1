@@ -9,7 +9,7 @@ import { Card, Edit2, Logout, Profile, Profile2User } from 'iconsax-react';
 
 // ==============================|| HEADER PROFILE - PROFILE TAB ||============================== //
 
-const ProfileTab = ({ handleLogout }) => {
+const ProfileTab = ({ handleLogout, handleProfileOverview }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
@@ -17,13 +17,13 @@ const ProfileTab = ({ handleLogout }) => {
 
   return (
     <List component="nav" sx={{ p: 0, '& .MuiListItemIcon-root': { minWidth: 32 } }}>
-      <ListItemButton selected={selectedIndex === 0} onClick={(event) => handleListItemClick(event, 0)}>
+      {/* <ListItemButton selected={selectedIndex === 0} onClick={(event) => handleListItemClick(event, 0)}>
         <ListItemIcon>
           <Edit2 variant="Bulk" size={18} />
         </ListItemIcon>
         <ListItemText primary="Edit Profile" />
-      </ListItemButton>
-      <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 1)}>
+      </ListItemButton> */}
+      <ListItemButton selected={selectedIndex === 1} onClick={handleProfileOverview}>
         <ListItemIcon>
           <Profile variant="Bulk" size={18} />
         </ListItemIcon>

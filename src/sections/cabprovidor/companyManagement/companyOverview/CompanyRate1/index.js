@@ -27,11 +27,15 @@ import MultipleAutoCompleteWithDeleteConfirmation1 from 'components/autocomplete
 import FormikSelectField1 from 'components/select/Select1';
 import FormikTextField from 'components/textfield/TextField';
 import AlertDelete from 'components/alertDialog/AlertDelete';
+import axios from 'axios';
+import { openSnackbar } from 'store/reducers/snackbar';
 
-const CompanyRate = () => {
+const CompanyRate = ({ id, companyName }) => {
   const [selectedVehicleTypes, setSelectedVehicleTypes] = useState([]);
+  console.log(selectedVehicleTypes);
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
   const [rateIndex, setRateIndex] = useState(null);
+  const token = localStorage.getItem('serviceToken');
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -52,27 +56,102 @@ const CompanyRate = () => {
   const initialValues = {
     rateData: [
       {
-        company_name: 'Company A',
+        company_name: '',
         rateMaster: [
           {
             zoneNameID: '',
             zoneTypeID: '',
-            vehicleTypeID: [],
-            cabAmount: [],
-            dualTrip: '',
-            dualTripAmount: [],
-            guard: '',
-            guardPrice: ''
+            cabAmount: [
+              // Array of objects with vehicleTypeID and amount
+              {
+                vehicleTypeID: '', // Placeholder for vehicle type ID
+                amount: 0 // Default amount
+              }
+            ],
+            dualTrip: 0, // Default dualTrip value (0 or 1)
+            dualTripAmount: [
+              // Array of objects with vehicleTypeID and amount
+              {
+                vehicleTypeID: '', // Placeholder for vehicle type ID
+                amount: 0 // Default amount
+              }
+            ],
+            guard: 0, // Default guard value (0 or 1)
+            guardPrice: 0 // Default guardPrice
           }
         ]
       }
     ]
   };
 
-  const handleSubmit = (values, { resetForm }) => {
-    console.log('Form values:', values);
-    // Reset the form after successful submission
-    resetForm();
+  const handleSubmit = async (values, { resetForm }) => {
+    console.log('values', values); // Check the full structure of values
+
+    // Process the rateData structure first, then map rateMaster for each entry
+    const formValues = {
+      rateData: values.rateData.map((rateData) => ({
+        rateMaster: rateData.rateMaster.map((rate) => {
+          console.log('Processing rate:', rate); // Log each rate for debugging
+
+          return {
+            zoneNameID: rate.zoneNameID,
+            zoneTypeID: rate.zoneTypeID,
+            cabAmount: rate.cabAmount.length ? rate.cabAmount : [], // Handle empty array case
+            dualTrip: rate.dualTrip,
+            dualTripAmount: rate.dualTripAmount.length ? rate.dualTripAmount : [], // Handle empty array case
+            guard: rate.guard,
+            guardPrice: rate.guardPrice
+          };
+        })
+      }))
+    };
+
+    console.log('formValues', formValues);
+
+    // Prepare the final data to be sent
+    const finalData = formValues.rateData.map((data) => ({
+      rateMaster: data.rateMaster
+    }));
+
+    console.log('finalData', finalData);
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/company/add/rates`,
+        {
+          data: {
+            companyID: id,
+            ratesForCompany: finalData
+          }
+        },
+        {
+          headers: {
+            Authorization: `${token}`
+          }
+        }
+      );
+
+      if (response.status === 201) {
+        console.log('response', response);
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: response.data.message,
+            variant: 'alert',
+            alert: {
+              color: 'success'
+            },
+            close: true
+          })
+        );
+      }
+
+      console.log('Submission successful', response.data);
+      resetForm({ values: initialValues });
+      setSelectedVehicleTypes([]);
+    } catch (error) {
+      console.error('Error submitting the form', error);
+    }
   };
 
   const handleSelectChangeForDualTrip = (event, values, setFieldValue) => {
@@ -112,7 +191,7 @@ const CompanyRate = () => {
                       <MainCard
                         title={
                           <Stack direction="row" spacing={1} alignItems="center" gap={1}>
-                            Add Company Rate for <Chip label={item.company_name} color="primary" />
+                            Add Company Rate for <Chip label={companyName} color="primary" />
                           </Stack>
                         }
                       >
@@ -121,205 +200,272 @@ const CompanyRate = () => {
                           render={(arrayHelpers) => (
                             <Stack spacing={2}>
                               <TableContainer>
-                                <Table>
-                                  <TableHead>
-                                    <TableRow>
-                                      <TableCell>#</TableCell>
-                                      <TableCell>Zone Name</TableCell>
-                                      <TableCell>Zone Type</TableCell>
-                                      <TableCell>Vehicle Type</TableCell>
-                                      <TableCell>Amount for</TableCell>
-                                      <TableCell>Dual Trip</TableCell>
-                                      <TableCell>Dual Trip Amount for</TableCell>
-                                      <TableCell>Guard</TableCell>
-                                      <TableCell>Guard Price</TableCell>
-                                      <TableCell>Action</TableCell>
-                                    </TableRow>
-                                  </TableHead>
-                                  <TableBody>
-                                    {item.rateMaster.map((rate, rateIndex) => (
-                                      <TableRow key={rateIndex}>
-                                        <TableCell>{rateIndex + 1}</TableCell>
-
-                                        {/* Zone Name */}
-                                        <TableCell>
-                                          <FormikAutocomplete
-                                            name={`rateData.${index}.rateMaster.${rateIndex}.zoneNameID`}
-                                            options={zoneList}
-                                            placeholder="Select Zone Name"
-                                            fullWidth
-                                            getOptionLabel={(option) => option['zoneName']}
-                                            saveValue="_id"
-                                            value={
-                                              zoneList?.find(
-                                                (item) =>
-                                                  item['_id'] ===
-                                                  getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
-                                              ) || null
-                                            }
-                                            renderOption={(props, option) => (
-                                              <Box
-                                                component="li"
-                                                sx={{
-                                                  '& > img': {
-                                                    mr: 2,
-                                                    flexShrink: 0
-                                                  }
-                                                }}
-                                                {...props}
-                                              >
-                                                {option['zoneName']}
-                                              </Box>
-                                            )}
-                                          />
-                                        </TableCell>
-
-                                        {/* Zone Type */}
-                                        <TableCell>
-                                          <FormikAutocomplete
-                                            name={`rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`}
-                                            options={
-                                              zoneTypeList.filter(
-                                                (zoneType) =>
-                                                  zoneType.zoneId._id ===
-                                                  getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
-                                              ) || []
-                                            }
-                                            placeholder="Select Zone Type"
-                                            fullWidth
-                                            getOptionLabel={(option) => option['zoneTypeName']}
-                                            saveValue="_id"
-                                            value={
-                                              zoneTypeList?.find(
-                                                (item) =>
-                                                  item['_id'] ===
-                                                  getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`)
-                                              ) || null
-                                            }
-                                            renderOption={(props, option) => (
-                                              <Box
-                                                component="li"
-                                                sx={{
-                                                  '& > img': {
-                                                    mr: 2,
-                                                    flexShrink: 0
-                                                  }
-                                                }}
-                                                {...props}
-                                              >
-                                                {option['zoneTypeName']}
-                                              </Box>
-                                            )}
-                                            disabled={
-                                              !getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
-                                            }
-                                          />
-                                        </TableCell>
-
-                                        {/* Vehicle Type */}
-                                        <TableCell>
-                                          <MultipleAutoCompleteWithDeleteConfirmation1
-                                            label="Vehicle Type"
-                                            id="vehicleType"
-                                            options={vehicleTypeList}
-                                            getOptionLabel={(option) => option['vehicleTypeName']}
-                                            fullWidth
-                                            placeholder="Select Vehicle Type"
-                                            saveToFun={(e, value, _, action) => {
-                                              // Update selected vehicle types
-                                              setSelectedVehicleTypes(value); // Store selected vehicle types in state
-                                              setFieldValue(
-                                                'vehicleTypeID',
-                                                value.map((vehicleType) => vehicleType._id)
-                                              );
-                                            }}
-                                            matchID="_id"
-                                            displayDeletedKeyName="vehicleTypeName"
-                                            deleteAllMessage="Vehicle Types"
-                                            disableClearable // To hide the clear button
-                                          />
-                                        </TableCell>
-
-                                        {/* Amount */}
-                                        <TableCell>
-                                          <TextField
-                                            label={`Amount for`}
-                                            fullWidth
-                                            disabled={selectedVehicleTypes.length === 0} // Disable if no vehicle type is selected
-                                            // {...getFieldProps(`rateData.${index}.rateMaster.${rateIndex}.cabAmount.${cabIndex}.amount`)}
-                                          />
-                                        </TableCell>
-
-                                        {/* Dual Trip */}
-                                        <TableCell>
-                                          <FormikSelectField1
-                                            label="Dual Trip"
-                                            name={`rateData.${index}.rateMaster.${rateIndex}.dualTrip`}
-                                            options={optionsForDualTrip}
-                                            fullWidth
-                                            onChange={(event) => {
-                                              handleSelectChangeForDualTrip(event, values, setFieldValue);
-                                            }}
-                                          />
-                                        </TableCell>
-
-                                        {/* Dual Trip Amount */}
-                                        <TableCell>
-                                          <TextField
-                                            label={`Dual Trip Amount for`}
-                                            disabled={getFieldProps(`rateData.${index}.rateMaster.${rateIndex}.dualTrip`).value !== 1}
-                                            fullWidth
-                                          />
-                                        </TableCell>
-
-                                        {/* Guard */}
-                                        <TableCell>
-                                          <FormikSelectField1
-                                            label="Guard"
-                                            name={`rateData.${index}.rateMaster.${rateIndex}.guard`}
-                                            options={optionsForDualTrip}
-                                            fullWidth
-                                          />
-                                        </TableCell>
-
-                                        {/* Guard Price */}
-                                        <TableCell>
-                                          <FormikTextField
-                                            name={`rateData.${index}.rateMaster.${rateIndex}.guardPrice`}
-                                            label="Guard Price"
-                                            fullWidth
-                                            disabled={!(getFieldProps(`rateData.${index}.rateMaster.${rateIndex}.guard`).value == 1)}
-                                          />
-                                        </TableCell>
-
-                                        {/* <TableCell>
-                                          <IconButton onClick={() => handleDeleteRate(index)}>
-                                            <Trash color="red" />
-                                          </IconButton>
-                                        </TableCell> */}
-
-                                        {/* Delete */}
-                                        <TableCell>
-                                          <IconButton
-                                            onClick={(event) => {
-                                              handleOpenDialog(rateIndex);
-                                            }}
-                                          >
-                                            <Trash color="red" />
-                                          </IconButton>
-                                        </TableCell>
-
-                                        <AlertDelete
-                                          title={`Rate ${rateIndex + 1}`}
-                                          open={removeDialogOpen}
-                                          handleClose={(event, confirm) =>
-                                            handleCloseDialog(event, confirm, arrayHelpers.remove, rateIndex)
-                                          }
-                                        />
+                                <Box sx={{ overflowX: 'auto' }}>
+                                  <Table>
+                                    <TableHead>
+                                      <TableRow>
+                                        <TableCell>#</TableCell>
+                                        <TableCell>Zone Name</TableCell>
+                                        <TableCell>Zone Type</TableCell>
+                                        <TableCell>Vehicle Type</TableCell>
+                                        <TableCell>Amount</TableCell>
+                                        <TableCell>Dual Trip</TableCell>
+                                        <TableCell>Dual Trip Amount</TableCell>
+                                        <TableCell>Guard</TableCell>
+                                        <TableCell>Guard Price</TableCell>
+                                        <TableCell>Action</TableCell>
                                       </TableRow>
-                                    ))}
-                                  </TableBody>
-                                </Table>
+                                    </TableHead>
+                                    <TableBody>
+                                      {item.rateMaster.map((rate, rateIndex) => (
+                                        <TableRow key={rateIndex}>
+                                          <TableCell>{rateIndex + 1}</TableCell>
+
+                                          {/* Zone Name */}
+                                          <TableCell>
+                                            <FormikAutocomplete
+                                              name={`rateData.${index}.rateMaster.${rateIndex}.zoneNameID`}
+                                              options={zoneList}
+                                              placeholder="Select Zone Name"
+                                              sx={{ width: '150px' }}
+                                              getOptionLabel={(option) => option['zoneName']}
+                                              saveValue="_id"
+                                              value={
+                                                zoneList?.find(
+                                                  (item) =>
+                                                    item['_id'] ===
+                                                    getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
+                                                ) || null
+                                              }
+                                              renderOption={(props, option) => (
+                                                <Box
+                                                  component="li"
+                                                  sx={{
+                                                    '& > img': {
+                                                      mr: 2,
+                                                      flexShrink: 0
+                                                    }
+                                                  }}
+                                                  {...props}
+                                                >
+                                                  {option['zoneName']}
+                                                </Box>
+                                              )}
+                                            />
+                                          </TableCell>
+
+                                          {/* Zone Type */}
+                                          <TableCell>
+                                            <FormikAutocomplete
+                                              name={`rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`}
+                                              options={
+                                                zoneTypeList.filter(
+                                                  (zoneType) =>
+                                                    zoneType.zoneId._id ===
+                                                    getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
+                                                ) || []
+                                              }
+                                              placeholder="Select Zone Type"
+                                              sx={{ width: '150px' }}
+                                              getOptionLabel={(option) => option['zoneTypeName']}
+                                              saveValue="_id"
+                                              value={
+                                                zoneTypeList?.find(
+                                                  (item) =>
+                                                    item['_id'] ===
+                                                    getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`)
+                                                ) || null
+                                              }
+                                              renderOption={(props, option) => (
+                                                <Box
+                                                  component="li"
+                                                  sx={{
+                                                    '& > img': {
+                                                      mr: 2,
+                                                      flexShrink: 0
+                                                    }
+                                                  }}
+                                                  {...props}
+                                                >
+                                                  {option['zoneTypeName']}
+                                                </Box>
+                                              )}
+                                              disabled={
+                                                !getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
+                                              }
+                                            />
+                                          </TableCell>
+
+                                          {/* Vehicle Type */}
+                                          <TableCell>
+                                            <MultipleAutoCompleteWithDeleteConfirmation1
+                                              label="Vehicle Type"
+                                              id="vehicleType"
+                                              options={vehicleTypeList}
+                                              getOptionLabel={(option) => option['vehicleTypeName']}
+                                              sx={{ width: '150px' }}
+                                              placeholder="Select Vehicle Type"
+                                              saveToFun={(e, value) => {
+                                                // Update selected vehicle types
+                                                const vehicleTypeIds = value.map((vehicleType) => vehicleType._id);
+                                                setSelectedVehicleTypes(value);
+                                                // Update Formik's state for vehicleTypeID
+                                                setFieldValue(
+                                                  `rateData.${index}.rateMaster.${rateIndex}.cabAmount`,
+                                                  vehicleTypeIds.map((vehicleTypeID) => ({
+                                                    vehicleTypeID,
+                                                    amount: 0
+                                                  }))
+                                                );
+                                              }}
+                                              matchID="_id"
+                                              displayDeletedKeyName="vehicleTypeName"
+                                              deleteAllMessage="Vehicle Types"
+                                              disableClearable // To hide the clear button
+                                            />
+                                          </TableCell>
+                                          {console.log(values.rateData[index].rateMaster[rateIndex].cabAmount.length)}
+                                          {values.rateData[index].rateMaster[rateIndex].cabAmount.length === 0 ? (
+                                            // Fallback input for when no vehicle type is selected
+                                            <TableCell sx={{ width: '150px' }}>
+                                              <TextField label="Amount (No Vehicle)" disabled sx={{ width: '150px' }} />
+                                            </TableCell>
+                                          ) : (
+                                            values.rateData[index].rateMaster[rateIndex].cabAmount.map((cab, cabIndex) => (
+                                              <TableCell
+                                                key={cab.vehicleTypeID}
+                                                sx={{
+                                                  display: 'flex',
+                                                  flexDirection: 'column',
+                                                  alignItems: 'center',
+                                                  justifyContent: 'center',
+                                                  width: '150px'
+                                                }}
+                                              >
+                                                <TextField
+                                                  label={`Amount for ${
+                                                    vehicleTypeList.find((v) => v._id === cab.vehicleTypeID)?.vehicleTypeName
+                                                  }`}
+                                                  sx={{ width: '150px' }}
+                                                  value={cab.amount}
+                                                  onChange={(e) => {
+                                                    // Update the amount for this particular vehicle type
+                                                    setFieldValue(
+                                                      `rateData.${index}.rateMaster.${rateIndex}.cabAmount.${cabIndex}.amount`,
+                                                      e.target.value
+                                                    );
+                                                  }}
+                                                />
+                                              </TableCell>
+                                            ))
+                                          )}
+
+                                          {/* Dual Trip */}
+                                          <TableCell>
+                                            <FormikSelectField1
+                                              label="Dual Trip"
+                                              name={`rateData.${index}.rateMaster.${rateIndex}.dualTrip`}
+                                              options={optionsForDualTrip}
+                                              sx={{ width: '150px' }}
+                                              onChange={(event) => {
+                                                handleSelectChangeForDualTrip(event, values, setFieldValue);
+                                              }}
+                                            />
+                                          </TableCell>
+
+                                          {/* Dual Trip Amount */}
+                                          {selectedVehicleTypes.length === 0 ? (
+                                            <TableCell
+                                              sx={{
+                                                width: '150px'
+                                              }}
+                                            >
+                                              <TextField
+                                                label={`Dual Trip Amount for (No Vehicle Type)`}
+                                                sx={{ width: '150px' }}
+                                                disabled
+                                              />
+                                            </TableCell>
+                                          ) : (
+                                            <>
+                                              {selectedVehicleTypes.map((vehicleType, cabIndex) => (
+                                                <React.Fragment key={cabIndex}>
+                                                  {/* Dual Trip Amount for each selected vehicle type */}
+                                                  <TableCell
+                                                    sx={{
+                                                      display: 'flex',
+                                                      flexDirection: 'column',
+                                                      alignItems: 'flex-start'
+                                                    }}
+                                                  >
+                                                    <TextField
+                                                      label={`Dual Trip Amount for ${vehicleType.vehicleTypeName}`} // Use vehicle type name from selected options
+                                                      name={`rateData.${index}.rateMaster.${rateIndex}.dualTripAmount.${cabIndex}`} // Ensure correct binding
+                                                      disabled={
+                                                        getFieldProps(`rateData.${index}.rateMaster.${rateIndex}.dualTrip`).value !== 1
+                                                      }
+                                                      sx={{
+                                                        width: '150px'
+                                                      }}
+                                                      onChange={(event) =>
+                                                        setFieldValue(
+                                                          `rateData.${index}.rateMaster.${rateIndex}.dualTripAmount.${cabIndex}`,
+                                                          {
+                                                            amount: event.target.value,
+                                                            vehicleTypeID: selectedVehicleTypes[cabIndex]._id
+                                                          }
+                                                        )
+                                                      }
+                                                    />
+                                                  </TableCell>
+                                                </React.Fragment>
+                                              ))}
+                                            </>
+                                          )}
+
+                                          {/* Guard */}
+                                          <TableCell>
+                                            <FormikSelectField1
+                                              label="Guard"
+                                              name={`rateData.${index}.rateMaster.${rateIndex}.guard`}
+                                              options={optionsForDualTrip}
+                                              sx={{ width: '150px' }}
+                                            />
+                                          </TableCell>
+
+                                          {/* Guard Price */}
+                                          <TableCell>
+                                            <FormikTextField
+                                              name={`rateData.${index}.rateMaster.${rateIndex}.guardPrice`}
+                                              label="Guard Price"
+                                              sx={{ width: '150px' }}
+                                              disabled={!(getFieldProps(`rateData.${index}.rateMaster.${rateIndex}.guard`).value == 1)}
+                                            />
+                                          </TableCell>
+
+                                          {/* Delete */}
+                                          <TableCell>
+                                            <IconButton
+                                              onClick={(event) => {
+                                                handleOpenDialog(rateIndex);
+                                              }}
+                                            >
+                                              <Trash color="red" />
+                                            </IconButton>
+                                          </TableCell>
+
+                                          <AlertDelete
+                                            title={`Rate ${rateIndex + 1}`}
+                                            open={removeDialogOpen}
+                                            handleClose={(event, confirm) =>
+                                              handleCloseDialog(event, confirm, arrayHelpers.remove, rateIndex)
+                                            }
+                                          />
+                                        </TableRow>
+                                      ))}
+                                    </TableBody>
+                                  </Table>
+                                </Box>
                               </TableContainer>
                               <Stack direction={'row'}>
                                 <Button
@@ -364,7 +510,6 @@ const CompanyRate = () => {
               </Button>
               <Button type="submit" variant="contained">
                 {' '}
-                {/* to disable -> disabled={isSubmitting || !dirty}*/}
                 Add
               </Button>
             </Stack>

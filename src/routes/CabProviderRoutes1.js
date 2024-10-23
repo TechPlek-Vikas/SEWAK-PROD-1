@@ -26,6 +26,7 @@ const UnderConstruction = Loadable(lazy(() => import('components/maintenance/Und
 
 // Dashboard
 const Dashboard = Loadable(lazy(() => import('pages')));
+const ProfileOverview = Loadable(lazy(() => import('pages/overview/ProfileOverview')));
 // Roster
 const Roster = Loadable(lazy(() => import('pages/apps/roster')));
 const RosterFileList = Loadable(lazy(() => import('pages/apps/test/RosterFileManagement')));
@@ -54,6 +55,7 @@ const Company = Loadable(lazy(() => import('pages/management/company')));
 const AddCompany = Loadable(lazy(() => import('pages/management/company/AddCompany')));
 const AddBranch = Loadable(lazy(() => import('pages/management/company/AddBranch')));
 const CompanyOverview = Loadable(lazy(() => import('pages/overview/CompanyOverview')));
+const CompanyRateListing = Loadable(lazy(() => import('pages/management/company/addCompanyRate/CompanyRate1/CompanyRateListing')));
 
 // reports
 const Reports = Loadable(lazy(() => import('pages/Reports')));
@@ -105,6 +107,11 @@ const CabProvidorRoutes = {
           path: 'dashboard',
           element: <Dashboard />
           //   element: <UnderConstruction title="Dashboard" />
+        },
+
+        {
+          path: 'profile-overview',
+          element: <ProfileOverview />
         },
 
         // Application
@@ -252,7 +259,7 @@ const CabProvidorRoutes = {
                 },
                 {
                   path: 'add-company-rate',
-                  element: <UnderConstruction title="Add Company Rate" />
+                  element: <CompanyRateListing/>
                 }
               ]
             },

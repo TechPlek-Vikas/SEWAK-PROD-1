@@ -23,8 +23,7 @@ import AttachedDriver from 'sections/cabprovidor/companyManagement/companyOvervi
 import Statement from 'sections/cabprovidor/companyManagement/companyOverview/Statement';
 import Transaction from 'sections/cabprovidor/companyManagement/companyOverview/Transaction';
 import ViewRoster from 'sections/cabprovidor/companyManagement/companyOverview/ViewRoster';
-import CompanyRate from 'sections/cabprovidor/companyManagement/companyOverview/CompanyRate1';
-// import CompanyRates from 'sections/cabprovidor/companyManagement/companyOverview/CompanyRate';
+import CompanyRateListing from 'sections/cabprovidor/companyManagement/companyOverview/CompanyRate1/CompanyRateListing';
 
 const CompanyOverview = () => {
   const { id } = useParams();
@@ -132,12 +131,12 @@ const CompanyOverview = () => {
             <Box sx={{ p: 3 }}>
               {activeTab === 0 && <Overview data={companyDetails} />}
               {activeTab === 1 && <Transaction data={data} />}
-              {activeTab === 2 && <Mails data={companyDetails} />}
+              {activeTab === 2 && <Mails />}
               {activeTab === 3 && <Statement />}
               {activeTab === 4 && <AttachedVendor data={companiesVendor} loading={loading} />}
               {activeTab === 5 && <AttachedDriver data={companiesDriver} loading={loading} />}
               {activeTab === 6 && <ViewRoster id={companyId} />}
-              {activeTab === 7 && <CompanyRate id={companyId} companyName={companyName} />}
+              {activeTab === 7 && <CompanyRateListing id={companyId} companyName={companyName} />}
             </Box>
           </Box>
           <Box sx={{ mt: 2.5 }}>
