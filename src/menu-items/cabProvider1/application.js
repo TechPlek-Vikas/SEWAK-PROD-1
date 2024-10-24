@@ -2,7 +2,7 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { Bill, DocumentUpload, Eye, MenuBoard } from 'iconsax-react';
+import { Bill, Car, DocumentUpload, Eye, MenuBoard } from 'iconsax-react';
 import { MODULE, PERMISSIONS } from 'constant';
 
 // icons
@@ -10,7 +10,8 @@ const icons = {
   samplePage: MenuBoard,
   view: Eye,
   upload: DocumentUpload,
-  invoice: Bill
+  invoice: Bill,
+  trip:Car
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -30,18 +31,18 @@ const application = {
       url: '/apps/roster/dashboard',
       children: [
         {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
+          id: 'list',
+          title: <FormattedMessage id="list" />,
           type: 'item',
-          url: '/apps/roster/view',
-          icon: icons.view
+          url: '/apps/roster/all-roster',
+          // icon: icons.view
         },
         {
           id: 'upload',
           title: <FormattedMessage id="upload" />,
           type: 'item',
           url: '/apps/roster/create',
-          icon: icons.upload
+          // icon: icons.upload
         },
 
         {
@@ -49,7 +50,7 @@ const application = {
           title: <FormattedMessage id="test" />,
           type: 'item',
           url: '/apps/roster/test',
-          icon: icons.samplePage
+          // icon: icons.samplePage
         }
       ]
     },
@@ -63,19 +64,37 @@ const application = {
       icon: icons.invoice,
       children: [
         {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
+          id: 'list',
+          title: <FormattedMessage id="list" />,
           type: 'item',
-          url: '/apps/invoices/view',
-          icon: icons.view
+          url: '/apps/invoices/list',
+          // icon: icons.view
         },
         {
           id: 'upload',
           title: <FormattedMessage id="upload" />,
           type: 'item',
           url: '/apps/invoices/create',
-          icon: icons.upload
+          // icon: icons.upload
         }
+      ]
+    },
+
+     // Trips
+     {
+      id: 'trips',
+      title: <FormattedMessage id="trips" />,
+      type: 'collapse',
+      // url: '/apps/invoices/dashboard',
+      icon: icons.trip,
+      children: [
+        {
+          id: 'list',
+          title: <FormattedMessage id="list" />,
+          type: 'item',
+          url: '/apps/trips/list',
+          // icon: icons.view
+        },
       ]
     }
   ]

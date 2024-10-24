@@ -34,7 +34,7 @@ const master = {
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/master/role',
-          icon: icons.view
+          // icon: icons.view
         }
       ]
     },
@@ -50,7 +50,7 @@ const master = {
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/master/zone',
-          icon: icons.view
+          // icon: icons.view
         }
       ]
     },
@@ -66,7 +66,7 @@ const master = {
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/master/zone-type',
-          icon: icons.view
+          // icon: icons.view
         }
       ]
     }

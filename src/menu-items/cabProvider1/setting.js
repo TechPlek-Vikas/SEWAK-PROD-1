@@ -32,7 +32,7 @@ const setting = {
           id: 'account-setting',
           title: <FormattedMessage id="account setting" />,
           type: 'item',
-          icon: icons.account,
+          // icon: icons.account,
           url: '/settings/account'
         },
 
@@ -41,7 +41,7 @@ const setting = {
           id: 'roster-setting',
           title: <FormattedMessage id="roster setting" />,
           type: 'item',
-          icon: icons.samplePage,
+          // icon: icons.samplePage,
           url: '/settings/roster'
         },
 
@@ -50,7 +50,7 @@ const setting = {
           id: 'invoice-setting',
           title: <FormattedMessage id="invoice setting" />,
           type: 'item',
-          icon: icons.invoice,
+          // icon: icons.invoice,
           url: '/settings/invoice'
         }
       ]
