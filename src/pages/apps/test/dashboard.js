@@ -17,7 +17,7 @@ import InvoiceCard from 'sections/apps/test/InvoiceCard';
 import InvoiceWidgetCard from 'sections/apps/test/InvoiceWidgetCard';
 import { Dialog } from '@mui/material';
 import { PopupTransition } from 'components/@extended/Transitions';
-import AddRosterFileForm from './AddRosterFileForm';
+import AddRosterFileForm from './components/AddRosterFileForm';
 import CreateRosterTemplate from './CreateRosterTemplateDrawer.js';
 // ==============================|| INVOICE - DASHBOARD ||============================== //
 

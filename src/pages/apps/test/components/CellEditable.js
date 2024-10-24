@@ -21,12 +21,10 @@ import LinearWithLabel from 'components/@extended/progress/LinearWithLabel';
 
 // assets
 import { Send } from 'iconsax-react';
-import { Checkbox, Typography } from '@mui/material';
+import { Checkbox, FormControl, FormHelperText, InputLabel, Typography } from '@mui/material';
 import { formatIndianDate } from 'utils/dateFormat_dbTOviewDate';
 
 // ==============================|| EDITABLE CELL ||============================== //
-
-
 
 const updateObjectValue = (obj, path, newValue) => {
   // Split the path into keys
@@ -38,11 +36,11 @@ const updateObjectValue = (obj, path, newValue) => {
   // Reduce the keys to find the target object for updating
   const lastKey = keys.pop();
   const target = keys.reduce((acc, key) => {
-      // Create nested objects if they do not exist
-      if (!acc[key]) {
-          acc[key] = {};
-      }
-      return acc[key];
+    // Create nested objects if they do not exist
+    if (!acc[key]) {
+      acc[key] = {};
+    }
+    return acc[key];
   }, newObj);
 
   // Set the new value at the last key
@@ -51,11 +49,15 @@ const updateObjectValue = (obj, path, newValue) => {
   return newObj; // Return the new object with the updated value
 };
 
-
-export default function CellEditable({ getValue: initialValue, row, column: { id, columnDef }, table }) {
+export default function CellEditable({ getValue: initialValue, row, column, table }) {
   const [value, setValue] = useState(initialValue);
   const [showSelect, setShowSelect] = useState(false);
   const { original, index } = row;
+  const { id, columnDef } = column;
+  const { zoneInfo } = column.columnDef.meta;
+  console.log("column.columnDef.meta",zoneInfo)
+  console.log("row",row)
+  console.log("column",column)
   const onChange = (e) => {
     setValue(e.target?.value);
   };
@@ -140,40 +142,204 @@ export default function CellEditable({ getValue: initialValue, row, column: { id
       break;
     case 'zoneName':
       element = (
+        <Formik
+          initialValues={{
+            zoneName: value // Initialize with the current value
+          }}
+          enableReinitialize
+          validationSchema={userInfoSchema}
+          onSubmit={() => {}}
+        >
+          {({ values, handleChange, handleBlur, errors, touched }) => (
+            <Form>
+              <FormControl fullWidth error={touched.zoneName && Boolean(errors.zoneName)}>
+                <InputLabel id={`select-label-${index}-${id}`}>Zone Name</InputLabel>
+                <Select
+                  labelId={`select-label-${index}-${id}`}
+                  value={values.zoneName || ''} // Use values.zoneName directly
+                  id={`${index}-${id}`}
+                  name="zoneName"
+                  onChange={(e) => {
+                    handleChange(e);
+                    setValue(e.target.value); // Update local state for immediate feedback
+                    table.options.meta.updateData(row.index, id, e.target.value); // Update table data
+                  }}
+                  onBlur={handleBlur}
+                  label="Zone Name"
+                >
+                  {[
+                    { _id: '1', zoneName: 'Zone 1' },
+                    { _id: '2', zoneName: 'Zone 2' }
+                  ].map((zone) => (
+                    <MenuItem key={zone._id} value={zone}>
+                      {zone.zoneName}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>{touched.zoneName && errors.zoneName && errors.zoneName}</FormHelperText>
+              </FormControl>
+            </Form>
+          )}
+        </Formik>
+      );
+      break;
+    case 'zoneType':
+      element = (
         <>
           <Formik
             initialValues={{
-              zoneName: value
+              zoneType: value // Initialize with the full zoneType object
             }}
             enableReinitialize
             validationSchema={userInfoSchema}
             onSubmit={() => {}}
           >
-            {({ values, handleChange, handleBlur, errors, touched }) => (
-              <Form>
-                <TextField
-                  fullWidth
-                  value={values.zoneName}
-                  id={`${index}-${id}`}
-                  name="zoneName"
-                  onChange={(e) => {
-                    handleChange(e);
-                    onChange(e);
-                  }}
-                  onBlur={handleBlur}
-                  error={touched.zoneName && Boolean(errors.zoneName)}
-                  helperText={touched.zoneName && errors.zoneName && errors.zoneName}
-                  sx={{
-                    '& .MuiOutlinedInput-input': { py: 0.75, px: 1, minWidth: { xs: 100 } },
-                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
-                  }}
-                />
-              </Form>
-            )}
+            {({ values, handleChange, handleBlur, errors, touched }) => {
+              // console.log(values);
+              return (
+                <Form>
+                  <TextField
+                    fullWidth
+                    value={values.zoneType?.zoneTypeName || ''} // Display zoneTypeName field from the object
+                    id={`${index}-${id}`}
+                    name="zoneType"
+                    onChange={(e) => {
+                      handleChange(e);
+                      onChange(e);
+                    }}
+                    onBlur={handleBlur}
+                    error={touched.zoneType && Boolean(errors.zoneType)}
+                    helperText={touched.zoneType && errors.zoneType && errors.zoneType}
+                    sx={{
+                      '& .MuiOutlinedInput-input': { py: 0.75, px: 1, minWidth: { xs: 100 } },
+                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                    }}
+                  />
+                </Form>
+              );
+            }}
           </Formik>
         </>
       );
       break;
+    case 'vehicleType':
+      element = (
+        <>
+          <Formik
+            initialValues={{
+              vehicleType: value // Initialize with the full zoneType object
+            }}
+            enableReinitialize
+            validationSchema={userInfoSchema}
+            onSubmit={() => {}}
+          >
+            {({ values, handleChange, handleBlur, errors, touched }) => {
+              // console.log(values);
+              return (
+                <Form>
+                  <TextField
+                    fullWidth
+                    value={values.vehicleType?.vehicleTypeName || ''} // Display zoneTypeName field from the object
+                    id={`${index}-${id}`}
+                    name="zoneType"
+                    onChange={(e) => {
+                      handleChange(e);
+                      onChange(e);
+                    }}
+                    onBlur={handleBlur}
+                    error={touched.vehicleType && Boolean(errors.vehicleType)}
+                    helperText={touched.vehicleType && errors.vehicleType && errors.vehicleType}
+                    sx={{
+                      '& .MuiOutlinedInput-input': { py: 0.75, px: 1, minWidth: { xs: 100 } },
+                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                    }}
+                  />
+                </Form>
+              );
+            }}
+          </Formik>
+        </>
+      );
+      break;
+    case 'driver':
+      element = (
+        <>
+          <Formik
+            initialValues={{
+              driver: value // Initialize with the full zoneType object
+            }}
+            enableReinitialize
+            validationSchema={userInfoSchema}
+            onSubmit={() => {}}
+          >
+            {({ values, handleChange, handleBlur, errors, touched }) => {
+              // console.log(values);
+              return (
+                <Form>
+                  <TextField
+                    fullWidth
+                    value={values.driver?.userName || 'N/A'} // Display zoneTypeName field from the object
+                    id={`${index}-${id}`}
+                    name="zoneType"
+                    onChange={(e) => {
+                      handleChange(e);
+                      onChange(e);
+                    }}
+                    onBlur={handleBlur}
+                    error={touched.driver && Boolean(errors.driver)}
+                    helperText={touched.driver && errors.driver && errors.driver}
+                    sx={{
+                      '& .MuiOutlinedInput-input': { py: 0.75, px: 1, minWidth: { xs: 100 } },
+                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                    }}
+                  />
+                </Form>
+              );
+            }}
+          </Formik>
+        </>
+      );
+      break;
+    case 'cab':
+      element = (
+        <>
+          <Formik
+            initialValues={{
+              cab: value // Initialize with the full zoneType object
+            }}
+            enableReinitialize
+            validationSchema={userInfoSchema}
+            onSubmit={() => {}}
+          >
+            {({ values, handleChange, handleBlur, errors, touched }) => {
+              // console.log(values);
+              return (
+                <Form>
+                  <TextField
+                    fullWidth
+                    value={values.cab?.vehicleNumber || 'N/A'} // Display zoneTypeName field from the object
+                    id={`${index}-${id}`}
+                    name="zoneType"
+                    onChange={(e) => {
+                      handleChange(e);
+                      onChange(e);
+                    }}
+                    onBlur={handleBlur}
+                    error={touched.cab && Boolean(errors.cab)}
+                    helperText={touched.cab && errors.cab && errors.cab}
+                    sx={{
+                      '& .MuiOutlinedInput-input': { py: 0.75, px: 1, minWidth: { xs: 100 } },
+                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                    }}
+                  />
+                </Form>
+              );
+            }}
+          </Formik>
+        </>
+      );
+      break;
+
     case 'checkbox':
       element = (
         <Formik

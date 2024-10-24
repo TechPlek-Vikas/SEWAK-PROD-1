@@ -43,7 +43,7 @@ import { APP_DEFAULT_PATH } from 'config';
 import * as XLSX from 'xlsx';
 import moment from 'moment';
 import axiosServices from 'utils/axios';
-import { getMergeResult } from './MappingAlgorithem';
+import { getMergeResult } from './utils/MappingAlgorithem';
 const avatarImage = require.context('assets/images/users', true);
 
 // ==============================|| REACT TABLE ||============================== //
@@ -397,7 +397,6 @@ const ViewRosterTest = () => {
   useEffect(() => {
     if (excelData.length > 0 && zoneInfo && vehicleTypeInfo) {
       const result = getMergeResult(excelData, zoneInfo, vehicleTypeInfo);
-      console.log(result);
       setMappedRowData(result);
       setLoading(false); // Set loading to false after processing is complete
     }
