@@ -34,14 +34,14 @@ const application = {
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/apps/roster/view',
-          icon: icons.view
+          // icon: icons.view
         },
         {
           id: 'upload',
           title: <FormattedMessage id="upload" />,
           type: 'item',
           url: '/apps/roster/create',
-          icon: icons.upload
+          // icon: icons.upload
         },
 
         {
@@ -49,7 +49,7 @@ const application = {
           title: <FormattedMessage id="test" />,
           type: 'item',
           url: '/apps/roster/test',
-          icon: icons.samplePage
+          // icon: icons.samplePage
         }
       ]
     },
@@ -67,14 +67,14 @@ const application = {
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/apps/invoices/view',
-          icon: icons.view
+          // icon: icons.view
         },
         {
           id: 'upload',
           title: <FormattedMessage id="upload" />,
           type: 'item',
           url: '/apps/invoices/create',
-          icon: icons.upload
+          // icon: icons.upload
         }
       ]
     }

@@ -13,7 +13,7 @@ import List from 'pages/invoice/list/List';
 import Create from 'pages/invoice/create/Create';
 import Create1 from 'pages/invoice/create/Create1';
 import { element } from 'prop-types';
-import RosterDashboard from 'pages/apps/test/dashboard';
+// import RosterDashboard from 'pages/apps/test/dashboard';
 import MapRosterFileTest from 'pages/apps/test/CreateRosterTemplateDrawer.js';
 import ViewRosterTest from 'pages/apps/test/List';
 
@@ -76,7 +76,7 @@ const AddCabRateVendor = Loadable(lazy(() => import('pages/master/CabRate/Vendor
 const AddCabRateDriver = Loadable(lazy(() => import('pages/master/CabRate/Driver')));
 
 // Dashboard
-// const RosterDashboard = Loadable(lazy(() => import('pages/dashboard/rosterDashboard/RosterDashboard')));
+const RosterDashboard = Loadable(lazy(() => import('pages/dashboard/rosterDashboard/RosterDashboard')));
 const CabDashBoard = Loadable(lazy(() => import('pages/dashboard/cabDashboard/CabDashBoard')));
 const DriverDashboard = Loadable(lazy(() => import('pages/dashboard/driverDashboard/DriverDashboard')));
 const VendorDashboard = Loadable(lazy(() => import('pages/dashboard/vendorDashboard/VendorDashboard')));
@@ -85,7 +85,7 @@ const UserDashboard = Loadable(lazy(() => import('pages/dashboard/userDashboard/
 const InvoiceDashboard = Loadable(lazy(() => import('pages/dashboard/invoiceDashboard/InvoiceDashboard')));
 
 // Dashboard
-// const RosterDashboard = Loadable(lazy(() => import('pages/apps/test/dashboard')));
+const RosterDashboard1 = Loadable(lazy(() => import('pages/apps/test/dashboard')));
 
 // Settings
 const InvoiceSettings = Loadable(lazy(() => import('pages/setting/invoice')));
@@ -152,7 +152,7 @@ const CabProvidorRoutes = {
                 },
                 {
                   path: 'test',
-                  element: <RosterDashboard />
+                  element: <RosterDashboard1 />
                 },
                 {
                   path: 'test-map',
