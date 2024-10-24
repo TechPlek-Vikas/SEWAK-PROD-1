@@ -60,8 +60,8 @@ const getInitialValues = (data) => {
     discountBy: data?.discount?.by || DISCOUNT_BY.PERCENTAGE,
     additionalCharges: data?.additionalCharges || STATUS.NO,
     roundOff: data?.roundOff || STATUS.NO,
-    invoicePrefix: data?.invoice?.preFix || 'INV',
-    invoiceNumber: data?.invoice?.invoiceNumber || 1
+    invoicePrefix: data?.invoice?.preFix || '',
+    invoiceNumber: data?.invoice?.invoiceNumber || 0
   };
 };
 
@@ -87,10 +87,16 @@ const InvoiceSetting = ({ redirect, onClose }) => {
           }
         };
 
-        const response = await getApiResponse(url, config);
+        const response = await getApiResponse(url);
         console.log(`🚀 ~ response:`, response);
 
         if (response.success) {
+          if (!response.data) {
+            setSettings({});
+            setLoading(false);
+            return;
+          }
+
           const { invoiceSetting } = response.data;
           console.log(invoiceSetting);
           setSettings(invoiceSetting);
@@ -129,28 +135,27 @@ const InvoiceSetting = ({ redirect, onClose }) => {
       await new Promise((resolve) => setTimeout(resolve, 3000));
       console.log('Formik submit done .......');
 
-      let response = 0;
+      let response;
 
-      if (redirect) {
-        // TODO : Update settings API
-        console.log('Update API call');
-        const payload = {
-          data: {
-            invoiceSettingsId: settings?._id,
-            discountApply: values.discountType,
-            discountBy: values.discountBy,
-            additionalCharges: values.additionalCharges,
-            roundOff: values.roundOff,
-            taxApply: values.taxType
-          }
-        };
-        console.log(`🚀 ~ handleFormikSubmit ~ payload:`, payload);
+      // TODO : Update settings API
+      console.log('Update API call');
+      const payload = {
+        data: {
+          invoiceSettingsId: settings?._id || '',
+          discountApply: values.discountType,
+          discountBy: values.discountBy,
+          additionalCharges: values.additionalCharges,
+          roundOff: values.roundOff,
+          taxApply: values.taxType,
+          // prefix: values.invoicePrefix,
+          // invoiceNumber: values.invoiceNumber,
+          ...(redirect ? {} : { prefix: values.invoicePrefix, invoiceNumber: values.invoiceNumber }),
+          terms: ['']
+        }
+      };
+      console.log(`🚀 ~ handleFormikSubmit ~ payload:`, payload);
 
-        response = await axios.put('/invoice/settings/update', payload);
-      } else {
-        // TODO : Create settings API
-        console.log('Create API call');
-      }
+      response = await axios.put('/invoice/settings/update', payload);
 
       // const response = {
       //   status: 200
