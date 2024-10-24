@@ -34,8 +34,7 @@ import ScrollX from 'components/ScrollX';
 import MainCard from 'components/MainCard';
 import Avatar from 'components/@extended/Avatar';
 import IconButton from 'components/@extended/IconButton';
-import InvoiceCard from 'components/cards/invoice/InvoiceCard';
-import InvoiceChart from 'components/cards/invoice/InvoiceChart';
+import TripCard from 'components/cards/trips/TripCard';
 import { CSVExport, HeaderSort, IndeterminateCheckbox, TablePagination, TableRowSelection } from 'components/third-party/ReactTable';
 import AlertColumnDelete from 'sections/apps/kanban/Board/AlertColumnDelete';
 
@@ -46,7 +45,7 @@ import { renderFilterTypes, GlobalFilter, DateColumnFilter } from 'utils/react-t
 
 // assets
 import { Edit, Eye, InfoCircle, More, ProfileTick, Trash } from 'iconsax-react';
-import axios from 'axios';
+import TripChart from 'components/cards/trips/TripChart';
 
 const avatarImage = require.context('assets/images/users', true);
 
@@ -128,9 +127,15 @@ function ReactTable({ columns, data }) {
               icon={
                 <Chip
                   label={
-                    status === 'All' ? data.length : status === 'Paid' ? counts.Paid : status === 'Unpaid' ? counts.Unpaid : counts.Cancelled
+                    status === 'All'
+                      ? data.length
+                      : status === 'Completed'
+                      ? counts.Completed
+                      : status === 'Pending'
+                      ? counts.Pending
+                      : counts.Cancelled
                   }
-                  color={status === 'All' ? 'primary' : status === 'Paid' ? 'success' : status === 'Unpaid' ? 'warning' : 'error'}
+                  color={status === 'All' ? 'primary' : status === 'Completed' ? 'success' : status === 'Pending' ? 'warning' : 'error'}
                   variant="light"
                   size="small"
                 />
@@ -214,12 +219,11 @@ ReactTable.propTypes = {
   data: PropTypes.array
 };
 
-// ==============================|| INVOICE - LIST ||============================== //
+// ==============================|| TRIP - LIST ||============================== //
 
-const List = () => {
+const TripList = () => {
   const [loading, setLoading] = useState(true);
   const { alertPopup } = useSelector((state) => state.invoice);
-  const token = localStorage.getItem('serviceToken');
 
   useEffect(() => {
     dispatch(getInvoiceList()).then(() => setLoading(false));
@@ -228,20 +232,6 @@ const List = () => {
 
   const [invoiceId, setInvoiceId] = useState(0);
   const [getInvoiceId, setGetInvoiceId] = useState(0);
-  const [data, setData] = useState(0);
-
-  useEffect(() => {
-    const fetchInvoice = async () => {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/invoice/by/cabProviderId`, {
-        headers: {
-          Authorization: `${token}`
-        }
-      });
-
-      setData(response.data.data);
-    };
-    fetchInvoice();
-  }, []);
 
   const dummyData = [
     {
@@ -251,9 +241,11 @@ const List = () => {
       date: '2024-09-01',
       due_date: '2024-10-01',
       quantity: 10,
-      totalAmount: 256,
-      status: 'Paid',
-      avatar: 1
+      status: 'Completed',
+      avatar: 1,
+      rate: 100, // Rate for the trip
+      driver: 'Mike Johnson', // Driver for the trip
+      remarks: 'On time delivery' // Remarks for the trip
     },
     {
       id: 2,
@@ -262,9 +254,11 @@ const List = () => {
       date: '2024-09-05',
       due_date: '2024-10-05',
       quantity: 5,
-      totalAmount: 676,
-      status: 'Unpaid',
-      avatar: 2
+      status: 'Pending',
+      avatar: 2,
+      rate: 50, // Rate for the trip
+      driver: 'Sara Wilson', // Driver for the trip
+      remarks: 'Waiting for confirmation' // Remarks for the trip
     },
     {
       id: 3,
@@ -273,9 +267,11 @@ const List = () => {
       date: '2024-09-10',
       due_date: '2024-10-10',
       quantity: 20,
-      totalAmount: 908,
       status: 'Cancelled',
-      avatar: 3
+      avatar: 3,
+      rate: 200, // Rate for the trip
+      driver: 'Chris Lee', // Driver for the trip
+      remarks: 'Cancelled by customer' // Remarks for the trip
     },
     {
       id: 4,
@@ -284,9 +280,11 @@ const List = () => {
       date: '2024-09-12',
       due_date: '2024-10-12',
       quantity: 8,
-      totalAmount: 356,
-      status: 'Paid',
-      avatar: 4
+      status: 'Completed',
+      avatar: 4,
+      rate: 80, // Rate for the trip
+      driver: 'Laura Green', // Driver for the trip
+      remarks: 'Successful trip' // Remarks for the trip
     },
     {
       id: 5,
@@ -295,9 +293,11 @@ const List = () => {
       date: '2024-09-15',
       due_date: '2024-10-15',
       quantity: 12,
-      totalAmount: 876,
-      status: 'Unpaid',
-      avatar: 5
+      status: 'Pending',
+      avatar: 5,
+      rate: 120, // Rate for the trip
+      driver: 'James White', // Driver for the trip
+      remarks: 'Awaiting pickup' // Remarks for the trip
     }
   ];
 
@@ -336,7 +336,7 @@ const List = () => {
         disableFilters: true
       },
       {
-        Header: 'Invoice Id',
+        Header: 'Trip Id',
         accessor: 'id',
         className: 'cell-center',
         disableFilters: true
@@ -372,21 +372,21 @@ const List = () => {
         disableFilters: true
       },
       {
-        Header: 'Invoice Date',
+        Header: 'Trip Date',
         accessor: 'date'
       },
       {
-        Header: 'Due Date',
+        Header: 'Driver',
         accessor: 'due_date'
       },
       {
-        Header: 'Total Amount',
-        accessor: 'totalAmount'
+        Header: 'Trip Rate',
+        accessor: 'rate', // Updated to use the new rate field
+        disableFilters: true
       },
       {
-        Header: 'Quantity',
-        accessor: 'quantity',
-        disableFilters: true
+        Header: 'Remarks',
+        accessor: 'remarks'
       },
       {
         Header: 'Status',
@@ -397,11 +397,11 @@ const List = () => {
           switch (value) {
             case 'Cancelled':
               return <Chip color="error" label="Cancelled" size="small" variant="light" />;
-            case 'Paid':
-              return <Chip color="success" label="Paid" size="small" variant="light" />;
-            case 'Unpaid':
+            case 'Completed':
+              return <Chip color="success" label="Completed" size="small" variant="light" />;
+            case 'Pending':
             default:
-              return <Chip color="info" label="Unpaid" size="small" variant="light" />;
+              return <Chip color="info" label="Pending" size="small" variant="light" />;
           }
         }
       },
@@ -410,8 +410,10 @@ const List = () => {
         className: 'cell-center',
         disableSortBy: true,
         Cell: ({ row }) => {
-          
+          console.log('row', row);
+
           const [anchorEl, setAnchorEl] = useState(null);
+          const [status, setStatus] = useState(null);
 
           const handleMenuClick = (event) => {
             setAnchorEl(event.currentTarget);
@@ -421,15 +423,21 @@ const List = () => {
             setAnchorEl(null);
           };
 
-          const handlePaid = () => {
-            row.original.status = 'Paid';
-            handleMenuClose();
+          const handleCompleted = () => {
+            row.original.status = 'Completed'; // Update the row's status
+            handleMenuClose(); // Close the menu after selecting an option
           };
 
-          const handleUnpaid = () => {
-            row.original.status = 'Unpaid';
-            handleMenuClose();
+          const handlePending = () => {
+            row.original.status = 'Pending'; // Update the row's status
+            handleMenuClose(); // Close the menu after selecting an option
           };
+
+          const handleCancelled = () => {
+            row.original.status = 'Cancelled'; // Update the row's status
+            handleMenuClose(); // Close the menu after selecting an option
+          };
+
           const openMenu = Boolean(anchorEl);
 
           return (
@@ -455,15 +463,15 @@ const List = () => {
                   horizontal: 'right'
                 }}
               >
-                <MenuItem onClick={handlePaid}>Paid</MenuItem>
-                <MenuItem onClick={handleUnpaid}>Unpaid</MenuItem>
+                <MenuItem onClick={handleCompleted}>Completed</MenuItem>
+                <MenuItem onClick={handlePending}>Pending</MenuItem>
+                <MenuItem onClick={handleCancelled}>Cancelled</MenuItem>
               </Menu>
             </Stack>
           );
         }
       }
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -472,7 +480,7 @@ const List = () => {
 
   const widgetsData = [
     {
-      title: 'Paid',
+      title: 'Completed',
       count: '$7,825',
       percentage: 70.5,
       isLoss: false,
@@ -481,7 +489,7 @@ const List = () => {
       chartData: [200, 600, 100, 400, 300, 400, 50]
     },
     {
-      title: 'Unpaid',
+      title: 'Pending',
       count: '$1,880',
       percentage: 27.4,
       isLoss: true,
@@ -490,7 +498,7 @@ const List = () => {
       chartData: [100, 550, 300, 350, 200, 100, 300]
     },
     {
-      title: 'Cancelled',
+      title: 'Overdue',
       count: '$3,507',
       percentage: 27.4,
       isLoss: true,
@@ -510,7 +518,7 @@ const List = () => {
             {widgetsData.map((widget, index) => (
               <Grid item sm={4} xs={12} key={index}>
                 <MainCard>
-                  <InvoiceCard
+                  <TripCard
                     title={widget.title}
                     count={widget.count}
                     percentage={widget.percentage}
@@ -518,8 +526,8 @@ const List = () => {
                     invoice={widget.invoice}
                     color={widget.color.main}
                   >
-                    <InvoiceChart color={widget.color} data={widget.chartData} />
-                  </InvoiceCard>
+                    <TripChart color={widget.color} data={widget.chartData} />
+                  </TripCard>
                 </MainCard>
               </Grid>
             ))}
@@ -557,7 +565,7 @@ const List = () => {
               </Stack>
               <Stack direction="row" spacing={1}>
                 <Typography variant="body2" color="white">
-                  Cancelled
+                  Overdue
                 </Typography>
                 <Typography variant="body1" color="white">
                   62k
@@ -584,7 +592,7 @@ const List = () => {
   );
 };
 
-List.propTypes = {
+TripList.propTypes = {
   row: PropTypes.object,
   values: PropTypes.object,
   email: PropTypes.string,
@@ -617,4 +625,4 @@ LinearWithLabel.propTypes = {
   others: PropTypes.any
 };
 
-export default List;
+export default TripList;

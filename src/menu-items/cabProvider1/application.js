@@ -2,7 +2,7 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { Bill, DocumentUpload, Eye, MenuBoard } from 'iconsax-react';
+import { Bill, Car, DocumentUpload, Eye, MenuBoard } from 'iconsax-react';
 import { MODULE, PERMISSIONS } from 'constant';
 
 // icons
@@ -10,7 +10,8 @@ const icons = {
   samplePage: MenuBoard,
   view: Eye,
   upload: DocumentUpload,
-  invoice: Bill
+  invoice: Bill,
+  trip:Car
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -30,10 +31,10 @@ const application = {
       url: '/apps/roster/dashboard',
       children: [
         {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
+          id: 'list',
+          title: <FormattedMessage id="list" />,
           type: 'item',
-          url: '/apps/roster/view',
+          url: '/apps/roster/all-roster',
           // icon: icons.view
         },
         {
@@ -63,10 +64,10 @@ const application = {
       icon: icons.invoice,
       children: [
         {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
+          id: 'list',
+          title: <FormattedMessage id="list" />,
           type: 'item',
-          url: '/apps/invoices/view',
+          url: '/apps/invoices/list',
           // icon: icons.view
         },
         {
@@ -76,6 +77,24 @@ const application = {
           url: '/apps/invoices/create',
           // icon: icons.upload
         }
+      ]
+    },
+
+     // Trips
+     {
+      id: 'trips',
+      title: <FormattedMessage id="trips" />,
+      type: 'collapse',
+      // url: '/apps/invoices/dashboard',
+      icon: icons.trip,
+      children: [
+        {
+          id: 'list',
+          title: <FormattedMessage id="list" />,
+          type: 'item',
+          url: '/apps/trips/list',
+          // icon: icons.view
+        },
       ]
     }
   ]

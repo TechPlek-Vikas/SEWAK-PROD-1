@@ -34,6 +34,10 @@ const RosterFileList = Loadable(lazy(() => import('pages/apps/test/RosterFileMan
 const MapRosterFile = Loadable(lazy(() => import('pages/Roster/map-roster')));
 const ViewRoster = Loadable(lazy(() => import('pages/Roster/view-roster')));
 const AssignTrips = Loadable(lazy(() => import('pages/Roster/assign-trips')));
+const AllRosters = Loadable(lazy(() => import('pages/Roster/AllRosters')));
+
+//Trip
+const TripList = Loadable(lazy(() => import('pages/trips/TripList')));
 
 // Management
 const User = Loadable(lazy(() => import('pages/management/user')));
@@ -166,6 +170,10 @@ const CabProvidorRoutes = {
                 {
                   path: 'test-view',
                   element: <ViewRoster /> // Render Company only for base path
+                },
+                {
+                  path: 'all-roster',
+                  element: <AllRosters /> 
                 }
               
               ]
@@ -180,7 +188,7 @@ const CabProvidorRoutes = {
                   element: <InvoiceDashboard />
                 },
                 {
-                  path: 'view',
+                  path: 'list',
                   element: <List />
                 },
                 {
@@ -206,6 +214,17 @@ const CabProvidorRoutes = {
                   element: <AdvanceType />
                   //   element: <ProtectedRoute element={AdvanceType} moduleName={MODULE.ADVANCE_TYPE} permission={PERMISSIONS.READ} />
                 }
+              ]
+            },
+
+             // Trips
+             {
+              path: 'trips',
+              children: [
+                {
+                  path: 'list',
+                  element: <TripList />
+                },
               ]
             }
           ]

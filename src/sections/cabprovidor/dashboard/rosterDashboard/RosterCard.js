@@ -24,8 +24,7 @@ export default function RosterCard({ handleFileUploadDialogue }) {
         <Grid item xs={4} sm={2} lg={6}>
           <Box
             onClick={() => {
-              console.log('drawer', isOpen);
-              openDrawer();
+            navigate('/apps/roster/all-roster');
             }}
             sx={{ cursor: 'pointer' }}
           >

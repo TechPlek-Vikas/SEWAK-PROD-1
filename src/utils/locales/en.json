@@ -42,5 +42,7 @@
   "setting": "Setting",
   "account setting": "Account Setting",
   "roster setting": "Roster Setting",
-  "invoice setting": "Invoice Setting"
+  "invoice setting": "Invoice Setting",
+  "list":"List",
+  "trips":"Trips"
 }
