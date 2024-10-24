@@ -62,6 +62,7 @@ import InvoiceSetting from 'pages/setting/invoice';
 import GenericSelect from 'components/select/GenericSelect';
 import { formatDateUsingMoment } from 'utils/helper';
 import axios from 'utils/axios';
+import { getApiResponse } from 'utils/axiosHelper';
 
 export const TAX_TYPE = {
   INDIVIDUAL: 'Individual',
@@ -94,11 +95,11 @@ const SETTINGS = {
     apply: TAX_TYPE.GROUP
   },
   discount: {
-    apply: DISCOUNT_TYPE.INDIVIDUAL,
-    // apply: DISCOUNT_TYPE.GROUP,
-    by: DISCOUNT_BY.PERCENTAGE
+    // apply: DISCOUNT_TYPE.INDIVIDUAL,
+    apply: DISCOUNT_TYPE.GROUP,
+    // by: DISCOUNT_BY.PERCENTAGE
 
-    // by: DISCOUNT_BY.AMOUNT
+    by: DISCOUNT_BY.AMOUNT
   },
   additionalCharges: STATUS.YES,
   roundOff: STATUS.YES
@@ -108,14 +109,14 @@ const getItem = (data) => {
   console.log(`🚀 ~ getItem ~ data:`, data);
   return {
     id: UIDV4(),
-    itemName: 'ABCD',
-    rate: 200,
-    quantity: 6,
-    amount: 1200,
+    itemName: '',
+    rate: 0,
+    quantity: 0,
+    amount: 0,
     ...(data?.tax?.apply === TAX_TYPE.INDIVIDUAL
-      ? { tax: data?.tax?.by || DISCOUNT_BY.PERCENTAGE, itemTax: 5, code: 'VH45BS35VJ3', taxAmount: 0 }
+      ? { tax: data?.tax?.by || DISCOUNT_BY.PERCENTAGE, itemTax: 0, code: 'VH45BS35VJ3', taxAmount: 0 }
       : {}),
-    ...(data?.discount?.apply === DISCOUNT_TYPE.INDIVIDUAL ? { discount: data?.discount?.by, itemDiscount: 22, discountAmount: 0 } : {})
+    ...(data?.discount?.apply === DISCOUNT_TYPE.INDIVIDUAL ? { discount: data?.discount?.by, itemDiscount: 0, discountAmount: 0 } : {})
   };
 };
 
@@ -157,16 +158,24 @@ const getInitialValues = (data) => {
       IFSCCode: 'SBIN0001234',
       bankName: 'State Bank of India'
     },
-    discount: 0,
-    tax: 0,
+    tax: data?.tax?.by || DISCOUNT_BY.PERCENTAGE,
+    discount: data?.discount?.by,
+    groupTaxAmount: 0,
+    groupDiscountAmount: 0,
+    ...(data?.tax?.apply === TAX_TYPE.GROUP ? { groupTax: 0 } : {}),
+
+    ...(data?.discount?.apply === DISCOUNT_TYPE.GROUP ? { groupDiscount: 0 } : {}),
     notes: '',
     terms: '',
-    total: 1200,
-    additional: {
-      ...(data?.tax?.apply === TAX_TYPE.GROUP ? { tax: data?.tax?.by || DISCOUNT_BY.PERCENTAGE, groupTax: 19, groupTaxAmount: 0 } : {}),
-
-      ...(data?.discount?.apply === DISCOUNT_TYPE.GROUP ? { discount: data?.discount?.by, groupDiscount: 29, groupDiscountAmount: 0 } : {})
-    }
+    subTotal: 0,
+    total: 0,
+    CGST: 0,
+    SGST: 0,
+    IGST: 0,
+    MCDAmount: 0,
+    tollParkingCharges: 0,
+    penalty: 0,
+    additional: {}
   };
 
   return result;
@@ -223,11 +232,34 @@ const Create1 = () => {
 
     async function fetchSettings() {
       // TODO : Get settings from API
-      console.log('Api call for get settings (At Invoice Creation)');
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      try {
+        console.log('Api call for get settings (At Invoice Creation)');
+        // await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      console.log('Api call done get settings ........');
-      setSettings(SETTINGS);
+        const cabProviderId = JSON.parse(localStorage.getItem('userInformation'))?.userId || '';
+        const url = `/invoice/settings/list`;
+        const config = {
+          params: {
+            cabProviderId
+          }
+        };
+
+        const response = await getApiResponse(url, config);
+        console.log(`🚀 ~ response:`, response);
+
+        if (response.success) {
+          const { invoiceSetting } = response.data;
+          console.log(invoiceSetting);
+          setSettings(invoiceSetting);
+          setLoading(false);
+          console.log('Api call done .......');
+        }
+
+        console.log('Api call done get settings ........');
+        // setSettings(SETTINGS);
+      } catch (error) {
+        console.log('Error fetching settings: (Invoice Creation)', error);
+      }
     }
 
     if (!dialogOpen) {
@@ -238,6 +270,42 @@ const Create1 = () => {
   const handleFormikSubmit = async (values, { resetForm, setSubmitting }) => {
     try {
       console.log('Formik submit', values);
+
+      const cabProviderId = JSON.parse(localStorage.getItem('userInformation'))?.userId || '';
+      const format = 'YYYY-MM-DD';
+
+      const payload = {
+        data: {
+          companyId: values?.customerInfo?._id || '',
+          cabProviderId,
+          invoiceNumber: invoiceId,
+          invoiceDate: formatDateUsingMoment(values?.date, format),
+          dueDate: formatDateUsingMoment(values?.due_date, format),
+          servicePeriod:
+            formatDateUsingMoment(values?.start_date, 'DD-MM-YYYY') + ' to ' + formatDateUsingMoment(values?.end_date, 'DD-MM-YYYY'),
+          invoiceData: values?.invoice_detail || [],
+          taxBy: values?.tax,
+          subTotal: values?.subTotal,
+          discountBy: values.discount,
+          totalAmount: values?.total,
+          groupTaxAmount: values?.groupTaxAmount,
+          groupDiscountAmount: values?.groupDiscountAmount,
+          grandTotal: values?.total,
+          CGST: values?.CGST,
+          SGST: values?.SGST,
+          IGST: values?.IGST,
+          MCDAmount: values?.MCDAmount,
+          tollParkingCharges: values?.tollParkingCharges,
+          penalty: values?.penalty,
+          terms: values?.terms,
+          billedTo: values?.customerInfo,
+          billedBy: values?.cashierInfo,
+          bankDetails: values?.bank_details
+        }
+      };
+
+      console.log('payload', payload);
+      alert(JSON.stringify(payload, null, 2));
     } catch (error) {
       console.log(error);
     }
@@ -328,18 +396,6 @@ const Create1 = () => {
     setCashierValues(values?.cashierInfo || {});
   }, []);
 
-  const subtotal = values?.invoice_detail.reduce((prev, curr) => {
-    if (curr.itemName.trim().length > 0) return prev + Number(curr.rate * Math.floor(curr.quantity));
-    else return prev;
-  }, 0);
-
-  let taxRate = values.invoice_detail.reduce((accumulator, item) => {
-    return accumulator + item.itemTax;
-  }, 0);
-
-  const discountRate = (values.discount * subtotal) / 100;
-  const total = subtotal - discountRate + taxRate;
-
   const defaultHeader = useMemo(() => {
     console.log('🚀 ~ defaultHeader ~ settings:', settings);
 
@@ -351,8 +407,8 @@ const Create1 = () => {
         type: 'text'
       },
       {
-        name: 'price',
-        label: 'Price',
+        name: 'rate',
+        label: 'Rate',
         type: 'number'
       },
       {
@@ -365,11 +421,6 @@ const Create1 = () => {
     if (settings?.tax?.apply === TAX_TYPE.INDIVIDUAL) {
       header.push({ name: 'code', label: 'HSN Code', type: 'string' });
       header.push({ name: 'tax', label: 'Tax (%)', type: 'number' });
-      header.push({
-        name: 'taxAmount',
-        label: 'Tax Amount',
-        type: 'label'
-      });
     }
 
     if (settings?.discount?.apply === TAX_TYPE.INDIVIDUAL) {
@@ -378,6 +429,17 @@ const Create1 = () => {
         label: getDiscountLabel(settings?.discount),
         type: 'text'
       });
+    }
+
+    if (settings?.tax?.apply === TAX_TYPE.INDIVIDUAL) {
+      header.push({
+        name: 'taxAmount',
+        label: 'Tax Amount',
+        type: 'label'
+      });
+    }
+
+    if (settings?.discount?.apply === TAX_TYPE.INDIVIDUAL) {
       header.push({
         name: 'discountAmount',
         label: 'Discount Amount',
@@ -408,21 +470,102 @@ const Create1 = () => {
 
   console.log('loadingTable = ', loadingTable);
 
-  // Recalculate total whenever invoice_details change
   useEffect(() => {
-    const total = values.invoice_detail.reduce((acc, curr) => acc + curr.amount, 0);
-    console.log(`🚀 ~ useEffect ~ total:`, total);
+    const subTotal = values.subTotal;
+    const taxType = settings?.tax?.apply;
+    const groupTax = values.groupTax;
+    const discountAmount = values.groupDiscount || 0;
+
+    const subTotalDiscount = Number(values.invoice_detail.reduce((acc, curr) => acc + Number(curr.discountAmount), 0)) || 0;
+    const subTotalTax = Number(values.invoice_detail.reduce((acc, curr) => acc + Number(curr.taxAmount), 0)) || 0;
+
+    console.log({ subTotal, taxType, groupTax, discountAmount, subTotalDiscount, subTotalTax });
+
+    let taxAmount = 0;
+
+    if (taxType === TAX_TYPE.GROUP) {
+      taxAmount = (groupTax * subTotal) / 100;
+      console.log({ taxAmount });
+      setFieldValue('groupTaxAmount', taxAmount);
+      const total = subTotal + taxAmount - discountAmount;
+      // const total = subTotal + taxAmount - discountAmount - subTotalDiscount;
+
+      console.log({ taxAmount, total });
+      // setFieldValue('total', total);
+    }
+  }, [values.groupTax, setFieldValue, values.subTotal, values.groupDiscountAmount, settings?.tax?.apply]);
+
+  useEffect(() => {
+    const subTotal = values.subTotal;
+    const discountType = settings?.discount?.apply;
+    const discountBy = settings?.discount?.by;
+    const discountAmount = values?.groupDiscount || 0;
+    const groupTaxAmount = values.groupTaxAmount;
+
+    let discountAmountValue = 0;
+
+    if (discountType === DISCOUNT_TYPE.GROUP) {
+      if (discountBy === DISCOUNT_BY.AMOUNT) {
+        discountAmountValue = discountAmount;
+      } else if (discountBy === DISCOUNT_BY.PERCENTAGE) {
+        discountAmountValue = (discountAmount * subTotal) / 100;
+      } else {
+        discountAmountValue = 0;
+      }
+
+      setFieldValue('groupDiscountAmount', discountAmountValue);
+
+      const total = subTotal + groupTaxAmount - discountAmountValue;
+
+      console.log({ subTotal, discountType, discountBy, discountAmountValue, groupTaxAmount, total });
+
+      // setFieldValue('total', total);
+    }
+  }, [values.groupDiscount, setFieldValue, values.subTotal, values.groupTaxAmount, settings?.discount?.apply, settings?.discount?.by]);
+
+  useEffect(() => {
+    console.log('values.invoice_detail = ', values.invoice_detail);
+    const subTotal = values.invoice_detail.reduce((acc, curr) => acc + curr.amount, 0);
+    const subTotalDiscount = Number(values.invoice_detail.reduce((acc, curr) => acc + Number(curr.discountAmount), 0)) || 0;
+    const subTotalTax = Number(values.invoice_detail.reduce((acc, curr) => acc + Number(curr.taxAmount), 0)) || 0;
+
+    const taxType = settings?.tax?.apply;
+    const discountType = settings?.discount?.apply;
+    const discountBy = settings?.discount?.by;
+
+    let taxAmount = 0;
+    let discountAmount = 0;
+
+    if (taxType === TAX_TYPE.INDIVIDUAL) {
+      taxAmount = subTotalTax;
+      setFieldValue('groupTaxAmount', taxAmount);
+    }
+
+    if (discountType === DISCOUNT_TYPE.INDIVIDUAL) {
+      discountAmount = subTotalDiscount;
+      setFieldValue('groupDiscountAmount', discountAmount);
+    } else if (discountType === DISCOUNT_TYPE.GROUP) {
+      discountAmount = subTotalDiscount;
+    } else {
+      discountAmount = 0;
+    }
+
+    const total = subTotal + taxAmount - discountAmount;
+    console.log({ subTotal, subTotalDiscount, subTotalTax, taxAmount, discountAmount, total });
+    setFieldValue('subTotal', subTotal);
+    // setFieldValue('total', total);
+
+    console.log({ subTotal, subTotalDiscount, subTotalTax });
+  }, [values.invoice_detail, setFieldValue, settings?.tax?.apply, settings?.discount?.apply, settings?.discount?.by]);
+
+  useEffect(() => {
+    const tax = values.groupTaxAmount;
+    const discount = values.groupDiscountAmount;
+    const subTotal = values.subTotal;
+    const total = subTotal + tax - discount;
+
     setFieldValue('total', total);
-  }, [values.invoice_detail, setFieldValue]);
-
-  useEffect(() => {
-    const groupTax = values.additional.groupTax;
-    const amount = values.total;
-    const result = (groupTax * amount) / 100;
-    console.log(`🚀 ~ useEffect ~ result:`, result);
-
-    setFieldValue('additional.groupTaxAmount', result);
-  }, [values.additional.groupTax, setFieldValue, values.total]);
+  }, [values.groupTaxAmount, values.groupDiscountAmount, values.subTotal, setFieldValue]);
 
   const handleSelectChange = async (event) => {
     try {
@@ -1125,14 +1268,14 @@ const Create1 = () => {
                                         <TextField
                                           type="number"
                                           style={{ width: '100%' }}
-                                          name="additional.groupTax"
-                                          id="additional.groupTax"
+                                          name="groupTax"
+                                          id="groupTax"
                                           placeholder="0.0"
-                                          value={values.additional.groupTax}
+                                          value={values.groupTax}
                                           onChange={handleChange}
                                           onBlur={formik.handleBlur}
-                                          error={formik.touched?.additional?.groupTax && !!formik.errors?.additional?.groupTax}
-                                          helperText={formik.touched?.additional?.groupTax && formik.errors?.additional?.groupTax}
+                                          error={formik.touched?.groupTax && !!formik.errors.groupTax}
+                                          helperText={formik.touched?.groupTax && formik.errors?.groupTax}
                                           sx={{
                                             '& .MuiInputBase-input': {
                                               padding: '8px'
@@ -1155,14 +1298,14 @@ const Create1 = () => {
                                         <TextField
                                           type="number"
                                           style={{ width: '100%' }}
-                                          name="additional.groupDiscount"
-                                          id="additional.groupDiscount"
+                                          name="groupDiscount"
+                                          id="groupDiscount"
                                           placeholder="0.0"
-                                          value={values.additional.groupDiscount}
+                                          value={values.groupDiscount}
                                           onChange={handleChange}
                                           onBlur={formik.handleBlur}
-                                          error={formik.touched?.additional?.groupDiscount && !!formik.errors?.additional?.groupDiscount}
-                                          helperText={formik.touched?.additional?.groupDiscount && formik.errors?.additional?.groupDiscount}
+                                          error={formik.touched?.groupDiscount && !!formik.errors?.groupDiscount}
+                                          helperText={formik.touched?.groupDiscount && formik.errors?.groupDiscount}
                                           sx={{
                                             '& .MuiInputBase-input': {
                                               padding: '8px'
@@ -1195,30 +1338,48 @@ const Create1 = () => {
                                   <Stack spacing={2}>
                                     <Stack direction="row" justifyContent="space-between">
                                       <Typography color={theme.palette.secondary.main}>Sub Total:</Typography>
-                                      <Typography>{country?.prefix + '' + formik.values.total.toFixed(2)}</Typography>
-                                    </Stack>
-                                    {/* <Stack direction="row" justifyContent="space-between">
-                                      <Typography color={theme.palette.secondary.main}>Discount:</Typography>
-                                      <Typography variant="h6" color={theme.palette.success.main}>
-                                        {country?.prefix + '' + discountRate.toFixed(2)}
-                                      </Typography>
-                                    </Stack> */}
+                                      {/* <Typography>{country?.prefix + '' + formik.values.subTotal?.toFixed(2)}</Typography> */}
 
-                                    {settings?.tax?.apply === TAX_TYPE.GROUP && (
-                                      <Stack direction="row" justifyContent="space-between">
-                                        <Typography color={theme.palette.secondary.main}>Tax:</Typography>
-                                        <Typography>
-                                          {country?.prefix + '' + formik.values.additional?.groupTaxAmount?.toFixed(2) || 0}
-                                        </Typography>
-                                      </Stack>
-                                    )}
+                                      <GenericPriceDisplay
+                                        total={formik.values?.subTotal}
+                                        roundOff={settings.roundOff}
+                                        prefix={country?.prefix}
+                                      />
+                                    </Stack>
+
+                                    <Stack direction="row" justifyContent="space-between">
+                                      <Typography color={theme.palette.secondary.main}>Tax:</Typography>
+                                      {/* <Typography>{country?.prefix + '' + formik.values?.groupTaxAmount?.toFixed(2) || 0}</Typography> */}
+                                      <GenericPriceDisplay
+                                        total={formik.values?.groupTaxAmount}
+                                        roundOff={settings.roundOff}
+                                        prefix={country?.prefix}
+                                      />
+                                    </Stack>
+
+                                    <Stack direction="row" justifyContent="space-between">
+                                      <Typography color={theme.palette.secondary.main}>Discount:</Typography>
+                                      {/* <Typography>{country?.prefix + '' + formik.values?.groupDiscountAmount?.toFixed(2) || 0}</Typography> */}
+                                      <GenericPriceDisplay
+                                        total={formik.values?.groupDiscountAmount}
+                                        roundOff={settings.roundOff}
+                                        prefix={country?.prefix}
+                                      />
+                                    </Stack>
 
                                     <Stack direction="row" justifyContent="space-between">
                                       <Typography variant="subtitle1">Grand Total:</Typography>
-                                      <Typography variant="subtitle1">
-                                        {' '}
-                                        {total % 1 === 0 ? country?.prefix + '' + total : country?.prefix + '' + total.toFixed(2)}
-                                      </Typography>
+                                      {/* <Typography variant="subtitle1">
+                                        {settings.roundOff === STATUS.NO
+                                          ? country?.prefix + '' + formik.values?.total?.toFixed(2) || 0
+                                          : country?.prefix + '' + Math.ceil(formik.values.total) || 0}
+                                      </Typography> */}
+                                      <GenericPriceDisplay
+                                        total={formik.values?.total}
+                                        roundOff={settings.roundOff}
+                                        prefix={country?.prefix}
+                                        variant="subtitle1" // Optional
+                                      />
                                     </Stack>
                                   </Stack>
                                 </Grid>
@@ -1422,6 +1583,110 @@ const Create1 = () => {
                     </MainCard>
                   </Grid>
                 </Grid>
+
+                {/* Set Currency */}
+                <Grid item xs={12} sm={6}>
+                  <Stack spacing={1}>
+                    <InputLabel>Set Currency*</InputLabel>
+                    <FormControl sx={{ width: { xs: '100%', sm: 250 } }}>
+                      <Autocomplete
+                        id="country-select-demo"
+                        fullWidth
+                        options={countries}
+                        defaultValue={countries[2]}
+                        value={countries.find((option) => option.code === country?.code)}
+                        sx={{
+                          '& .MuiInputBase-input': {
+                            padding: '8px'
+                          }
+                        }}
+                        onChange={(event, value) => {
+                          dispatch(
+                            selectCountry({
+                              country: value
+                            })
+                          );
+                        }}
+                        autoHighlight
+                        getOptionLabel={(option) => option.label}
+                        renderOption={(props, option) => (
+                          <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                            {option.code && (
+                              <img
+                                loading="lazy"
+                                width="20"
+                                src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                                srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                                alt=""
+                              />
+                            )}
+                            {option.label}
+                          </Box>
+                        )}
+                        renderInput={(params) => {
+                          const selected = countries.find((option) => option.code === country?.code);
+                          return (
+                            <TextField
+                              {...params}
+                              name="phoneCode"
+                              placeholder="Select"
+                              InputProps={{
+                                ...params.InputProps,
+                                startAdornment: (
+                                  <>
+                                    {selected && selected.code !== '' && (
+                                      <img
+                                        style={{ marginRight: 6 }}
+                                        loading="lazy"
+                                        width="20"
+                                        src={`https://flagcdn.com/w20/${selected.code.toLowerCase()}.png`}
+                                        srcSet={`https://flagcdn.com/w40/${selected.code.toLowerCase()}.png 2x`}
+                                        alt=""
+                                      />
+                                    )}
+                                  </>
+                                )
+                              }}
+                              inputProps={{
+                                ...params.inputProps,
+                                autoComplete: 'new-password' // disable autocomplete and autofill
+                              }}
+                            />
+                          );
+                        }}
+                      />
+                    </FormControl>
+                  </Stack>
+                </Grid>
+
+                {/* Action Buttons */}
+                <Grid item xs={12} sm={6}>
+                  <Stack direction="row" justifyContent="flex-end" alignItems="flex-end" spacing={2} sx={{ height: '100%' }}>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      disabled={values.status === '' || !isValid}
+                      sx={{ color: 'secondary.dark' }}
+                      onClick={() =>
+                        dispatch(
+                          reviewInvoicePopup({
+                            isOpen: true
+                          })
+                        )
+                      }
+                    >
+                      Preview
+                    </Button>
+                    {/* save data to database */}
+                    {/* <Button variant="outlined" color="secondary" sx={{ color: 'secondary.dark' }}>
+                      Create
+                    </Button> */}
+                    {/* send mail */}
+                    <Button color="primary" variant="contained" type="submit">
+                      Create & Send
+                    </Button>
+                  </Stack>
+                </Grid>
               </Grid>
             </Form>
           </FormikProvider>
@@ -1432,6 +1697,14 @@ const Create1 = () => {
 };
 
 export default Create1;
+
+const GenericPriceDisplay = ({ total, roundOff, prefix, variant }) => {
+  return (
+    <Typography {...(variant && { variant })}>
+      {roundOff === STATUS.NO ? prefix + total?.toFixed(2) || 0 : prefix + Math.ceil(total) || 0}
+    </Typography>
+  );
+};
 
 function validateFields(fields) {
   const missingFields = [];
