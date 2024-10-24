@@ -12,6 +12,7 @@ import List from 'pages/invoice/list/List';
 
 import Create from 'pages/invoice/create/Create';
 import Create1 from 'pages/invoice/create/Create1';
+import Create2 from 'pages/invoice/create/Create2';
 import { element } from 'prop-types';
 import RosterDashboard from 'pages/apps/test/dashboard';
 import MapRosterFileTest from 'pages/apps/test/CreateRosterTemplateDrawer.js';
@@ -186,7 +187,8 @@ const CabProvidorRoutes = {
                 {
                   path: 'create',
                   // element: <Create />
-                  element: <Create1 />
+                  // element: <Create1 />
+                  element: <Create2 />
                 },
                 {
                   path: 'invoice',
