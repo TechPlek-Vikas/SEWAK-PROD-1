@@ -18,6 +18,7 @@ import { element } from 'prop-types';
 import MapRosterFileTest from 'pages/apps/test/CreateRosterTemplateDrawer.js';
 import ViewRosterTest from 'pages/apps/test/List';
 import ViewRosterTest1 from 'pages/apps/test/ViewRoster';
+import AddRosterFileForm from 'pages/apps/test/components/AddRosterFileForm';
 
 const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/error/404')));
 const MaintenanceError500 = Loadable(lazy(() => import('pages/maintenance/error/500')));
@@ -138,7 +139,7 @@ const CabProvidorRoutes = {
                 },
                 {
                   path: 'create',
-                  element: <UnderConstruction title="Roster Upload" />
+                  element: <AddRosterFileForm/>
                 },
                 {
                   path: 'file-management',
@@ -160,10 +161,10 @@ const CabProvidorRoutes = {
                   path: 'assign-trips',
                   element: <AssignTrips />
                 },
-                {
-                  path: 'test',
-                  element: <RosterDashboard1 />
-                },
+                // {
+                //   path: 'test',
+                //   element: <RosterDashboard1 />
+                // },
                 {
                   path: 'test-map',
                   element: <MapRosterFileTest />
