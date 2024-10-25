@@ -240,6 +240,9 @@ const List = () => {
   const [data, setData] = useState(null);
   const [metadata, setMetadata] = useState(null);
 
+  console.log("metadata",metadata);
+  
+
   const fetchInvoice = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/invoice/by/cabProviderId`, {
@@ -352,124 +355,7 @@ const List = () => {
         Header: 'Actions',
         disableSortBy: true,
         Cell: ({ row }) => {
-          // const [anchorEl, setAnchorEl] = useState(null);
-          // const [dialogOpen, setDialogOpen] = useState(false);
-          // const [newStatus, setNewStatus] = useState(null);
-          // const token = localStorage.getItem('serviceToken');
-
-          // const handleMenuClick = (event) => {
-          //   setAnchorEl(event.currentTarget);
-          // };
-
-          // const handleMenuClose = () => {
-          //   setAnchorEl(null);
-          // };
-
-          // const handleStatusChange = (status) => {
-          //   setNewStatus(status);
-          //   setDialogOpen(true);
-          // };
-
-          // const handleDialogClose = () => {
-          //   setDialogOpen(false);
-          // };
-
-          // const confirmStatusChange = async () => {
-          //   try {
-          //     // API request to update the status
-          //     const response = await axios.put(
-          //       `${process.env.REACT_APP_API_URL}/invoice/update/paymentStatus`,
-          //       {
-          //         data: {
-          //           invoiceId: row.original._id,
-          //           status: newStatus
-          //         }
-          //       },
-          //       {
-          //         headers: {
-          //           Authorization: `${token}`
-          //         }
-          //       }
-          //     );
-
-          //     if (response.status === 201) {
-          //       dispatch(
-          //         openSnackbar({
-          //           open: true,
-          //           message: response.data.message,
-          //           variant: 'alert',
-          //           alert: {
-          //             color: 'success'
-          //           },
-          //           close: true
-          //         })
-          //       );
-          //     }
-          //     // Update the local status after successful API call
-          //     row.original.status = newStatus;
-          //     fetchInvoice();
-          //   } catch (error) {
-          //     console.error('Failed to update status:', error);
-          //   }
-          //   setDialogOpen(false);
-          //   handleMenuClose();
-          // };
-
-          // const openMenu = Boolean(anchorEl);
-
-          // return (
-          //   <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
-          //     <IconButton edge="end" aria-label="more actions" color="secondary" onClick={handleMenuClick}>
-          //       <More style={{ fontSize: '1.15rem' }} />
-          //     </IconButton>
-          //     <Menu
-          //       id="fade-menu"
-          //       MenuListProps={{
-          //         'aria-labelledby': 'fade-button'
-          //       }}
-          //       anchorEl={anchorEl}
-          //       open={openMenu}
-          //       onClose={handleMenuClose}
-          //       TransitionComponent={Fade}
-          //       anchorOrigin={{
-          //         vertical: 'bottom',
-          //         horizontal: 'right'
-          //       }}
-          //       transformOrigin={{
-          //         vertical: 'top',
-          //         horizontal: 'right'
-          //       }}
-          //     >
-          //       <MenuItem onClick={() => handleStatusChange(1)}>Unpaid</MenuItem>
-          //       <MenuItem onClick={() => handleStatusChange(2)}>Paid</MenuItem>
-          //       <MenuItem onClick={() => handleStatusChange(3)}>Cancelled</MenuItem>
-          //     </Menu>
-
-          //     {/* Confirmation Dialog */}
-          //     <Dialog
-          //       open={dialogOpen}
-          //       onClose={handleDialogClose}
-          //       aria-labelledby="alert-dialog-title"
-          //       aria-describedby="alert-dialog-description"
-          //     >
-          //       <Box sx={{ p: 1, py: 1.5 }}>
-          //         <DialogTitle id="alert-dialog-title">Confirm Status Change</DialogTitle>
-          //         <DialogContent>
-          //           <DialogContentText id="alert-dialog-description">
-          //             Are you sure you want to change the status to {newStatus === 1 ? 'Unpaid' : newStatus === 2 ? 'Paid' : 'Cancelled'}?
-          //           </DialogContentText>
-          //         </DialogContent>
-          //         <DialogActions>
-          //           <Button color="error" onClick={handleDialogClose}>
-          //             Disagree
-          //           </Button>
-          //           <Button variant="contained" onClick={confirmStatusChange} autoFocus>
-          //             Agree
-          //           </Button>
-          //         </DialogActions>
-          //       </Box>
-          //     </Dialog>
-          // </Stack>
+         
           const [anchorEl, setAnchorEl] = useState(null);
           const [dialogOpen, setDialogOpen] = useState(false);
           const [formDialogOpen, setFormDialogOpen] = useState(false);
@@ -624,40 +510,40 @@ const List = () => {
   const widgetsData = [
     {
       title: 'Paid',
-      count: metadata.paid.paidCount,
-      amount: metadata.paid.paidAmount,
+      count: metadata?.paid.paidCount,
+      amount: metadata?.paid.paidAmount,
       percentage: (
-        (metadata.paid.paidCount / (metadata.paid.paidCount + metadata.unpaid.unpaidCount + metadata.overDue.overDueCount)) *
+        (metadata?.paid.paidCount / (metadata?.paid.paidCount + metadata?.unpaid.unpaidCount + metadata?.overDue.overDueCount)) *
         100
       ).toFixed(2),
       isLoss: false,
-      invoice: metadata.paid.paidCount, // Adjust if needed
+      invoice: metadata?.paid.paidCount, // Adjust if needed
       color: { main: '#4caf50' }, // Example color for paid
-      chartData: [] // Add your chart metadata here if necessary
+      chartData: [] // Add your chart metadata? here if necessary
     },
     {
       title: 'Unpaid',
-      count: metadata.unpaid.unpaidCount,
-      amount: metadata.unpaid.unpaidAmount,
+      count: metadata?.unpaid.unpaidCount,
+      amount: metadata?.unpaid.unpaidAmount,
       percentage: (
-        (metadata.unpaid.unpaidCount / (metadata.paid.paidCount + metadata.unpaid.unpaidCount + metadata.overDue.overDueCount)) *
+        (metadata?.unpaid.unpaidCount / (metadata?.paid.paidCount + metadata?.unpaid.unpaidCount + metadata?.overDue.overDueCount)) *
         100
       ).toFixed(2),
       isLoss: true,
-      invoice: metadata.unpaid.unpaidCount, // Adjust if needed
+      invoice: metadata?.unpaid.unpaidCount, // Adjust if needed
       color: { main: '#f44336' }, // Example color for unpaid
-      chartData: [] // Add your chart metadata here if necessary
+      chartData: [] // Add your chart metadata? here if necessary
     },
     {
       title: 'Overdue',
-      count: metadata.overDue.overDueCount,
-      amount: metadata.overDue.overDueAmount,
+      count: metadata?.overDue.overDueCount,
+      amount: metadata?.overDue.overDueAmount,
       percentage: (
-        (metadata.overDue.overDueCount / (metadata.paid.paidCount + metadata.unpaid.unpaidCount + metadata.overDue.overDueCount)) *
+        (metadata?.overDue.overDueCount / (metadata?.paid.paidCount + metadata?.unpaid.unpaidCount + metadata?.overDue.overDueCount)) *
         100
       ).toFixed(2),
       isLoss: true,
-      invoice: metadata.overDue.overDueCount, // Adjust if needed
+      invoice: metadata?.overDue.overDueCount, // Adjust if needed
       color: { main: '#ff9800' }, // Example color for overdue
       chartData: [] // Add your chart data here if necessary
     }
