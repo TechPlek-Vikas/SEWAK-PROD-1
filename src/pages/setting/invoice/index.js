@@ -54,13 +54,14 @@ const SETTINGS = {
 };
 
 const getInitialValues = (data) => {
+  console.log(`🚀 ~ getInitialValues ~ data:`, data);
   return {
     taxType: data?.tax?.apply || TAX_TYPE.INDIVIDUAL,
     discountType: data?.discount?.apply || DISCOUNT_TYPE.NO,
     discountBy: data?.discount?.by || DISCOUNT_BY.PERCENTAGE,
     additionalCharges: data?.additionalCharges || STATUS.NO,
     roundOff: data?.roundOff || STATUS.NO,
-    invoicePrefix: data?.invoice?.preFix || '',
+    invoicePrefix: data?.invoice?.prefix || '',
     invoiceNumber: data?.invoice?.invoiceNumber || 0
   };
 };
