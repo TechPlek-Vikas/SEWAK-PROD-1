@@ -13,9 +13,10 @@ import TextField from '@mui/material/TextField';
 import * as yup from 'yup';
 import { Formik, Form } from 'formik';
 import LinearWithLabel from 'components/@extended/progress/LinearWithLabel';
-import { Checkbox, Typography } from '@mui/material';
+import { Checkbox, FormHelperText, IconButton, Tooltip, Typography } from '@mui/material';
 import { formatIndianDate } from 'utils/dateFormat_dbTOviewDate';
 import axiosServices from 'utils/axios';
+import { InfoCircle } from 'iconsax-react';
 
 // project-imports
 // ==============================|| EDITABLE ROW ||============================== //
@@ -28,10 +29,9 @@ export default function RowEditable({ getValue: initialValue, row, column, table
   const { _zoneName_options, _vehicleType_options, _drivers_options } = original;
 
   const onChange = (e) => {
-   
-    if(id==="_guard_1"||id==="_dual_trip"){
-      setValue(e.target.checked? 1 : 0)
-    }else{
+    if (id === '_guard_1' || id === '_dual_trip') {
+      setValue(e.target.checked ? 1 : 0);
+    } else {
       setValue(e.target?.value);
     }
     console.log({ id }, e.target?.value, { original });
@@ -120,24 +120,38 @@ export default function RowEditable({ getValue: initialValue, row, column, table
       element = (
         <>
           {isEditable ? (
-            <Select
-              labelId="editable-select-label"
-              sx={{ '& .MuiOutlinedInput-input': { py: 0.75, px: 1 } }}
-              id="editable-select"
-              value={value}
-              onChange={onChange}
-              onBlur={onBlur}
-            >
-              {_zoneName_options.map((zone) => {
-                return (
-                  <MenuItem key={zone._id} value={zone}>
-                    <Typography>{zone.zoneName}</Typography>
-                  </MenuItem>
-                );
-              })}
-            </Select>
+            <>
+              {/* <FormHelperText>Without label</FormHelperText> */}
+              <Select
+                labelId="editable-select-label"
+                sx={{ '& .MuiOutlinedInput-input': { py: 0.75, px: 1 } }}
+                label="Company Rate"
+                id="editable-select"
+                value={value}
+                onChange={onChange}
+                onBlur={onBlur}
+              >
+                {_zoneName_options.map((zone) => {
+                  console.log({ value });
+                  return (
+                    <MenuItem key={zone._id} value={zone}>
+                      <Typography>{zone.zoneName}</Typography>
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </>
           ) : (
-            value?.zoneName
+            <Typography>
+              {value?.zoneName}{' '}
+              {!value._id && (
+                <Tooltip title={'select Zone Name'}>
+                  <IconButton size="small" color="error">
+                    <InfoCircle />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Typography>
           )}
         </>
       );
@@ -165,7 +179,16 @@ export default function RowEditable({ getValue: initialValue, row, column, table
                 })}
             </Select>
           ) : (
-            value?.zoneTypeName
+            <Typography>
+              {value?.zoneTypeName}{' '}
+              {!value._id && (
+                <Tooltip title={'select Zone type'}>
+                  <IconButton size="small" color="info">
+                    <InfoCircle />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Typography>
           )}
         </>
       );
@@ -192,7 +215,16 @@ export default function RowEditable({ getValue: initialValue, row, column, table
               })}
             </Select>
           ) : (
-            value?.vehicleTypeName
+            <Typography>
+              {value?.vehicleTypeName}{' '}
+              {!value._id && (
+                <Tooltip title={'select vehicle type'}>
+                  <IconButton size="small" color="error">
+                    <InfoCircle />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Typography>
           )}
         </>
       );
@@ -219,7 +251,16 @@ export default function RowEditable({ getValue: initialValue, row, column, table
               })}
             </Select>
           ) : (
-            value?.userName
+            <Typography>
+              {value?.userName}{' '}
+              {!value._id && (
+                <Tooltip title={'select Driver'}>
+                  <IconButton size="small" color="error">
+                    <InfoCircle />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Typography>
           )}
         </>
       );
@@ -247,35 +288,16 @@ export default function RowEditable({ getValue: initialValue, row, column, table
               </MenuItem>
             </Select>
           ) : (
-            value?.vehicleNumber
-          )}
-        </>
-      );
-      break;
-    case 'progress':
-      element = (
-        <>
-          {isEditable ? (
-            <>
-              <Stack direction="row" alignItems="center" spacing={1} sx={{ pl: 1, minWidth: 120 }}>
-                <Slider
-                  value={value}
-                  min={0}
-                  max={100}
-                  step={1}
-                  onBlur={onBlur}
-                  onChange={(event, newValue) => {
-                    setValue(newValue);
-                  }}
-                  valueLabelDisplay="auto"
-                  aria-labelledby="non-linear-slider"
-                />
-              </Stack>
-            </>
-          ) : (
-            <div>
-              <LinearWithLabel value={value} sx={{ minWidth: 75 }} />
-            </div>
+            <Typography>
+              {value?.vehicleNumber}{' '}
+              {!value._id && (
+                <Tooltip title={'select Driver'}>
+                  <IconButton size="small" color="info">
+                    <InfoCircle />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Typography>
           )}
         </>
       );
@@ -400,16 +422,7 @@ export default function RowEditable({ getValue: initialValue, row, column, table
       element = (
         <>
           {isEditable ? (
-     
-                  <Checkbox
-                    id={`checkbox`}
-                    name="checkbox"
-                    checked={value===1}
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    color="primary"
-                  />
-                
+            <Checkbox id={`checkbox`} name="checkbox" checked={value === 1} onChange={onChange} onBlur={onBlur} color="primary" />
           ) : (
             <Checkbox id={`${index}-${id}`} checked={value === 1} color="primary" disabled />
           )}
