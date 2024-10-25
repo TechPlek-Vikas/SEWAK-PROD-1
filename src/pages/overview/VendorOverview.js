@@ -33,7 +33,7 @@ const VendorOverview = () => {
       const fetchVendorData = async () => {
         const token = localStorage.getItem('serviceToken');
         try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}vendor/details/by?vendorId=${vendorId}`, {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/vendor/details/by?vendorId=${vendorId}`, {
             headers: {
               Authorization: `${token}`
             }
@@ -62,7 +62,7 @@ const VendorOverview = () => {
       const fetchCompanyData = async () => {
         const token = localStorage.getItem('serviceToken');
         try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}vendor/companies?vendorId=${vendorId}`, {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/vendor/companies?vendorId=${vendorId}`, {
             headers: {
               Authorization: `${token}`
             }
