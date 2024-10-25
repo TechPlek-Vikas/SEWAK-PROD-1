@@ -72,6 +72,8 @@ const getTabName = (status) => {
       return 'Completed';
     case TRIP_STATUS.CANCELLED:
       return 'Cancelled';
+    default:
+      return 'All';
   }
 };
 
@@ -142,19 +144,12 @@ function ReactTable({ columns, data }) {
 
   // ================ Tab ================
 
-  // const groups = ['All', ...new Set(data.map((item) => item.assignedStatus))];
-  const groups = ['All', 'Pending', 'Completed', 'Cancelled'];
+  const groups = ['All', ...new Set(data.map((item) => item.assignedStatus))];
+  // const groups = ['All', 'Pending', 'Completed', 'Cancelled'];
 
   console.log('Data = ', data);
 
   const countGroup = data.map((item) => item.assignedStatus);
-  // const counts = countGroup.reduce(
-  //   (acc, value) => ({
-  //     ...acc,
-  //     [value]: (acc[value] || 0) + 1
-  //   }),
-  //   {}
-  // );
   const counts = {
     Pending: countGroup.filter((status) => status === TRIP_STATUS.PENDING).length,
     Completed: countGroup.filter((status) => status === TRIP_STATUS.COMPLETED).length,
@@ -166,8 +161,8 @@ function ReactTable({ columns, data }) {
   console.log({ groups, countGroup, counts, activeTab });
 
   useEffect(() => {
-    // setFilter('assignedStatus', activeTab === 'All' ? '' : activeTab);
-    setFilter('status', activeTab === 'All' ? '' : activeTab === 'Pending' ? 1 : activeTab === 'Completed' ? 3 : 2);
+    console.log('Tab = ', activeTab);
+    setFilter('status', activeTab === 'All' ? '' : activeTab === TRIP_STATUS.PENDING ? 1 : activeTab === TRIP_STATUS.COMPLETED ? 2 : 3);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
@@ -178,7 +173,6 @@ function ReactTable({ columns, data }) {
           {groups.map((status, index) => (
             <Tab
               key={index}
-              // label={status}
               label={getTabName(status)}
               value={status}
               icon={
@@ -186,13 +180,21 @@ function ReactTable({ columns, data }) {
                   label={
                     status === 'All'
                       ? data.length
-                      : status === 'Completed'
-                      ? counts.COMPLETED
-                      : status === 'Pending'
-                      ? counts.PENDING
-                      : counts.CANCELLED
+                      : status === TRIP_STATUS.COMPLETED
+                      ? counts.Completed
+                      : status === TRIP_STATUS.PENDING
+                      ? counts.Pending
+                      : counts.Cancelled
                   }
-                  color={status === 'All' ? 'primary' : status === 'Completed' ? 'success' : status === 'Pending' ? 'warning' : 'error'}
+                  color={
+                    status === 'All'
+                      ? 'primary'
+                      : status === TRIP_STATUS.COMPLETED
+                      ? 'success'
+                      : status === TRIP_STATUS.PENDING
+                      ? 'warning'
+                      : 'error'
+                  }
                   variant="light"
                   size="small"
                 />
@@ -205,23 +207,9 @@ function ReactTable({ columns, data }) {
       <TableRowSelection selected={Object.keys(selectedRowIds).length} />
       <Stack direction={matchDownSM ? 'column' : 'row'} spacing={1} justifyContent="space-between" alignItems="center" sx={{ p: 3, pb: 3 }}>
         <Stack direction={matchDownSM ? 'column' : 'row'} spacing={2}>
-          <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+          {/* <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} /> */}
         </Stack>
         <Stack direction={matchDownSM ? 'column' : 'row'} alignItems="center" spacing={matchDownSM ? 1 : 2}>
-          {/* <>
-            {headerGroups.map((group) => (
-              <Stack key={group} direction={matchDownSM ? 'column' : 'row'} spacing={2} {...group.getHeaderGroupProps()}>
-                {group.headers.map(
-                  (column) =>
-                    column.canFilter && (
-                      <Box key={column} {...column.getHeaderProps([{ className: column.className }])}>
-                        {column.render('Filter')}
-                      </Box>
-                    )
-                )}
-              </Stack>
-            ))}
-          </> */}
           <CSVExport data={data} filename={'invoice-list.csv'} />
         </Stack>
       </Stack>
@@ -422,15 +410,6 @@ const TripList = () => {
     setCancelText(event.target.value);
   };
 
-  // const handleCloseAlertCancel = () => {
-  //   setSelectedRow(null);
-  //   setAlertCancelOpen(false);
-  // };
-
-  // const handleConfirmAlertCancel = () => {
-  //   setAlertCancelOpen(false);
-  // };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -517,67 +496,6 @@ const TripList = () => {
     }
   }, [selectedRow, alertOpen, updatedStatus, cancelText]);
 
-  // useEffect(() => {
-  //   console.log('UseEffect2 running ......... ');
-  //   console.log({
-  //     selectedRow,
-  //     alertCancelOpen,
-  //     updatedStatus,
-  //     alertOpen
-  //   });
-
-  //   if (selectedRow && !alertCancelOpen && updatedStatus !== -1 && !alertOpen) {
-  //     // TODO : Change Api status
-  //     console.log('Row Selected', selectedRow);
-  //     console.log('UseEffect2 running inside ......... ');
-
-  //     const changeStatus = async () => {
-  //       try {
-  //         // const response = await axiosServices.put('/assignTrip/update/status', {
-  //         //   data: {
-  //         //     tripId: selectedRow.id,
-  //         //     assignedStatus: updatedStatus
-  //         //   }
-  //         // });
-
-  //         console.log('Api Calling for cancel');
-
-  //         await changeStatusFromAPI(selectedRow._id, updatedStatus, cancelText);
-
-  //         dispatch(
-  //           openSnackbar({
-  //             open: true,
-  //             message: 'Trips Status changed successfully',
-  //             variant: 'alert',
-  //             alert: {
-  //               color: 'success'
-  //             },
-  //             close: true
-  //           })
-  //         );
-  //         setRefetch((prev) => !prev);
-  //         setUpdatedStatus(-1);
-  //         setSelectedRow(null);
-  //       } catch (error) {
-  //         console.log('Error while changing status = ', error);
-  //         dispatch(
-  //           openSnackbar({
-  //             open: true,
-  //             message: error?.message || 'Something went wrong',
-  //             variant: 'alert',
-  //             alert: {
-  //               color: 'error'
-  //             },
-  //             close: true
-  //           })
-  //         );
-  //       }
-  //     };
-
-  //     changeStatus();
-  //   }
-  // }, [selectedRow, alertCancelOpen, updatedStatus, cancelText, alertOpen]);
-
   const columns = useMemo(
     () => [
       {
@@ -621,8 +539,9 @@ const TripList = () => {
       {
         Header: 'Status',
         accessor: 'assignedStatus',
+        id: 'status', // Explicitly set id to 'status' for clarity
         disableFilters: true,
-        filter: 'includes',
+        // filter: 'includes',
         Cell: ({ value }) => {
           switch (value) {
             case TRIP_STATUS.PENDING: {
@@ -869,16 +788,6 @@ const TripList = () => {
           content="Are you sure you want to cancel this trip?"
         />
       )}
-      {/* {alertCancelOpen && (
-        <FormDialog
-          open={alertCancelOpen}
-          handleClose={handleCloseAlertCancel}
-          handleConfirm={handleConfirmAlertCancel}
-          handleTextChange={handleTextChange}
-          title="Cancel Trip"
-          content="Are you sure you want to cancel this trip?"
-        />
-      )} */}
     </>
   );
 };
