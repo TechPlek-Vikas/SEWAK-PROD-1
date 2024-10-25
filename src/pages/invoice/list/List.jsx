@@ -54,6 +54,7 @@ import { renderFilterTypes, GlobalFilter, DateColumnFilter } from 'utils/react-t
 import { Edit, Eye, InfoCircle, More, ProfileTick, Trash } from 'iconsax-react';
 import axios from 'axios';
 import { formattedDate } from 'utils/helper';
+import FormDialog from 'components/alertDialog/FormDialog';
 
 const avatarImage = require.context('assets/images/users', true);
 
@@ -351,9 +352,129 @@ const List = () => {
         Header: 'Actions',
         disableSortBy: true,
         Cell: ({ row }) => {
+          // const [anchorEl, setAnchorEl] = useState(null);
+          // const [dialogOpen, setDialogOpen] = useState(false);
+          // const [newStatus, setNewStatus] = useState(null);
+          // const token = localStorage.getItem('serviceToken');
+
+          // const handleMenuClick = (event) => {
+          //   setAnchorEl(event.currentTarget);
+          // };
+
+          // const handleMenuClose = () => {
+          //   setAnchorEl(null);
+          // };
+
+          // const handleStatusChange = (status) => {
+          //   setNewStatus(status);
+          //   setDialogOpen(true);
+          // };
+
+          // const handleDialogClose = () => {
+          //   setDialogOpen(false);
+          // };
+
+          // const confirmStatusChange = async () => {
+          //   try {
+          //     // API request to update the status
+          //     const response = await axios.put(
+          //       `${process.env.REACT_APP_API_URL}/invoice/update/paymentStatus`,
+          //       {
+          //         data: {
+          //           invoiceId: row.original._id,
+          //           status: newStatus
+          //         }
+          //       },
+          //       {
+          //         headers: {
+          //           Authorization: `${token}`
+          //         }
+          //       }
+          //     );
+
+          //     if (response.status === 201) {
+          //       dispatch(
+          //         openSnackbar({
+          //           open: true,
+          //           message: response.data.message,
+          //           variant: 'alert',
+          //           alert: {
+          //             color: 'success'
+          //           },
+          //           close: true
+          //         })
+          //       );
+          //     }
+          //     // Update the local status after successful API call
+          //     row.original.status = newStatus;
+          //     fetchInvoice();
+          //   } catch (error) {
+          //     console.error('Failed to update status:', error);
+          //   }
+          //   setDialogOpen(false);
+          //   handleMenuClose();
+          // };
+
+          // const openMenu = Boolean(anchorEl);
+
+          // return (
+          //   <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
+          //     <IconButton edge="end" aria-label="more actions" color="secondary" onClick={handleMenuClick}>
+          //       <More style={{ fontSize: '1.15rem' }} />
+          //     </IconButton>
+          //     <Menu
+          //       id="fade-menu"
+          //       MenuListProps={{
+          //         'aria-labelledby': 'fade-button'
+          //       }}
+          //       anchorEl={anchorEl}
+          //       open={openMenu}
+          //       onClose={handleMenuClose}
+          //       TransitionComponent={Fade}
+          //       anchorOrigin={{
+          //         vertical: 'bottom',
+          //         horizontal: 'right'
+          //       }}
+          //       transformOrigin={{
+          //         vertical: 'top',
+          //         horizontal: 'right'
+          //       }}
+          //     >
+          //       <MenuItem onClick={() => handleStatusChange(1)}>Unpaid</MenuItem>
+          //       <MenuItem onClick={() => handleStatusChange(2)}>Paid</MenuItem>
+          //       <MenuItem onClick={() => handleStatusChange(3)}>Cancelled</MenuItem>
+          //     </Menu>
+
+          //     {/* Confirmation Dialog */}
+          //     <Dialog
+          //       open={dialogOpen}
+          //       onClose={handleDialogClose}
+          //       aria-labelledby="alert-dialog-title"
+          //       aria-describedby="alert-dialog-description"
+          //     >
+          //       <Box sx={{ p: 1, py: 1.5 }}>
+          //         <DialogTitle id="alert-dialog-title">Confirm Status Change</DialogTitle>
+          //         <DialogContent>
+          //           <DialogContentText id="alert-dialog-description">
+          //             Are you sure you want to change the status to {newStatus === 1 ? 'Unpaid' : newStatus === 2 ? 'Paid' : 'Cancelled'}?
+          //           </DialogContentText>
+          //         </DialogContent>
+          //         <DialogActions>
+          //           <Button color="error" onClick={handleDialogClose}>
+          //             Disagree
+          //           </Button>
+          //           <Button variant="contained" onClick={confirmStatusChange} autoFocus>
+          //             Agree
+          //           </Button>
+          //         </DialogActions>
+          //       </Box>
+          //     </Dialog>
+          // </Stack>
           const [anchorEl, setAnchorEl] = useState(null);
           const [dialogOpen, setDialogOpen] = useState(false);
+          const [formDialogOpen, setFormDialogOpen] = useState(false);
           const [newStatus, setNewStatus] = useState(null);
+          const [remarks, setRemarks] = useState('');
           const token = localStorage.getItem('serviceToken');
 
           const handleMenuClick = (event) => {
@@ -366,22 +487,35 @@ const List = () => {
 
           const handleStatusChange = (status) => {
             setNewStatus(status);
-            setDialogOpen(true);
+            if (status === 3) {
+              // Open FormDialog if "Cancelled"
+              setFormDialogOpen(true);
+            } else {
+              setDialogOpen(true); // Open confirmation dialog for other statuses
+            }
           };
 
           const handleDialogClose = () => {
             setDialogOpen(false);
           };
 
+          const handleFormDialogClose = () => {
+            setFormDialogOpen(false);
+          };
+
+          const handleTextChange = (event) => {
+            setRemarks(event.target.value);
+          };
+
           const confirmStatusChange = async () => {
             try {
-              // API request to update the status
               const response = await axios.put(
                 `${process.env.REACT_APP_API_URL}/invoice/update/paymentStatus`,
                 {
                   data: {
                     invoiceId: row.original._id,
-                    status: newStatus
+                    status: newStatus,
+                    remarks: newStatus === 3 ? remarks : undefined // Include remarks if cancelled
                   }
                 },
                 {
@@ -404,13 +538,15 @@ const List = () => {
                   })
                 );
               }
-              // Update the local status after successful API call
+
               row.original.status = newStatus;
               fetchInvoice();
             } catch (error) {
               console.error('Failed to update status:', error);
             }
+
             setDialogOpen(false);
+            setFormDialogOpen(false);
             handleMenuClose();
           };
 
@@ -423,21 +559,13 @@ const List = () => {
               </IconButton>
               <Menu
                 id="fade-menu"
-                MenuListProps={{
-                  'aria-labelledby': 'fade-button'
-                }}
+                MenuListProps={{ 'aria-labelledby': 'fade-button' }}
                 anchorEl={anchorEl}
                 open={openMenu}
                 onClose={handleMenuClose}
                 TransitionComponent={Fade}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right'
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right'
-                }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
               >
                 <MenuItem onClick={() => handleStatusChange(1)}>Unpaid</MenuItem>
                 <MenuItem onClick={() => handleStatusChange(2)}>Paid</MenuItem>
@@ -468,6 +596,19 @@ const List = () => {
                   </DialogActions>
                 </Box>
               </Dialog>
+
+              {/* FormDialog for "Cancelled" Status */}
+              <FormDialog
+                open={formDialogOpen}
+                handleClose={handleFormDialogClose}
+                handleConfirm={confirmStatusChange}
+                handleTextChange={handleTextChange}
+                title="Provide Remarks for Cancellation"
+                content="Please provide a reason for cancelling this invoice."
+                placeholder="Enter your remarks"
+                cancelledButtonTitle="Disagree"
+                confirmedButtonTitle="Confirm Cancellation"
+              />
             </Stack>
           );
         }
@@ -485,7 +626,10 @@ const List = () => {
       title: 'Paid',
       count: metadata.paid.paidCount,
       amount: metadata.paid.paidAmount,
-      percentage: ((metadata.paid.paidCount / (metadata.paid.paidCount + metadata.unpaid.unpaidCount + metadata.overDue.overDueCount)) * 100).toFixed(2),
+      percentage: (
+        (metadata.paid.paidCount / (metadata.paid.paidCount + metadata.unpaid.unpaidCount + metadata.overDue.overDueCount)) *
+        100
+      ).toFixed(2),
       isLoss: false,
       invoice: metadata.paid.paidCount, // Adjust if needed
       color: { main: '#4caf50' }, // Example color for paid
@@ -495,9 +639,10 @@ const List = () => {
       title: 'Unpaid',
       count: metadata.unpaid.unpaidCount,
       amount: metadata.unpaid.unpaidAmount,
-      percentage: ((metadata.unpaid.unpaidCount / (metadata.paid.paidCount + metadata.unpaid.unpaidCount + metadata.overDue.overDueCount)) * 100).toFixed(
-        2
-      ),
+      percentage: (
+        (metadata.unpaid.unpaidCount / (metadata.paid.paidCount + metadata.unpaid.unpaidCount + metadata.overDue.overDueCount)) *
+        100
+      ).toFixed(2),
       isLoss: true,
       invoice: metadata.unpaid.unpaidCount, // Adjust if needed
       color: { main: '#f44336' }, // Example color for unpaid
@@ -507,9 +652,10 @@ const List = () => {
       title: 'Overdue',
       count: metadata.overDue.overDueCount,
       amount: metadata.overDue.overDueAmount,
-      percentage: ((metadata.overDue.overDueCount / (metadata.paid.paidCount + metadata.unpaid.unpaidCount + metadata.overDue.overDueCount)) * 100).toFixed(
-        2
-      ),
+      percentage: (
+        (metadata.overDue.overDueCount / (metadata.paid.paidCount + metadata.unpaid.unpaidCount + metadata.overDue.overDueCount)) *
+        100
+      ).toFixed(2),
       isLoss: true,
       invoice: metadata.overDue.overDueCount, // Adjust if needed
       color: { main: '#ff9800' }, // Example color for overdue
@@ -583,7 +729,7 @@ const List = () => {
               </Stack>
             </Stack>
             <Typography variant="h4" color="white" sx={{ pt: 2, pb: 1, zIndex: 1 }}>
-            ₹43,078
+              ₹43,078
             </Typography>
             <Box sx={{ maxWidth: '100%' }}>
               <LinearWithLabel value={90} />
