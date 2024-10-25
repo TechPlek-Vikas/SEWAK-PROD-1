@@ -116,7 +116,7 @@ const DriverOverview = () => {
       const fetchDriverData = async () => {
         const token = localStorage.getItem('serviceToken');
         try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}driver/by?driverId=${driverId}`, {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/driver/by?driverId=${driverId}`, {
             headers: {
               Authorization: `${token}`
             }

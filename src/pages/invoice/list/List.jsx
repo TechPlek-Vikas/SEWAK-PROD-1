@@ -21,7 +21,13 @@ import {
   Tooltip,
   Menu,
   MenuItem,
-  Fade
+  Fade,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Dialog,
+  Button
 } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 
@@ -128,7 +134,13 @@ function ReactTable({ columns, data }) {
               icon={
                 <Chip
                   label={
-                    status === 'All' ? data.length : status === 'Paid' ? counts.Paid : status === 'Unpaid' ? counts.Unpaid : counts.Cancelled
+                    status === 'All'
+                      ? data.length
+                      : status === 'Paid'
+                      ? counts.Paid
+                      : status === 'Unpaid'
+                      ? counts.Unpaid
+                      : counts.Cancelled
                   }
                   color={status === 'All' ? 'primary' : status === 'Paid' ? 'success' : status === 'Unpaid' ? 'warning' : 'error'}
                   variant="light"
@@ -410,8 +422,19 @@ const List = () => {
         className: 'cell-center',
         disableSortBy: true,
         Cell: ({ row }) => {
-          
           const [anchorEl, setAnchorEl] = useState(null);
+          const [dialogOpen, setDialogOpen] = useState(false);
+          const [newStatus, setNewStatus] = useState(null);
+
+          // const handlePaid = () => {
+          //   row.original.status = 'Paid';
+          //   handleMenuClose();
+          // };
+
+          // const handleUnpaid = () => {
+          //   row.original.status = 'Unpaid';
+          //   handleMenuClose();
+          // };
 
           const handleMenuClick = (event) => {
             setAnchorEl(event.currentTarget);
@@ -421,15 +444,21 @@ const List = () => {
             setAnchorEl(null);
           };
 
-          const handlePaid = () => {
-            row.original.status = 'Paid';
+          const handleStatusChange = (status) => {
+            setNewStatus(status);
+            setDialogOpen(true); // Open dialog on selecting Paid/Unpaid
+          };
+
+          const handleDialogClose = () => {
+            setDialogOpen(false);
+          };
+
+          const confirmStatusChange = () => {
+            row.original.status = newStatus;
+            setDialogOpen(false);
             handleMenuClose();
           };
 
-          const handleUnpaid = () => {
-            row.original.status = 'Unpaid';
-            handleMenuClose();
-          };
           const openMenu = Boolean(anchorEl);
 
           return (
@@ -455,9 +484,35 @@ const List = () => {
                   horizontal: 'right'
                 }}
               >
-                <MenuItem onClick={handlePaid}>Paid</MenuItem>
-                <MenuItem onClick={handleUnpaid}>Unpaid</MenuItem>
+                <MenuItem onClick={() => handleStatusChange('Paid')}>Paid</MenuItem>
+                <MenuItem onClick={() => handleStatusChange('Unpaid')}>Unpaid</MenuItem>
               </Menu>
+
+              {/* Confirmation Dialog */}
+              <Dialog
+                open={dialogOpen}
+                onClose={handleDialogClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <Box sx={{ p: 1, py: 1.5 }}>
+                  <DialogTitle id="alert-dialog-title">Confirm Status Change</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                      Are you sure you want to change the status to {newStatus}?
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button color="error" onClick={handleDialogClose}>
+                      Disagree
+                    </Button>
+                    <Button variant="contained" onClick={confirmStatusChange} autoFocus>
+                      Agree
+                    </Button>
+                  </DialogActions>
+                </Box>
+              </Dialog>
+              
             </Stack>
           );
         }
