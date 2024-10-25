@@ -30,6 +30,7 @@ import AlertDelete from 'components/alertDialog/AlertDelete';
 import axios from 'axios';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { useNavigate } from 'react-router';
+import axiosServices from 'utils/axios';
 
 const CompanyRate = ({ id, companyName }) => {
   const [selectedVehicleTypes, setSelectedVehicleTypes] = useState([]);
@@ -63,25 +64,24 @@ const CompanyRate = ({ id, companyName }) => {
         billingCycle: '',
         cabAmount: [
           {
-            vehicleTypeID: '', 
-            amount: 0 
+            vehicleTypeID: '',
+            amount: 0
           }
         ],
         dualTrip: 0,
         dualTripAmount: [
           {
-            vehicleTypeID: '', 
-            amount: 0 
+            vehicleTypeID: '',
+            amount: 0
           }
         ],
-        guard: 0, 
-        guardPrice: 0 
+        guard: 0,
+        guardPrice: 0
       }
     ]
   };
 
   const handleSubmit = async (values, { resetForm }) => {
-
     // Process the rateData structure and ensure it aligns with the expected API structure
     const formValues = {
       rateData: values.rateData.map((rateData) => ({
@@ -101,9 +101,9 @@ const CompanyRate = ({ id, companyName }) => {
     const finalData = formValues.rateData.map((data) => ({
       zoneNameID: data.zoneNameID,
       zoneTypeID: data.zoneTypeID,
-      cabAmount: data.cabAmount, 
-      dualTrip: data.dualTrip, 
-      dualTripAmount: data.dualTripAmount, 
+      cabAmount: data.cabAmount,
+      dualTrip: data.dualTrip,
+      dualTripAmount: data.dualTripAmount,
       guard: data.guardPrice > 0 ? 1 : 0,
       guardPrice: data.guardPrice,
       cabRate: 0,
@@ -111,20 +111,12 @@ const CompanyRate = ({ id, companyName }) => {
     }));
 
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/company/add/rates`,
-        {
-          data: {
-            companyID: id, 
-            ratesForCompany: finalData 
-          }
-        },
-        {
-          headers: {
-            Authorization: `${token}` 
-          }
+      const response = await axiosServices.post(`/company/add/rates`, {
+        data: {
+          companyID: id,
+          ratesForCompany: finalData
         }
-      );
+      });
 
       if (response.status === 201) {
         dispatch(
@@ -140,8 +132,8 @@ const CompanyRate = ({ id, companyName }) => {
         );
       }
 
-      resetForm({ values: initialValues }); 
-      setSelectedVehicleTypes([]); 
+      resetForm({ values: initialValues });
+      setSelectedVehicleTypes([]);
     } catch (error) {
       console.error('Error submitting the form', error);
       dispatch(
@@ -177,9 +169,9 @@ const CompanyRate = ({ id, companyName }) => {
 
   const handleCloseDialog = (event, confirm, removeFn, rateIndex) => {
     if (confirm) {
-      removeFn(rateIndex); 
+      removeFn(rateIndex);
     }
-    setRemoveDialogOpen(false); 
+    setRemoveDialogOpen(false);
   };
 
   return (
@@ -288,7 +280,7 @@ const CompanyRate = ({ id, companyName }) => {
                                                 `rateData.${index}.cabAmount`,
                                                 vehicleTypeIds.map((vehicleTypeID) => ({
                                                   vehicleTypeID,
-                                                  amount: 0 
+                                                  amount: 0
                                                 }))
                                               );
                                             }}
@@ -347,7 +339,7 @@ const CompanyRate = ({ id, companyName }) => {
                                               if (event.target.value === 1) {
                                                 setFieldValue(
                                                   `rateData.${index}.dualTripAmount`,
-                                                  selectedVehicleTypes.map(() => ({ amount: '', vehicleTypeID: '' })) 
+                                                  selectedVehicleTypes.map(() => ({ amount: '', vehicleTypeID: '' }))
                                                 );
                                               }
                                             }}
@@ -371,12 +363,10 @@ const CompanyRate = ({ id, companyName }) => {
                                             {selectedVehicleTypes.map((vehicleType, cabIndex) => (
                                               <TextField
                                                 key={vehicleType._id}
-                                                label={`Dual Trip Amount for ${vehicleType.vehicleTypeName}`} 
-                                                name={`rateData.${index}.dualTripAmount.${cabIndex}`} 
+                                                label={`Dual Trip Amount for ${vehicleType.vehicleTypeName}`}
+                                                name={`rateData.${index}.dualTripAmount.${cabIndex}`}
                                                 value={values.rateData[index].dualTripAmount[cabIndex]?.amount || ''}
-                                                disabled={
-                                                  getFieldProps(`rateData.${index}.dualTrip`).value !== 1 
-                                                }
+                                                disabled={getFieldProps(`rateData.${index}.dualTrip`).value !== 1}
                                                 sx={{ width: '150px' }}
                                                 onChange={(event) =>
                                                   setFieldValue(`rateData.${index}.dualTripAmount.${cabIndex}`, {
@@ -458,10 +448,10 @@ const CompanyRate = ({ id, companyName }) => {
                 color="secondary"
                 variant="outlined"
                 onClick={() => {
-                  navigate(0); 
+                  navigate(0);
                 }}
               >
-               Back
+                Back
               </Button>
               <Button type="submit" variant="contained">
                 {' '}

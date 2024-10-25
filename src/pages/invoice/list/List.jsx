@@ -55,6 +55,7 @@ import { Edit, Eye, InfoCircle, More, ProfileTick, Trash } from 'iconsax-react';
 import axios from 'axios';
 import { formattedDate } from 'utils/helper';
 import FormDialog from 'components/alertDialog/FormDialog';
+import axiosServices from 'utils/axios';
 
 const avatarImage = require.context('assets/images/users', true);
 
@@ -228,37 +229,27 @@ ReactTable.propTypes = {
 const List = () => {
   const [loading, setLoading] = useState(true);
   const { alertPopup } = useSelector((state) => state.invoice);
-  const token = localStorage.getItem('serviceToken');
+
+  const [data, setData] = useState([]);
+  const [metadata, setMetadata] = useState([]);
+
+  console.log({metadata} );
 
   useEffect(() => {
-    dispatch(getInvoiceList()).then(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const fetchInvoice = async () => {
+      try {
+        const response = await axiosServices.get(`/invoice/by/cabProviderId`);
 
-  const [invoiceId, setInvoiceId] = useState(0);
-  const [getInvoiceId, setGetInvoiceId] = useState(0);
-  const [data, setData] = useState(null);
-  const [metadata, setMetadata] = useState(null);
+        setData(response.data.data);
+        setMetadata(response.data.metaData);
+        setLoading(false)
+      } catch (error) {
+        console.error('Error fetching invoices:', error);
+      }finally{
+        setLoading(false)
+      }
+    };
 
-  console.log("metadata",metadata);
-  
-
-  const fetchInvoice = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/invoice/by/cabProviderId`, {
-        headers: {
-          Authorization: `${token}`
-        }
-      });
-
-      setData(response.data.data);
-      setMetadata(response.data.metaData);
-    } catch (error) {
-      console.error('Error fetching invoices:', error);
-    }
-  };
-
-  useEffect(() => {
     fetchInvoice();
   }, []);
 
@@ -355,7 +346,6 @@ const List = () => {
         Header: 'Actions',
         disableSortBy: true,
         Cell: ({ row }) => {
-         
           const [anchorEl, setAnchorEl] = useState(null);
           const [dialogOpen, setDialogOpen] = useState(false);
           const [formDialogOpen, setFormDialogOpen] = useState(false);
@@ -510,44 +500,45 @@ const List = () => {
   const widgetsData = [
     {
       title: 'Paid',
-      count: metadata?.paid.paidCount,
-      amount: metadata?.paid.paidAmount,
+      count: metadata?.paid?.paidCount || 0,
+      amount: metadata?.paid?.paidAmount || 0,
       percentage: (
-        (metadata?.paid.paidCount / (metadata?.paid.paidCount + metadata?.unpaid.unpaidCount + metadata?.overDue.overDueCount)) *
-        100
+        ((metadata?.paid?.paidCount || 0) / 
+        ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) * 100
       ).toFixed(2),
       isLoss: false,
-      invoice: metadata?.paid.paidCount, // Adjust if needed
-      color: { main: '#4caf50' }, // Example color for paid
-      chartData: [] // Add your chart metadata? here if necessary
+      invoice: metadata?.paid?.paidCount || 0,
+      color: { main: '#4caf50' },
+      chartData: [] // Add your chart metadata if necessary
     },
     {
       title: 'Unpaid',
-      count: metadata?.unpaid.unpaidCount,
-      amount: metadata?.unpaid.unpaidAmount,
+      count: metadata?.unpaid?.unpaidCount || 0,
+      amount: metadata?.unpaid?.unpaidAmount || 0,
       percentage: (
-        (metadata?.unpaid.unpaidCount / (metadata?.paid.paidCount + metadata?.unpaid.unpaidCount + metadata?.overDue.overDueCount)) *
-        100
+        ((metadata?.unpaid?.unpaidCount || 0) / 
+        ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) * 100
       ).toFixed(2),
       isLoss: true,
-      invoice: metadata?.unpaid.unpaidCount, // Adjust if needed
-      color: { main: '#f44336' }, // Example color for unpaid
-      chartData: [] // Add your chart metadata? here if necessary
+      invoice: metadata?.unpaid?.unpaidCount || 0,
+      color: { main: '#f44336' },
+      chartData: [] // Add your chart metadata if necessary
     },
     {
       title: 'Overdue',
-      count: metadata?.overDue.overDueCount,
-      amount: metadata?.overDue.overDueAmount,
+      count: metadata?.overDue?.overDueCount || 0,
+      amount: metadata?.overDue?.overDueAmount || 0,
       percentage: (
-        (metadata?.overDue.overDueCount / (metadata?.paid.paidCount + metadata?.unpaid.unpaidCount + metadata?.overDue.overDueCount)) *
-        100
+        ((metadata?.overDue?.overDueCount || 0) / 
+        ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) * 100
       ).toFixed(2),
       isLoss: true,
-      invoice: metadata?.overDue.overDueCount, // Adjust if needed
-      color: { main: '#ff9800' }, // Example color for overdue
-      chartData: [] // Add your chart data here if necessary
+      invoice: metadata?.overDue?.overDueCount || 0,
+      color: { main: '#ff9800' },
+      chartData: [] // Add your chart metadata if necessary
     }
   ];
+  
 
   if (loading) return <Loader />;
 
@@ -629,7 +620,7 @@ const List = () => {
           <ReactTable columns={columns} data={data} />
         </ScrollX>
       </MainCard>
-      <AlertColumnDelete title={`${getInvoiceId}`} open={alertPopup} handleClose={handleClose} />
+      {/* <AlertColumnDelete title={`${getInvoiceId}`} open={alertPopup} handleClose={handleClose} /> */}
     </>
   );
 };
