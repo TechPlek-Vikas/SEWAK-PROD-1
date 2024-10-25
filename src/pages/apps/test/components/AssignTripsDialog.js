@@ -171,6 +171,7 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
         if (response1.data.success) {
           alert(`${payload1.length} Trips Created`);
           handleClose();
+          setPayload1([])
           setInitateRender((prev) => prev + 1);
         }
       }
