@@ -40,7 +40,7 @@ import RowEditable from './RowEditable';
 
 const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
-export default function AssignTripsDialog({ data: tripData, open, handleClose, handleAssignTrips }) {
+export default function AssignTripsDialog({ data: tripData, open, handleClose, setInitateRender }) {
   // const [data, setData] = useState(() => makeData(10));
   // console.log({ tripData });
   const [data, setData] = useState([]);
@@ -48,15 +48,19 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, h
   const [zoneInfo, setZoneInfo] = useState([]);
   const [vehicleTypeInfo, setVehicleTypeInfo] = useState([]);
   const [drivers, setDrivers] = useState([]);
-
+  console.log({ tripData });
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toISOString().split('T')[0]; // This will return the date in yyyy-mm-dd format
   };
+
   const generateTrips = async () => {
     console.log({ payload1 });
-    const assignedTripsObject = payload1.map((item) => {
+    console.log({ tripData });
+
+    const assignedTripsArray = payload1.map((item) => {
       return {
+        _roster_id: item._roster_id,
         tripId: item._roster_id,
         companyID: item._company_info?._id,
         tripDate: formatDate(item._trip_date),
@@ -73,25 +77,111 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, h
         companyRate: item._companyRate,
         vendorRate: 0,
         driverRate: item._driverRate_or_vendorRate,
+        _driverRate_or_vendorRate: item._driverRate_or_vendorRate,
         addOnRate: item._additional_rate,
         penalty: item._penalty_1,
         remarks: 'gg1'
       };
     });
-    console.log({ assignedTripsObject });
-    const fileId = payload1[0]._file_id;
-    console.log({ fileId });
-    const assignedTripsPayLoad = {
+
+    const rosterUploadArray = payload1.map((item) => {
+      console.log({ item });
+      return {
+        vehicleTypeArray: item._vehicleType ? [{ _id: item._vehicleType._id, vehicleTypeName: item._vehicleType.vehicleTypeName }] : [],
+
+        zoneNameArray: item._zoneName ? [{ _id: item._zoneName._id, zoneName: item._zoneName.zoneName }] : [],
+
+        zoneTypeArray: item._zoneType ? [{ _id: item._zoneType._id, zoneTypeName: item._zoneType.zoneTypeName }] : [],
+
+        zoneName: item._zoneName?.zoneName || 'N/A',
+        zoneType: item._zoneType?.zoneTypeName || 'N/A',
+        vehicleType: item._vehicleType?.vehicleTypeName || 'N/A',
+        vehicleNumber: item._driver?.assignedVehicle?.vehicleId?.vehicleNumber || 'N/A',
+        rosterMapDataId: item._roster_id,
+        _roster_id: item._roster_id,
+        tripId: item._roster_id,
+        companyID: item._company_info?._id,
+        tripDate: formatDate(item._trip_date),
+        tripTime: item._trip_time,
+        tripType: item._dualTrip_1,
+        zoneNameID: item._zoneName?._id,
+        zoneTypeID: item._zoneType?._id,
+        location: item.location,
+        guard: item._guard_1,
+        guardPrice: item._guard_price_1,
+        vehicleTypeID: item._vehicleType?._id,
+        // vehicleNumber: item._cab?.vehicleNumber || 'N/A',
+        driverId: item._driver?._id,
+        companyRate: item._companyRate,
+        vendorRate: 0,
+        driverRate: item._driverRate_or_vendorRate,
+        _driverRate_or_vendorRate: item._driverRate_or_vendorRate,
+        addOnRate: item._additional_rate,
+        penalty: item._penalty_1,
+        remarks: 'gg1',
+        status: 3
+      };
+    });
+
+    // const updatedTargetArray = data.map((targetItem) => {
+    //   // Find the matching payload item by comparing tripId and _id
+    //   const matchingPayload = payload1.find((payloadItem) => payloadItem.tripId === targetItem._id);
+
+    //   // If a match is found, replace all the fields except _id
+    //   if (matchingPayload) {
+    //     return {
+    //       ...matchingPayload, // Copy all properties from the matching payload item
+    //       _id: targetItem._id, // Keep the original _id from targetItem
+    //       status: 3
+    //     };
+    //   }
+
+    //   // If no match is found, return the original targetItem
+    //   return targetItem;
+    // });
+
+    const fileId = tripData[0].rosterFileId;
+    // console.log({ fileId });
+
+    // console.log({ updatedTargetArray });
+
+    // console.log({ rosterUploadArray });
+    // console.log({ assignedTripsArray });
+
+ 
+
+    const _generateTripPayLoad = {
       data: {
         rosterFileId: fileId,
-        assignTripsData: assignedTripsObject
+        assignTripsData: assignedTripsArray
       }
     };
 
-    const response = await axiosServices.post('/assignTrip/to/driver', assignedTripsPayLoad);
-    console.log(response.data);
-    setPayload1([])
+    const _mappedRosterDataPayload = {
+      data: {
+        tripsData: rosterUploadArray
+      }
+    };
+
+    try {
+      const response = await axiosServices.post('/assignTrip/to/driver', _generateTripPayLoad);
+      if (response.status === 201) {
+        const response1 = await axiosServices.put('/tripData/map/roster/update', _mappedRosterDataPayload);
+        console.log(response1.data);
+        if (response1.data.success) {
+          alert(`${payload1.length} Trips Created`);
+          handleClose();
+          setPayload1([])
+          setInitateRender((prev) => prev + 1);
+        }
+      }
+      console.log(response.data);
+    } catch (err) { console.error(err)}
+
+    // setPayload1([]);
   };
+
+  //helper data fetch
   useEffect(() => {
     const fetchAllZoneInfo = async () => {
       const response = await axiosServices.get('/zoneType/grouped/by/zone');
@@ -117,7 +207,7 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, h
     // console.log({tripData})
     if (tripData?.length > 0) {
       const mappedData = tripData.map((item) => ({
-        // ...item, // Spread existing properties
+        ...item, // Spread existing properties
         location: item.location,
         _trip_date: item.tripDate,
         _trip_time: item.tripTime,
@@ -155,9 +245,13 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, h
         _drivers_options: drivers
       }));
 
+      console.log({ mappedData });
+
       setData(mappedData);
     }
   }, [tripData, drivers, vehicleTypeInfo, zoneInfo]);
+
+  console.log({ data });
 
   const columns = useMemo(
     () => [
@@ -277,6 +371,7 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, h
     ],
     []
   );
+
   return (
     <>
       <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
@@ -303,20 +398,17 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, h
 function EditAction({ row, table, setPayload1, payload1 }) {
   const meta = table?.options?.meta;
 
-  const finalPayload = [];
   const setSelectedRow = (e) => {
     meta?.setSelectedRow((old) => ({
       ...old,
       [row.id]: !old[row.id]
     }));
-    console.log(row.original);
     // @ts-ignore
     meta?.revertData(row.index, e?.currentTarget.name === 'cancel');
   };
 
   const saveRow = () => {
     const rosterId = row.original._roster_id; // Assuming rosterId exists in row.original
-    // Create a new object without the unwanted keys
     const { _drivers_options, _vehicleType_options, _zoneName_options, ...cleanedRow } = row.original;
 
     setPayload1((prev) => {
