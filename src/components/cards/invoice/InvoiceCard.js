@@ -16,7 +16,7 @@ const TableWidgetCard = ({ color, title, count, percentage, isLoss, children, in
           <Typography variant="subtitle1">{title}</Typography>
           <Stack direction="column" spacing={1}>
             <Typography variant="h4" color="inherit">
-              {count}
+            ₹{count}
             </Typography>
             <Stack direction="row" spacing={1}>
               <Typography variant="subtitle1">{invoice}</Typography>

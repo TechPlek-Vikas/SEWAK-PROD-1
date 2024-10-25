@@ -246,10 +246,9 @@ const List = () => {
           Authorization: `${token}`
         }
       });
-      console.log("res",response);
-      
+
       setData(response.data.data);
-      setMetadata(response.data.metaData)
+      setMetadata(response.data.metaData);
     } catch (error) {
       console.error('Error fetching invoices:', error);
     }
@@ -258,9 +257,6 @@ const List = () => {
   useEffect(() => {
     fetchInvoice();
   }, []);
-
-  console.log("metadata",metadata);
-  
 
   const handleClose = (status) => {
     if (status) {
@@ -487,30 +483,37 @@ const List = () => {
   const widgetsData = [
     {
       title: 'Paid',
-      count: '$7,825',
-      percentage: 70.5,
+      count: metadata.paid.paidCount,
+      amount: metadata.paid.paidAmount,
+      percentage: ((metadata.paid.paidCount / (metadata.paid.paidCount + metadata.unpaid.unpaidCount + metadata.overDue.overDueCount)) * 100).toFixed(2),
       isLoss: false,
-      invoice: '9',
-      color: theme.palette.success,
-      chartData: [200, 600, 100, 400, 300, 400, 50]
+      invoice: metadata.paid.paidCount, // Adjust if needed
+      color: { main: '#4caf50' }, // Example color for paid
+      chartData: [] // Add your chart metadata here if necessary
     },
     {
       title: 'Unpaid',
-      count: '$1,880',
-      percentage: 27.4,
+      count: metadata.unpaid.unpaidCount,
+      amount: metadata.unpaid.unpaidAmount,
+      percentage: ((metadata.unpaid.unpaidCount / (metadata.paid.paidCount + metadata.unpaid.unpaidCount + metadata.overDue.overDueCount)) * 100).toFixed(
+        2
+      ),
       isLoss: true,
-      invoice: '6',
-      color: theme.palette.warning,
-      chartData: [100, 550, 300, 350, 200, 100, 300]
+      invoice: metadata.unpaid.unpaidCount, // Adjust if needed
+      color: { main: '#f44336' }, // Example color for unpaid
+      chartData: [] // Add your chart metadata here if necessary
     },
     {
-      title: 'Cancelled',
-      count: '$3,507',
-      percentage: 27.4,
+      title: 'Overdue',
+      count: metadata.overDue.overDueCount,
+      amount: metadata.overDue.overDueAmount,
+      percentage: ((metadata.overDue.overDueCount / (metadata.paid.paidCount + metadata.unpaid.unpaidCount + metadata.overDue.overDueCount)) * 100).toFixed(
+        2
+      ),
       isLoss: true,
-      invoice: '4',
-      color: theme.palette.error,
-      chartData: [100, 550, 200, 300, 100, 200, 300]
+      invoice: metadata.overDue.overDueCount, // Adjust if needed
+      color: { main: '#ff9800' }, // Example color for overdue
+      chartData: [] // Add your chart data here if necessary
     }
   ];
 
@@ -527,6 +530,7 @@ const List = () => {
                   <InvoiceCard
                     title={widget.title}
                     count={widget.count}
+                    amount={widget.amount} // Pass amount if needed
                     percentage={widget.percentage}
                     isLoss={widget.isLoss}
                     invoice={widget.invoice}
@@ -579,7 +583,7 @@ const List = () => {
               </Stack>
             </Stack>
             <Typography variant="h4" color="white" sx={{ pt: 2, pb: 1, zIndex: 1 }}>
-              $43,078
+            ₹43,078
             </Typography>
             <Box sx={{ maxWidth: '100%' }}>
               <LinearWithLabel value={90} />
