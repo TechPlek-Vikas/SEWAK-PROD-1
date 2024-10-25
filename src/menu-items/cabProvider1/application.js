@@ -45,13 +45,13 @@ const application = {
           // icon: icons.upload
         },
 
-        {
-          id: 'test',
-          title: <FormattedMessage id="test" />,
-          type: 'item',
-          url: '/apps/roster/test',
-          // icon: icons.samplePage
-        }
+        // {
+        //   id: 'test',
+        //   title: <FormattedMessage id="test" />,
+        //   type: 'item',
+        //   url: '/apps/roster/test',
+        //   // icon: icons.samplePage
+        // }
       ]
     },
 

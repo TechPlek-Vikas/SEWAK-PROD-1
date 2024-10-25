@@ -21,7 +21,13 @@ import {
   Tooltip,
   Menu,
   MenuItem,
-  Fade
+  Fade,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Dialog,
+  Button
 } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 
@@ -47,6 +53,8 @@ import { renderFilterTypes, GlobalFilter, DateColumnFilter } from 'utils/react-t
 // assets
 import { Edit, Eye, InfoCircle, More, ProfileTick, Trash } from 'iconsax-react';
 import axios from 'axios';
+import { formattedDate } from 'utils/helper';
+import FormDialog from 'components/alertDialog/FormDialog';
 
 const avatarImage = require.context('assets/images/users', true);
 
@@ -99,21 +107,24 @@ function ReactTable({ columns, data }) {
 
   // ================ Tab ================
 
+  // Map status codes to labels and colors
+  const statusMap = {
+    3: { label: 'Cancelled', color: 'error' },
+    2: { label: 'Paid', color: 'success' },
+    1: { label: 'Unpaid', color: 'warning' }
+  };
+
+  // Create groups and counts
   const groups = ['All', ...new Set(data.map((item) => item.status))];
-  const countGroup = data.map((item) => item.status);
-  const counts = countGroup.reduce(
-    (acc, value) => ({
-      ...acc,
-      [value]: (acc[value] || 0) + 1
-    }),
-    {}
-  );
+  const counts = data.reduce((acc, item) => {
+    acc[item.status] = (acc[item.status] || 0) + 1;
+    return acc;
+  }, {});
 
   const [activeTab, setActiveTab] = useState(groups[0]);
 
   useEffect(() => {
     setFilter('status', activeTab === 'All' ? '' : activeTab);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   return (
@@ -123,14 +134,12 @@ function ReactTable({ columns, data }) {
           {groups.map((status, index) => (
             <Tab
               key={index}
-              label={status}
+              label={status === 'All' ? 'All' : statusMap[status]?.label}
               value={status}
               icon={
                 <Chip
-                  label={
-                    status === 'All' ? data.length : status === 'Paid' ? counts.Paid : status === 'Unpaid' ? counts.Unpaid : counts.Cancelled
-                  }
-                  color={status === 'All' ? 'primary' : status === 'Paid' ? 'success' : status === 'Unpaid' ? 'warning' : 'error'}
+                  label={status === 'All' ? data.length : counts[status] || 0}
+                  color={status === 'All' ? 'primary' : statusMap[status]?.color || 'default'}
                   variant="light"
                   size="small"
                 />
@@ -228,10 +237,14 @@ const List = () => {
 
   const [invoiceId, setInvoiceId] = useState(0);
   const [getInvoiceId, setGetInvoiceId] = useState(0);
-  const [data, setData] = useState(0);
+  const [data, setData] = useState(null);
+  const [metadata, setMetadata] = useState(null);
 
-  useEffect(() => {
-    const fetchInvoice = async () => {
+  console.log("metadata",metadata);
+  
+
+  const fetchInvoice = async () => {
+    try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/invoice/by/cabProviderId`, {
         headers: {
           Authorization: `${token}`
@@ -239,69 +252,16 @@ const List = () => {
       });
 
       setData(response.data.data);
-    };
+      setMetadata(response.data.metaData);
+    } catch (error) {
+      console.error('Error fetching invoices:', error);
+    }
+  };
+
+  useEffect(() => {
     fetchInvoice();
   }, []);
 
-  const dummyData = [
-    {
-      id: 1,
-      customer_name: 'John Doe',
-      email: 'john.doe@example.com',
-      date: '2024-09-01',
-      due_date: '2024-10-01',
-      quantity: 10,
-      totalAmount: 256,
-      status: 'Paid',
-      avatar: 1
-    },
-    {
-      id: 2,
-      customer_name: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      date: '2024-09-05',
-      due_date: '2024-10-05',
-      quantity: 5,
-      totalAmount: 676,
-      status: 'Unpaid',
-      avatar: 2
-    },
-    {
-      id: 3,
-      customer_name: 'Bob Johnson',
-      email: 'bob.johnson@example.com',
-      date: '2024-09-10',
-      due_date: '2024-10-10',
-      quantity: 20,
-      totalAmount: 908,
-      status: 'Cancelled',
-      avatar: 3
-    },
-    {
-      id: 4,
-      customer_name: 'Alice Williams',
-      email: 'alice.williams@example.com',
-      date: '2024-09-12',
-      due_date: '2024-10-12',
-      quantity: 8,
-      totalAmount: 356,
-      status: 'Paid',
-      avatar: 4
-    },
-    {
-      id: 5,
-      customer_name: 'Steve Brown',
-      email: 'steve.brown@example.com',
-      date: '2024-09-15',
-      due_date: '2024-10-15',
-      quantity: 12,
-      totalAmount: 876,
-      status: 'Unpaid',
-      avatar: 5
-    }
-  ];
-
-  const navigation = useNavigate();
   const handleClose = (status) => {
     if (status) {
       dispatch(getInvoiceDelete(invoiceId));
@@ -337,23 +297,22 @@ const List = () => {
       },
       {
         Header: 'Invoice Id',
-        accessor: 'id',
-        className: 'cell-center',
+        accessor: 'invoiceNumber',
         disableFilters: true
       },
       {
-        Header: 'Company Name',
-        accessor: 'customer_name',
+        Header: 'Billed To',
+        accessor: 'billedTo',
         disableFilters: true,
         Cell: ({ row }) => {
           const { values } = row;
           return (
             <Stack direction="row" spacing={1.5} alignItems="center">
-              <Avatar alt="Avatar" size="sm" src={avatarImage(`./avatar-${!values.avatar ? 1 : values.avatar}.png`)} />
+              {/* <Avatar alt="Avatar" size="sm" src={avatarImage(`./avatar-${!values.avatar ? 1 : values.avatar}.png`)} /> */}
               <Stack spacing={0}>
-                <Typography variant="subtitle1">{values.customer_name}</Typography>
+                <Typography variant="subtitle1">{values.billedTo.company_name}</Typography>
                 <Typography variant="caption" color="textSecondary">
-                  {values.email}
+                  {values.billedTo.company_email}
                 </Typography>
               </Stack>
             </Stack>
@@ -361,57 +320,48 @@ const List = () => {
         }
       },
       {
-        Header: 'Avatar',
-        accessor: 'avatar',
-        disableSortBy: true,
-        disableFilters: true
-      },
-      {
-        Header: 'Email',
-        accessor: 'email',
-        disableFilters: true
-      },
-      {
         Header: 'Invoice Date',
-        accessor: 'date'
+        accessor: 'invoiceDate',
+        Cell: ({ value }) => {
+          return formattedDate(value, 'DD/MM/YYYY');
+        }
       },
       {
         Header: 'Due Date',
-        accessor: 'due_date'
+        accessor: 'dueDate',
+        Cell: ({ value }) => {
+          return formattedDate(value, 'DD/MM/YYYY');
+        }
       },
       {
         Header: 'Total Amount',
-        accessor: 'totalAmount'
-      },
-      {
-        Header: 'Quantity',
-        accessor: 'quantity',
-        disableFilters: true
+        accessor: 'grandTotal'
       },
       {
         Header: 'Status',
         accessor: 'status',
         disableFilters: true,
-        filter: 'includes',
         Cell: ({ value }) => {
-          switch (value) {
-            case 'Cancelled':
-              return <Chip color="error" label="Cancelled" size="small" variant="light" />;
-            case 'Paid':
-              return <Chip color="success" label="Paid" size="small" variant="light" />;
-            case 'Unpaid':
-            default:
-              return <Chip color="info" label="Unpaid" size="small" variant="light" />;
+          if (value === 3) {
+            return <Chip color="error" label="Cancelled" size="small" variant="light" />;
+          } else if (value === 2) {
+            return <Chip color="success" label="Paid" size="small" variant="light" />;
+          } else {
+            return <Chip color="info" label="Unpaid" size="small" variant="light" />;
           }
         }
       },
       {
         Header: 'Actions',
-        className: 'cell-center',
         disableSortBy: true,
         Cell: ({ row }) => {
-          
+         
           const [anchorEl, setAnchorEl] = useState(null);
+          const [dialogOpen, setDialogOpen] = useState(false);
+          const [formDialogOpen, setFormDialogOpen] = useState(false);
+          const [newStatus, setNewStatus] = useState(null);
+          const [remarks, setRemarks] = useState('');
+          const token = localStorage.getItem('serviceToken');
 
           const handleMenuClick = (event) => {
             setAnchorEl(event.currentTarget);
@@ -421,15 +371,71 @@ const List = () => {
             setAnchorEl(null);
           };
 
-          const handlePaid = () => {
-            row.original.status = 'Paid';
+          const handleStatusChange = (status) => {
+            setNewStatus(status);
+            if (status === 3) {
+              // Open FormDialog if "Cancelled"
+              setFormDialogOpen(true);
+            } else {
+              setDialogOpen(true); // Open confirmation dialog for other statuses
+            }
+          };
+
+          const handleDialogClose = () => {
+            setDialogOpen(false);
+          };
+
+          const handleFormDialogClose = () => {
+            setFormDialogOpen(false);
+          };
+
+          const handleTextChange = (event) => {
+            setRemarks(event.target.value);
+          };
+
+          const confirmStatusChange = async () => {
+            try {
+              const response = await axios.put(
+                `${process.env.REACT_APP_API_URL}/invoice/update/paymentStatus`,
+                {
+                  data: {
+                    invoiceId: row.original._id,
+                    status: newStatus,
+                    remarks: newStatus === 3 ? remarks : undefined // Include remarks if cancelled
+                  }
+                },
+                {
+                  headers: {
+                    Authorization: `${token}`
+                  }
+                }
+              );
+
+              if (response.status === 201) {
+                dispatch(
+                  openSnackbar({
+                    open: true,
+                    message: response.data.message,
+                    variant: 'alert',
+                    alert: {
+                      color: 'success'
+                    },
+                    close: true
+                  })
+                );
+              }
+
+              row.original.status = newStatus;
+              fetchInvoice();
+            } catch (error) {
+              console.error('Failed to update status:', error);
+            }
+
+            setDialogOpen(false);
+            setFormDialogOpen(false);
             handleMenuClose();
           };
 
-          const handleUnpaid = () => {
-            row.original.status = 'Unpaid';
-            handleMenuClose();
-          };
           const openMenu = Boolean(anchorEl);
 
           return (
@@ -439,25 +445,56 @@ const List = () => {
               </IconButton>
               <Menu
                 id="fade-menu"
-                MenuListProps={{
-                  'aria-labelledby': 'fade-button'
-                }}
+                MenuListProps={{ 'aria-labelledby': 'fade-button' }}
                 anchorEl={anchorEl}
                 open={openMenu}
                 onClose={handleMenuClose}
                 TransitionComponent={Fade}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right'
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right'
-                }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
               >
-                <MenuItem onClick={handlePaid}>Paid</MenuItem>
-                <MenuItem onClick={handleUnpaid}>Unpaid</MenuItem>
+                <MenuItem onClick={() => handleStatusChange(1)}>Unpaid</MenuItem>
+                <MenuItem onClick={() => handleStatusChange(2)}>Paid</MenuItem>
+                <MenuItem onClick={() => handleStatusChange(3)}>Cancelled</MenuItem>
               </Menu>
+
+              {/* Confirmation Dialog */}
+              <Dialog
+                open={dialogOpen}
+                onClose={handleDialogClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <Box sx={{ p: 1, py: 1.5 }}>
+                  <DialogTitle id="alert-dialog-title">Confirm Status Change</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                      Are you sure you want to change the status to {newStatus === 1 ? 'Unpaid' : newStatus === 2 ? 'Paid' : 'Cancelled'}?
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button color="error" onClick={handleDialogClose}>
+                      Disagree
+                    </Button>
+                    <Button variant="contained" onClick={confirmStatusChange} autoFocus>
+                      Agree
+                    </Button>
+                  </DialogActions>
+                </Box>
+              </Dialog>
+
+              {/* FormDialog for "Cancelled" Status */}
+              <FormDialog
+                open={formDialogOpen}
+                handleClose={handleFormDialogClose}
+                handleConfirm={confirmStatusChange}
+                handleTextChange={handleTextChange}
+                title="Provide Remarks for Cancellation"
+                content="Please provide a reason for cancelling this invoice."
+                placeholder="Enter your remarks"
+                cancelledButtonTitle="Disagree"
+                confirmedButtonTitle="Confirm Cancellation"
+              />
             </Stack>
           );
         }
@@ -473,30 +510,42 @@ const List = () => {
   const widgetsData = [
     {
       title: 'Paid',
-      count: '$7,825',
-      percentage: 70.5,
+      count: metadata?.paid.paidCount,
+      amount: metadata?.paid.paidAmount,
+      percentage: (
+        (metadata?.paid.paidCount / (metadata?.paid.paidCount + metadata?.unpaid.unpaidCount + metadata?.overDue.overDueCount)) *
+        100
+      ).toFixed(2),
       isLoss: false,
-      invoice: '9',
-      color: theme.palette.success,
-      chartData: [200, 600, 100, 400, 300, 400, 50]
+      invoice: metadata?.paid.paidCount, // Adjust if needed
+      color: { main: '#4caf50' }, // Example color for paid
+      chartData: [] // Add your chart metadata? here if necessary
     },
     {
       title: 'Unpaid',
-      count: '$1,880',
-      percentage: 27.4,
+      count: metadata?.unpaid.unpaidCount,
+      amount: metadata?.unpaid.unpaidAmount,
+      percentage: (
+        (metadata?.unpaid.unpaidCount / (metadata?.paid.paidCount + metadata?.unpaid.unpaidCount + metadata?.overDue.overDueCount)) *
+        100
+      ).toFixed(2),
       isLoss: true,
-      invoice: '6',
-      color: theme.palette.warning,
-      chartData: [100, 550, 300, 350, 200, 100, 300]
+      invoice: metadata?.unpaid.unpaidCount, // Adjust if needed
+      color: { main: '#f44336' }, // Example color for unpaid
+      chartData: [] // Add your chart metadata? here if necessary
     },
     {
-      title: 'Cancelled',
-      count: '$3,507',
-      percentage: 27.4,
+      title: 'Overdue',
+      count: metadata?.overDue.overDueCount,
+      amount: metadata?.overDue.overDueAmount,
+      percentage: (
+        (metadata?.overDue.overDueCount / (metadata?.paid.paidCount + metadata?.unpaid.unpaidCount + metadata?.overDue.overDueCount)) *
+        100
+      ).toFixed(2),
       isLoss: true,
-      invoice: '4',
-      color: theme.palette.error,
-      chartData: [100, 550, 200, 300, 100, 200, 300]
+      invoice: metadata?.overDue.overDueCount, // Adjust if needed
+      color: { main: '#ff9800' }, // Example color for overdue
+      chartData: [] // Add your chart data here if necessary
     }
   ];
 
@@ -513,6 +562,7 @@ const List = () => {
                   <InvoiceCard
                     title={widget.title}
                     count={widget.count}
+                    amount={widget.amount} // Pass amount if needed
                     percentage={widget.percentage}
                     isLoss={widget.isLoss}
                     invoice={widget.invoice}
@@ -565,7 +615,7 @@ const List = () => {
               </Stack>
             </Stack>
             <Typography variant="h4" color="white" sx={{ pt: 2, pb: 1, zIndex: 1 }}>
-              $43,078
+              ₹43,078
             </Typography>
             <Box sx={{ maxWidth: '100%' }}>
               <LinearWithLabel value={90} />
@@ -576,7 +626,7 @@ const List = () => {
 
       <MainCard content={false}>
         <ScrollX>
-          <ReactTable columns={columns} data={dummyData} />
+          <ReactTable columns={columns} data={data} />
         </ScrollX>
       </MainCard>
       <AlertColumnDelete title={`${getInvoiceId}`} open={alertPopup} handleClose={handleClose} />

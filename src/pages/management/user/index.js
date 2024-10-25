@@ -52,7 +52,7 @@ const ButtonComponent = () => {
     <>
       <Stack direction="row" spacing={1} alignItems="center">
         <WrapperButton moduleName={MODULE.USER} permission={PERMISSIONS.CREATE}>
-          <Button variant="contained" startIcon={<Add />} size="small" onClick={() => navigate('add-user', { state: { from: '/' } })}>
+          <Button variant="contained" startIcon={<Add />} size="small" onClick={() => navigate('/management/user/add-user', { state: { from: '/' } })}>
             Add User
           </Button>
         </WrapperButton>
