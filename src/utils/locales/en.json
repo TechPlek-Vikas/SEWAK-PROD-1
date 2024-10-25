@@ -43,6 +43,7 @@
   "account setting": "Account Setting",
   "roster setting": "Roster Setting",
   "invoice setting": "Invoice Setting",
-  "list":"List",
-  "trips":"Trips"
+  "list": "List",
+  "trips": "Trips",
+  "cab type": "Cab Type"
 }
