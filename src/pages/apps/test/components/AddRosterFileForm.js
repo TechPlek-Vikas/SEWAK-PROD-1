@@ -11,10 +11,11 @@ import { uploadRosterFile } from 'store/slice/cabProvidor/rosterFileSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomCircularLoader from 'components/CustomCircularLoader';
 import { useNavigate } from 'react-router';
-import SearchComponent from './CompanySearch';
-import TemplateSelector from './TemplateSelector';
-import MultiFileUpload from './MultiFileUpload';
+import SearchComponent from '../CompanySearch';
+import TemplateSelector from '../TemplateSelector';
+// import MultiFileUpload from './MultiFileUpload';
 import { enqueueSnackbar, useSnackbar } from 'notistack';
+import MultiFileUpload from './MultiFileUpload';
 
 const validationSchema = Yup.object().shape({
   //   parentCompanyID: Yup.string().required('Company name is required'),
