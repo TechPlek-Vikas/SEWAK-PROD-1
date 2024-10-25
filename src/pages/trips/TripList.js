@@ -46,6 +46,7 @@ import { renderFilterTypes, GlobalFilter, DateColumnFilter } from 'utils/react-t
 // assets
 import { Edit, Eye, InfoCircle, More, ProfileTick, Trash } from 'iconsax-react';
 import TripChart from 'components/cards/trips/TripChart';
+import AlertDialog from 'components/alertDialog/AlertDialog';
 
 const avatarImage = require.context('assets/images/users', true);
 
@@ -223,6 +224,8 @@ ReactTable.propTypes = {
 
 const TripList = () => {
   const [loading, setLoading] = useState(true);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertCancelOpen, setAlertCancelOpen] = useState(false);
   const { alertPopup } = useSelector((state) => state.invoice);
 
   useEffect(() => {
@@ -301,7 +304,7 @@ const TripList = () => {
     }
   ];
 
-  const navigation = useNavigate();
+  const navigate = useNavigate();
   const handleClose = (status) => {
     if (status) {
       dispatch(getInvoiceDelete(invoiceId));
@@ -323,6 +326,10 @@ const TripList = () => {
         alertToggle: false
       })
     );
+  };
+
+  const handleCloseAlert = () => {
+    setAlertOpen(false);
   };
 
   const columns = useMemo(
@@ -424,16 +431,24 @@ const TripList = () => {
           };
 
           const handleCompleted = () => {
+            alert('Completed');
+            console.log('row', row.original);
             row.original.status = 'Completed'; // Update the row's status
+            setAlertOpen(true);
             handleMenuClose(); // Close the menu after selecting an option
           };
 
           const handlePending = () => {
+            alert('Pending');
+            console.log('row', row.original);
             row.original.status = 'Pending'; // Update the row's status
+            setAlertOpen(true);
             handleMenuClose(); // Close the menu after selecting an option
           };
 
           const handleCancelled = () => {
+            alert('Cancelled');
+            console.log('row', row.original);
             row.original.status = 'Cancelled'; // Update the row's status
             handleMenuClose(); // Close the menu after selecting an option
           };
@@ -463,9 +478,9 @@ const TripList = () => {
                   horizontal: 'right'
                 }}
               >
-                <MenuItem onClick={handleCompleted}>Completed</MenuItem>
-                <MenuItem onClick={handlePending}>Pending</MenuItem>
-                <MenuItem onClick={handleCancelled}>Cancelled</MenuItem>
+                {row.original.status !== 'Completed' && <MenuItem onClick={handleCompleted}>Completed</MenuItem>}
+                {row.original.status !== 'Pending' && <MenuItem onClick={handlePending}>Pending</MenuItem>}
+                {row.original.status !== 'Cancelled' && <MenuItem onClick={handleCancelled}>Cancelled</MenuItem>}
               </Menu>
             </Stack>
           );
@@ -588,6 +603,17 @@ const TripList = () => {
         </ScrollX>
       </MainCard>
       <AlertColumnDelete title={`${getInvoiceId}`} open={alertPopup} handleClose={handleClose} />
+
+      {alertOpen && (
+        <AlertDialog
+          open={alertOpen}
+          handleClose={handleCloseAlert}
+          // title="Delete Trip"
+          // content="Are you sure you want to delete this trip?"
+          // cancelledButtonTitle="Disagree"
+          // confirmedButtonTitle="Agree"
+        />
+      )}
     </>
   );
 };
