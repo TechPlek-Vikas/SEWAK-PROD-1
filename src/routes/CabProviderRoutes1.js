@@ -14,7 +14,7 @@ import Create from 'pages/invoice/create/Create';
 import Create1 from 'pages/invoice/create/Create1';
 import Create2 from 'pages/invoice/create/Create2';
 import { element } from 'prop-types';
-import RosterDashboard from 'pages/apps/test/dashboard';
+// import RosterDashboard from 'pages/apps/test/dashboard';
 import MapRosterFileTest from 'pages/apps/test/CreateRosterTemplateDrawer.js';
 import ViewRosterTest from 'pages/apps/test/List';
 import ViewRosterTest1 from 'pages/apps/test/ViewRoster';
@@ -35,6 +35,10 @@ const RosterFileList = Loadable(lazy(() => import('pages/apps/test/RosterFileMan
 const MapRosterFile = Loadable(lazy(() => import('pages/Roster/map-roster')));
 const ViewRoster = Loadable(lazy(() => import('pages/Roster/view-roster')));
 const AssignTrips = Loadable(lazy(() => import('pages/Roster/assign-trips')));
+const AllRosters = Loadable(lazy(() => import('pages/Roster/AllRosters')));
+
+//Trip
+const TripList = Loadable(lazy(() => import('pages/trips/TripList')));
 
 // Management
 const User = Loadable(lazy(() => import('pages/management/user')));
@@ -78,7 +82,7 @@ const AddCabRateVendor = Loadable(lazy(() => import('pages/master/CabRate/Vendor
 const AddCabRateDriver = Loadable(lazy(() => import('pages/master/CabRate/Driver')));
 
 // Dashboard
-// const RosterDashboard = Loadable(lazy(() => import('pages/dashboard/rosterDashboard/RosterDashboard')));
+const RosterDashboard = Loadable(lazy(() => import('pages/dashboard/rosterDashboard/RosterDashboard')));
 const CabDashBoard = Loadable(lazy(() => import('pages/dashboard/cabDashboard/CabDashBoard')));
 const DriverDashboard = Loadable(lazy(() => import('pages/dashboard/driverDashboard/DriverDashboard')));
 const VendorDashboard = Loadable(lazy(() => import('pages/dashboard/vendorDashboard/VendorDashboard')));
@@ -87,7 +91,7 @@ const UserDashboard = Loadable(lazy(() => import('pages/dashboard/userDashboard/
 const InvoiceDashboard = Loadable(lazy(() => import('pages/dashboard/invoiceDashboard/InvoiceDashboard')));
 
 // Dashboard
-// const RosterDashboard = Loadable(lazy(() => import('pages/apps/test/dashboard')));
+const RosterDashboard1 = Loadable(lazy(() => import('pages/apps/test/dashboard')));
 
 // Settings
 const InvoiceSettings = Loadable(lazy(() => import('pages/setting/invoice')));
@@ -158,7 +162,7 @@ const CabProvidorRoutes = {
                 },
                 {
                   path: 'test',
-                  element: <RosterDashboard />
+                  element: <RosterDashboard1 />
                 },
                 {
                   path: 'test-map',
@@ -167,6 +171,10 @@ const CabProvidorRoutes = {
                 {
                   path: 'test-view',
                   element: <ViewRoster /> // Render Company only for base path
+                },
+                {
+                  path: 'all-roster',
+                  element: <AllRosters /> 
                 }
               
               ]
@@ -181,7 +189,7 @@ const CabProvidorRoutes = {
                   element: <InvoiceDashboard />
                 },
                 {
-                  path: 'view',
+                  path: 'list',
                   element: <List />
                 },
                 {
@@ -208,6 +216,17 @@ const CabProvidorRoutes = {
                   element: <AdvanceType />
                   //   element: <ProtectedRoute element={AdvanceType} moduleName={MODULE.ADVANCE_TYPE} permission={PERMISSIONS.READ} />
                 }
+              ]
+            },
+
+             // Trips
+             {
+              path: 'trips',
+              children: [
+                {
+                  path: 'list',
+                  element: <TripList />
+                },
               ]
             }
           ]

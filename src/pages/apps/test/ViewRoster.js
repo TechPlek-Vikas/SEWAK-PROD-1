@@ -47,7 +47,8 @@ import { Edit, Eye, InfoCircle, ProfileTick, Trash } from 'iconsax-react';
 import { APP_DEFAULT_PATH } from 'config';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import axiosServices from 'utils/axios';
-import AssignTripsDialog from './AssignTripsDialog';
+import AssignTripsDialog from './components/AssignTripsDialog';
+// import AssignTripsDialog from './components/AssignTripsDialog';
 
 const avatarImage = require.context('assets/images/users', true);
 
@@ -257,7 +258,7 @@ const ViewRosterTest1 = () => {
     setSelectedData(selectedRows);
   }, []);
 
-  console.log('selectedData', selectedData);
+  // console.log('selectedData', selectedData);
 
   useEffect(() => {
     if (stateData) {
@@ -272,7 +273,6 @@ const ViewRosterTest1 = () => {
           rosterFileId: id
         }
       });
-      console.log('response.data', response.data);
       setRosterData(response.data.data);
     };
 
@@ -317,24 +317,6 @@ const ViewRosterTest1 = () => {
         disableSortBy: true,
         disableFilters: true
       },
-      //   {
-      //     title: 'Row Selection',
-      //     Header: ({ getToggleAllPageRowsSelectedProps }) => (
-      //       <IndeterminateCheckbox indeterminate {...getToggleAllPageRowsSelectedProps()} />
-      //     ),
-      //     accessor: 'selection',
-      //     Cell: ({ row }) => {
-      //       const { status } = row.original; // Access the status value of the row
-      //       return (
-      //         <IndeterminateCheckbox
-      //           {...row.getToggleRowSelectedProps()}
-      //           disabled={status === 0} // Disable the checkbox if the status is Unverified
-      //         />
-      //       );
-      //     },
-      //     disableSortBy: true,
-      //     disableFilters: true
-      //   },
       {
         Header: 'Trip Date',
         accessor: 'tripDate',
