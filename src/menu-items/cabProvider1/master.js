@@ -33,7 +33,7 @@ const master = {
           id: 'view',
           title: <FormattedMessage id="view" />,
           type: 'item',
-          url: '/master/role',
+          url: '/master/role'
           // icon: icons.view
         }
       ]
@@ -49,7 +49,7 @@ const master = {
           id: 'view',
           title: <FormattedMessage id="view" />,
           type: 'item',
-          url: '/master/zone',
+          url: '/master/zone'
           // icon: icons.view
         }
       ]
@@ -65,7 +65,23 @@ const master = {
           id: 'view',
           title: <FormattedMessage id="view" />,
           type: 'item',
-          url: '/master/zone-type',
+          url: '/master/zone-type'
+          // icon: icons.view
+        }
+      ]
+    },
+    // Cab Type
+    {
+      id: 'cab-type',
+      title: <FormattedMessage id="cab type" />,
+      type: 'collapse',
+      icon: icons.zone,
+      children: [
+        {
+          id: 'view',
+          title: <FormattedMessage id="view" />,
+          type: 'item',
+          url: '/master/cab-type'
           // icon: icons.view
         }
       ]
