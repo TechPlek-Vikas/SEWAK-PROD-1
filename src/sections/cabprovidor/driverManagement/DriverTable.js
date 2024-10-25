@@ -1,21 +1,35 @@
 // eslint-disable-next-line no-unused-vars
-import { Box, Chip, Stack, Typography } from '@mui/material';
+import { Box, Chip, Dialog, Stack, Typography } from '@mui/material';
 import ScrollX from 'components/ScrollX';
 import PaginationBox from 'components/tables/Pagination';
 import ReactTable from 'components/tables/reactTable/ReactTable';
 import PropTypes from 'prop-types';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { formattedDate } from 'utils/helper';
 import MainCard from 'components/MainCard';
 import { Link } from 'react-router-dom';
 import TableSkeleton from 'components/tables/TableSkeleton';
 import EmptyTableDemo from 'components/tables/EmptyTable';
+import AssignVehiclePopup from './driverOverview/assignVehiclePopup/AssignVehiclePopup';
 
 const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading }) => {
   const theme = useTheme();
   // eslint-disable-next-line no-unused-vars
   const mode = theme.palette.mode;
+  const [driverId, setDriverId] = useState(null);
+  const [pendingDialogOpen, setPendingDialogOpen] = useState(false);
+
+  const handleClosePendingDialog = () => {
+    setPendingDialogOpen(false);
+    setDriverId(null);
+  };
+
+  const handleOpenPendingDialog = (id) => {
+    setDriverId(id);
+    setPendingDialogOpen(true);
+  };
+
   const columns = useMemo(
     () => [
       {
@@ -42,7 +56,7 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
                 onClick={(e) => e.stopPropagation()} // Prevent interfering with row expansion
                 style={{ textDecoration: 'none' }}
               >
-               {formattedValue}
+                {formattedValue}
               </Link>
             </Typography>
           );
@@ -72,13 +86,13 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
                 variant="light"
                 size="small"
                 label="Not Assigned"
-                // sx={{
-                //   ':hover': {
-                //     backgroundColor: 'rgba(255, 0, 0, 0.3)'
-                //     // cursor: 'pointer'
-                //   }
-                // }}
-                // onClick={() => handleOpenPendingDialog(row.original)}
+                sx={{
+                  ':hover': {
+                    backgroundColor: 'rgba(255, 0, 0, 0.3)',
+                    cursor: 'pointer'
+                  }
+                }}
+                onClick={() => handleOpenPendingDialog(row.original)}
               />
             );
           } else {
@@ -208,6 +222,10 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
           )}
         </Box>
       </Stack>
+      {/* Pending Dialog */}
+      <Dialog open={pendingDialogOpen} onClose={handleClosePendingDialog}>
+        <AssignVehiclePopup handleClose={handleClosePendingDialog} driverId={driverId} />
+      </Dialog>
     </>
   );
 };

@@ -2,7 +2,7 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { AddCircle, Eye, Location, MenuBoard, Profile2User } from 'iconsax-react';
+import { AddCircle, Car, Eye, Location, MenuBoard, Profile2User } from 'iconsax-react';
 import { MODULE, PERMISSIONS } from 'constant';
 
 // icons
@@ -11,7 +11,8 @@ const icons = {
   zone:Location,
   role:Profile2User,
   view:Eye,
-  add:AddCircle
+  add:AddCircle,
+  cab:Car
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -75,7 +76,7 @@ const master = {
       id: 'cab-type',
       title: <FormattedMessage id="cab type" />,
       type: 'collapse',
-      icon: icons.zone,
+      icon: icons.cab,
       children: [
         {
           id: 'view',

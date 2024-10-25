@@ -12,10 +12,10 @@ import { APP_DEFAULT_PATH } from 'config';
 import { Dialog } from '@mui/material';
 import { PopupTransition } from 'components/@extended/Transitions';
 import RosterWidgetCard from '../../../sections/cabprovidor/dashboard/rosterDashboard/RosterWidgetCard';
-import AddRosterFileForm from 'sections/cabprovidor/dashboard/rosterDashboard/AddRosterFileForm';
 import CreateRosterTemplate from 'sections/cabprovidor/dashboard/rosterDashboard/MapRosterData';
 import RosterCard from 'sections/cabprovidor/dashboard/rosterDashboard/RosterCard';
 import RosterIncomeAreaChart from 'sections/cabprovidor/dashboard/rosterDashboard/RosterIncomeAreaChart';
+import AddRosterFileForm from 'pages/apps/test/components/AddRosterFileForm';
 // ==============================|| ROSTER - DASHBOARD ||============================== //
 
 export default function RosterDashboard() {
