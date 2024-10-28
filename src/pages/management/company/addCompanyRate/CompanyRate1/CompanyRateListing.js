@@ -8,6 +8,7 @@ import WrapperButton from 'components/common/guards/WrapperButton';
 import { Add } from 'iconsax-react';
 import CompanyRate from './CompanyRate';
 import SearchComponent from 'pages/apps/test/CompanySearch';
+import axiosServices from 'utils/axios';
 
 // ==============================|| REACT TABLE - EDITABLE CELL ||============================== //
 
@@ -78,11 +79,7 @@ const CompanyRateListing = () => {
 
       setLoading(true); // Start loading
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/company/unwind/rates?companyId=${selectedCompany._id}`, {
-          headers: {
-            Authorization: `${token}`
-          }
-        });
+        const response = await axiosServices.get(`/company/unwind/rates?companyId=${selectedCompany._id}` );
         setCompanyList(response.data.data);
       } catch (error) {
         console.error('Error fetching data', error);

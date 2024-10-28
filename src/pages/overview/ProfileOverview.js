@@ -13,6 +13,7 @@ import Statement from 'sections/cabprovidor/profile/profileOverview/Statement';
 import Mails from 'sections/cabprovidor/profile/profileOverview/Mails';
 import Overview from 'sections/cabprovidor/profile/profileOverview/Overview';
 import axios from 'axios';
+import axiosServices from 'utils/axios';
 
 const ProfileOverview = () => {
 
@@ -66,11 +67,7 @@ const ProfileOverview = () => {
 
   useEffect(() => {
     async function fetchProfileDetails() {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/view`, {
-        headers: {
-          Authorization: `${token}`
-        }
-      });
+      const response = await axiosServices.get(`/user/view`);
 
       if (response.status === 200) {
         setProfileBasicData(response.data.userData);

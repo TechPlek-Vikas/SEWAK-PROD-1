@@ -11,6 +11,7 @@ import Header from 'components/tables/genericTable/Header';
 import WrapperButton from 'components/common/guards/WrapperButton';
 import { Add } from 'iconsax-react';
 import CompanyRate from './CompanyRate';
+import axiosServices from 'utils/axios';
 
 // ==============================|| REACT TABLE - EDITABLE CELL ||============================== //
 
@@ -30,13 +31,8 @@ const CompanyRateListing = ({companyName,id}) => {
 
   useEffect(() => {
     const fetchdata = async () => {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/company/unwind/rates?companyId=${id}`,
-        {
-          headers: {
-            Authorization: `${token}`
-          }
-        }
+      const response = await axiosServices.get(
+        `/company/unwind/rates?companyId=${id}`,
       );
       setCompanyList(response.data.data);
       setLoading(false);
