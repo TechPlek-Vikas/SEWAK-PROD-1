@@ -30,6 +30,7 @@ import AlertDelete from 'components/alertDialog/AlertDelete';
 import axios from 'axios';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { useNavigate } from 'react-router';
+import axiosServices from 'utils/axios';
 
 const CompanyRate = ({ id, companyName }) => {
   const [selectedVehicleTypes, setSelectedVehicleTypes] = useState([]);
@@ -111,19 +112,14 @@ const CompanyRate = ({ id, companyName }) => {
     }));
 
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/company/add/rates`,
+      const response = await axiosServices.post(
+        `/company/add/rates`,
         {
           data: {
             companyID: id, 
             ratesForCompany: finalData 
           }
         },
-        {
-          headers: {
-            Authorization: `${token}` 
-          }
-        }
       );
 
       if (response.status === 201) {

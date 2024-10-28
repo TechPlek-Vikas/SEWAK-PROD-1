@@ -15,6 +15,7 @@ import axios from 'axios';
 import Overview from 'sections/cabprovidor/vendorManagement/vendorOverview/overview';
 import Loan from 'sections/cabprovidor/vendorManagement/vendorOverview/loan';
 import AttachedCompany from 'sections/cabprovidor/vendorManagement/vendorOverview/AttachedCompany';
+import axiosServices from 'utils/axios';
 
 const VendorOverview = () => {
   const { id } = useParams(); // used to extract companyId to fetch company Data
@@ -33,11 +34,7 @@ const VendorOverview = () => {
       const fetchVendorData = async () => {
         const token = localStorage.getItem('serviceToken');
         try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/vendor/details/by?vendorId=${vendorId}`, {
-            headers: {
-              Authorization: `${token}`
-            }
-          });
+          const response = await axiosServices.get(`/vendor/details/by?vendorId=${vendorId}`);
 
           if (response.status === 200) {
             setVendorDetail(response.data.userData);
@@ -62,11 +59,7 @@ const VendorOverview = () => {
       const fetchCompanyData = async () => {
         const token = localStorage.getItem('serviceToken');
         try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/vendor/companies?vendorId=${vendorId}`, {
-            headers: {
-              Authorization: `${token}`
-            }
-          });
+          const response = await axiosServices.get(`/vendor/companies?vendorId=${vendorId}`);
 
 
           if (response.status === 200) {

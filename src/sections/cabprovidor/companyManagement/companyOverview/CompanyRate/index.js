@@ -35,6 +35,7 @@ import CompanyRateForm from './CompanyRateForm';
 import { fetchAllZoneTypes } from 'store/slice/cabProvidor/zoneTypeSlice';
 import { fetchZoneNames } from 'store/slice/cabProvidor/ZoneNameSlice';
 import { fetchAllVehicleTypesForAll } from 'store/slice/cabProvidor/vehicleTypeSlice';
+import axiosServices from 'utils/axios';
 
 // ==============================|| REACT TABLE - EDITABLE CELL ||============================== //
 
@@ -72,14 +73,8 @@ const CompanyRates = ({id,companyName}) => {
 
   useEffect(() => {
     const fetchdata = async () => {
-      const token = localStorage.getItem('serviceToken');
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/company/rates?companyId=${id}&page=1&limit=10`,
-        {
-          headers: {
-            Authorization: `${token}`
-          }
-        }
+      const response = await axiosServices.get(
+        `/company/rates?companyId=${id}&page=1&limit=10`,
       );
       console.log("response",response.data);
       
@@ -156,19 +151,14 @@ const CompanyRates = ({id,companyName}) => {
 
     try {
       // Replace the URL with your API endpoint
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/company/add/rates`,
+      const response = await axiosServices.post(
+        `/company/add/rates`,
         {
           data: {
             companyID: id,
             ratesForCompany: formValues // Directly passing formValues here
           }
         },
-        {
-          headers: {
-            Authorization: `${token}`
-          }
-        }
       );
 
       if (response.status === 201) {

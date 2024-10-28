@@ -22,6 +22,7 @@ import {
 import { SearchNormal1 } from 'iconsax-react';
 import { useEffect, useState } from 'react';
 import axios from 'utils/axios';
+import axiosServices from 'utils/axios';
 
 // ==============================|| INVOICE - SELECT ADDRESS ||============================== //
 
@@ -56,11 +57,8 @@ const AddressModal = ({ open, setOpen, handlerAddress }) => {
     const fetchFilteredData = async () => {
       const token = localStorage.getItem('serviceToken');
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/company/getCompanyByName`, {
+        const response = await axiosServices.get(`/company/getCompanyByName`, {
           params: { filter: searchQuery },
-          headers: {
-            Authorization: `${token}`
-          }
         });
         if (response.status === 200) {
           setResults(response.data.data.result); // Update results with the filtered data
