@@ -26,7 +26,7 @@ export default function InvoiceCard({ handleFileUploadDialogue }) {
             onClick={() => {
               // console.log('drawer', isOpen);
               // openDrawer();
-              navigate('/apps/invoices/view');
+              navigate('/apps/invoices/list');
             }}
             sx={{ cursor: 'pointer' }}
           >
