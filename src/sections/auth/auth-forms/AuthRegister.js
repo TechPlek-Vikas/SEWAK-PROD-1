@@ -135,7 +135,7 @@ const AuthRegister = () => {
         }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
-          <form noValidate onSubmit={handleSubmit}>
+          <form noValidate onSubmit={handleSubmit} autoComplete="off">
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
@@ -151,7 +151,7 @@ const AuthRegister = () => {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     placeholder="Demo Inc."
-                    inputProps={{}}
+                    inputProps={{ autoComplete: 'off' }}
                   />
                   {touched.userName && errors.userName && (
                     <FormHelperText error id="helper-text-userName">
@@ -175,7 +175,7 @@ const AuthRegister = () => {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     placeholder="demo@company.com"
-                    inputProps={{}}
+                    inputProps={{ autoComplete: 'off' }}
                   />
                   {touched.userEmail && errors.userEmail && (
                     <FormHelperText error id="helper-text-userEmail-signup">
@@ -215,7 +215,7 @@ const AuthRegister = () => {
                       </InputAdornment>
                     }
                     placeholder="******"
-                    inputProps={{}}
+                    inputProps={{ autoComplete: 'new-password' }}
                   />
                   {touched.userPassword && errors.userPassword && (
                     <FormHelperText error id="helper-text-userPassword-signup">
