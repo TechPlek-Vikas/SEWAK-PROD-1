@@ -40,7 +40,7 @@ const application = {
       id: 'invoices',
       title: <FormattedMessage id="invoices" />,
       type: 'collapse',
-      url: '/apps/invoices/dashboard',
+      // url: '/apps/invoices/dashboard',
       icon: icons.invoice,
       children: [
         {

@@ -221,7 +221,7 @@ function AddBranch() {
             })
           );
 
-          navigate('/management/company');
+          navigate('/management/company/view');
         }
       } catch (error) {
         dispatch(

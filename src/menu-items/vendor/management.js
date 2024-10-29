@@ -27,7 +27,7 @@ const management = {
       id: 'user',
       title: <FormattedMessage id="user" />,
       type: 'collapse',
-      url: '/management/user/dashboard',
+      // url: '/management/user/dashboard',
       icon: icons.user,
       children: [
         {
@@ -52,7 +52,7 @@ const management = {
       id: 'company',
       title: <FormattedMessage id="company" />,
       type: 'collapse',
-      url: '/management/company/dashboard',
+      // url: '/management/company/dashboard',
       icon: icons.company,
       children: [
         {
@@ -70,7 +70,7 @@ const management = {
       id: 'driver',
       title: <FormattedMessage id="driver" />,
       type: 'collapse',
-      url: '/management/driver/dashboard',
+      // url: '/management/driver/dashboard',
       icon: icons.driver,
       children: [
         {
@@ -88,7 +88,7 @@ const management = {
       id: 'cab',
       title: <FormattedMessage id="cab" />,
       type: 'collapse',
-      url: '/management/cab/dashboard',
+      // url: '/management/cab/dashboard',
       icon: icons.cab,
       children: [
         {
