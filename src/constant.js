@@ -150,6 +150,7 @@ export function getCaseInsensitiveValue(obj, key) {
 
 export const MODULE = {
   ROSTER: 'Roster',
+  DASHBOARD: 'Dashboard',
   USER: 'User',
   COMPANY: 'Company',
   VENDOR: 'Vendor',
@@ -159,6 +160,8 @@ export const MODULE = {
   ROLE: 'Role',
   ZONE: 'Zone',
   ZONE_TYPE: 'ZoneType',
+  STATE_TAX: 'stateTax',
+  TAX_CHARGE: 'taxCharges',
   CAB_TYPE: 'CabType',
   CAB_RATE: 'CabRate',
   CAB_RATE_VENDOR: 'vendorCabRate',
@@ -168,5 +171,9 @@ export const MODULE = {
   REPORT: 'Reports',
   LOAN: 'Loan',
   ADVANCE: 'Advance',
-  ADVANCE_TYPE: 'AdvanceType'
+  ADVANCE_TYPE: 'AdvanceType',
+
+  USER_SETTING: 'userSettings',
+  INVOICE_SETTING: 'invoiceSettings',
+  LOG: 'Logs'
 };
