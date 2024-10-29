@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // material-ui
 import { Box, Checkbox, Divider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
@@ -20,6 +20,8 @@ const permission_set1 = ['Create', 'Read', 'Update', 'Delete'];
 const permission_set2 = ['Create', 'Read'];
 const permission_set3 = ['Update', 'Delete'];
 
+const permission_set = ['Create', 'Read', 'Update', 'Delete'];
+
 // table data
 const rows = [
   createData('Loan', 305, permission_set1),
@@ -28,6 +30,8 @@ const rows = [
   createData('Reports', 159, permission_set1),
   createData('Zone', 356, permission_set2)
 ];
+
+console.log('rows = ', rows);
 
 // table header
 const headCells = [
@@ -154,6 +158,22 @@ export default function PermissionTable({ existedPermissions = {}, parentFunctio
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
+
+  useEffect(() => {
+    console.log('existedPermissions', existedPermissions);
+
+    const xPermissions = Object.fromEntries(rows.map((item) => [item.moduleName, item.permissions]));
+
+    const output = Object.keys(existedPermissions).filter((key) => {
+      const yPerms = existedPermissions[key];
+      const xPerms = xPermissions[key];
+
+      // Check if both permissions arrays exist, have the same length, and contain the same items
+      return xPerms && yPerms.length === xPerms.length && yPerms.every((perm) => xPerms.includes(perm));
+    });
+
+    setSelected(output);
+  }, [existedPermissions]);
 
   return (
     <>

@@ -4,7 +4,7 @@ import { Box, Button, Chip, IconButton, Stack, Tooltip } from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import ReactTable from 'components/tables/reactTable/ReactTable';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTheme } from '@mui/material/styles';
 import DataTable from 'sections/cabprovidor/master/role/DataTable';
 import GenericChip from 'sections/cabprovidor/master/role/GenericChip';

@@ -27,13 +27,15 @@ const dummyData = [
       Dashboard: ['Create', 'Read', 'Update', 'Delete'],
       Invoice: ['Create', 'Read', 'Update', 'Delete'],
       Cabs: ['Create', 'Read', 'Update', 'Delete'],
-      Loan: ['Create', 'Read']
+      // Loan: ['Create', 'Read']
+      Loan: []
     }
-  }
+  } 
 ];
 
 const Role = () => {
   const [open, setOpen] = useState(false);
+  const [remove, setRemove] = useState(false);
   const [roleId, setRoleId] = useState(null);
 
   const handleModalOpen = useCallback(() => {
@@ -69,6 +71,18 @@ const Role = () => {
         >
           <RoleModal handleClose={handleModalClose} roleId={roleId} />
         </Dialog>
+      )}
+
+      {remove && (
+        <Dialog
+          open={open}
+          onClose={handleModalClose}
+          scroll="body"
+          maxWidth="md"
+          fullWidth
+          aria-labelledby="scroll-dialog-title"
+          aria-describedby="scroll-dialog-description"
+        ></Dialog>
       )}
     </>
   );

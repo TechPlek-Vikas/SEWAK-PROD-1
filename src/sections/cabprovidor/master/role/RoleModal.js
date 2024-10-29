@@ -16,23 +16,99 @@ import {
 import { Add } from 'iconsax-react';
 import PermissionTable from 'sections/cabprovidor/master/role/PermissionTable';
 import { useCallback, useEffect, useState } from 'react';
+import axios from 'utils/axios';
+import { dispatch } from 'store';
+import { openSnackbar } from 'store/reducers/snackbar';
 
 const x = {
-  Loan: ['Create', 'Read', 'Update']
+  Loan: ['Create', 'Read', 'Update'],
+  Invoice: ['Create', 'Read']
 };
 
 const RoleModal = ({ handleClose, roleId }) => {
   // const [existedPermissions, setExistedPermissions] = useState(x);
   const [existedPermissions, setExistedPermissions] = useState({});
+  const [roleName, setRoleName] = useState('');
+  const [roleDescription, setRoleDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const parentFunction = useCallback((data) => {
     setExistedPermissions(data);
   }, []);
 
-  const handleButtonClick = useCallback(() => {
+  const handleButtonClick = useCallback(async () => {
     alert('Button clicked');
+    console.log(existedPermissions);
+
+    // const payload = {
+    //   data: {
+    //     role_name: roleName,
+    //     role_description: roleDescription,
+    //     permissions: existedPermissions
+    //   }
+    // };
+
+    // console.log('payload', payload);
+
+    let response;
+    setIsLoading(true);
+    try {
+      if (!roleId) {
+        // TODO : CREATE API
+        const payload = {
+          data: {
+            role_name: roleName,
+            role_description: roleDescription,
+            permissions: existedPermissions
+          }
+        };
+
+        console.log('payload', payload);
+
+        response = await axios.post('/cabProvidersRole2/add', payload);
+      } else {
+        // TODO : UPDATE API
+        const payload = {
+          data: {
+            _id: roleId,
+            role_name: roleName,
+            role_description: roleDescription,
+            permissions: existedPermissions
+          }
+        };
+
+        console.log('payload', payload);
+        response = await axios.put(`/cabProvidersRole2/${roleId}`, payload);
+      }
+
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: 'Cab Type deleted successfully',
+          variant: 'alert',
+          alert: {
+            color: 'success'
+          },
+          close: true
+        })
+      );
+    } catch (error) {
+      console.log('Error at role api = ', error);
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: error?.message || 'Something went wrong',
+          variant: 'alert',
+          alert: {
+            color: 'error'
+          },
+          close: true
+        })
+      );
+    } finally {
+      setIsLoading(false);
+    }
     handleClose();
-  }, [handleClose]);
+  }, [handleClose, existedPermissions, roleName, roleDescription, roleId]);
 
   useEffect(() => {
     if (roleId) {
@@ -41,7 +117,9 @@ const RoleModal = ({ handleClose, roleId }) => {
           //   const result = await dispatch(fetchRoleDetails(roleId)).unwrap();
           setIsLoading(true); // Start loading
           // Simulate an API call delay
-          await new Promise((resolve) => setTimeout(resolve, 7000));
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          setRoleName('Admin');
+          setRoleDescription('Admin Role');
           setExistedPermissions(x);
         } catch (error) {
           console.error(error);
@@ -75,7 +153,27 @@ const RoleModal = ({ handleClose, roleId }) => {
             {/* Role Name */}
             <Stack gap={1}>
               <InputLabel htmlFor="role-name">Role Name</InputLabel>
-              <TextField id="role-name" variant="outlined" placeholder="Role Name" fullWidth />
+              <TextField
+                id="role-name"
+                variant="outlined"
+                placeholder="Role Name"
+                fullWidth
+                value={roleName}
+                onChange={(e) => setRoleName(e.target.value)}
+              />
+            </Stack>
+
+            {/* Description */}
+            <Stack gap={1}>
+              <InputLabel htmlFor="role-description">Description</InputLabel>
+              <TextField
+                id="role-description"
+                variant="outlined"
+                placeholder="Description"
+                fullWidth
+                value={roleDescription}
+                onChange={(e) => setRoleDescription(e.target.value)}
+              />
             </Stack>
             {/* Permission */}
             <Stack gap={1}>
