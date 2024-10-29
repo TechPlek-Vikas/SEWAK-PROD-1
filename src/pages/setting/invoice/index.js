@@ -133,9 +133,6 @@ const InvoiceSetting = ({ redirect, onClose }) => {
     try {
       console.log('Formik submit', values);
 
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-      console.log('Formik submit done .......');
-
       let response;
 
       // TODO : Update settings API

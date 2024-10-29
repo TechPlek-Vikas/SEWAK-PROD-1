@@ -21,6 +21,7 @@ import {
   
   import { formatDateUsingMoment } from "utils/helper";
 import CompanyWiseRoster from "./CompanyWiseRoster";
+import axiosServices from "utils/axios";
   
   const token = localStorage.getItem("serviceToken");
   
@@ -46,19 +47,14 @@ import CompanyWiseRoster from "./CompanyWiseRoster";
   
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
       try {
-        const response = await axios.post(
-          `${process.env.REACT_APP_API_URL}tripData/trip/requests/company`,
+        const response = await axiosServices.post(
+          `/tripData/trip/requests/company`,
           {
             data: {
               companyId: id,
               fromDate: values.fromDate,
               toDate: values.toDate,
               tripStatus: 1,
-            },
-          },
-          {
-            headers: {
-              Authorization: `${token}`,
             },
           }
         );

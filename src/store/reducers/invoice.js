@@ -4,6 +4,7 @@ import { dispatch } from 'store';
 
 // third-party
 import { createSlice } from '@reduxjs/toolkit';
+import axiosServices from 'utils/axios';
 
 const countries = [
   { code: 'US', label: 'United States Dollar', currency: 'Dollar', prefix: '$' },
@@ -102,7 +103,7 @@ export const { reviewInvoicePopup, customerPopup, toggleCustomerPopup, selectCou
 export function getInvoiceList() {
   return async () => {
     try {
-      const response = await axios.get('/api/invoice/list');
+      const response = await axiosServices.get('/api/invoice/list');
       dispatch(invoice.actions.getLists(response.data.invoice));
     } catch (error) {
       dispatch(invoice.actions.hasError(error));

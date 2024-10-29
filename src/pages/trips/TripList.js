@@ -682,7 +682,7 @@ const TripList = () => {
     }
   ];
 
-  console.log('Data = ', data);
+  // console.log('Data = ', data);
 
   if (loading) return <Loader />;
 

@@ -35,6 +35,7 @@ import { fetchZoneNames } from 'store/slice/cabProvidor/ZoneNameSlice';
 import { fetchAllZoneTypes } from 'store/slice/cabProvidor/zoneTypeSlice';
 import { fetchAllVehicleTypes } from 'store/slice/cabProvidor/vehicleTypeSlice';
 import CompanyRateReactTable from './CompanyRateReactTable';
+import axiosServices from 'utils/axios';
 
 // ==============================|| REACT TABLE - EDITABLE CELL ||============================== //
 
@@ -131,17 +132,12 @@ const VendorRate = ({ onClose, companyName }) => {
 
     try {
       // Replace the URL with your API endpoint
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}company/add/rates`,
+      const response = await axiosServices.post(
+        `/company/add/rates`,
         {
           data: {
             companyID: companyID,
             ratesForCompany: formValues // Directly passing formValues here
-          }
-        },
-        {
-          headers: {
-            Authorization: `${token}`
           }
         }
       );

@@ -37,6 +37,7 @@ import { HeaderSort, TablePagination, TableRowSelection } from 'components/table
 import AddCustomer from './AddCustomer';
 import CustomerView from './CustomerView';
 import AlertCustomerDelete from './AlertCustomerDelete';
+import axiosServices from 'utils/axios';
 
 // ==============================|| REACT TABLE ||============================== //
 
@@ -181,11 +182,7 @@ const Loan = () => {
   useEffect(() => {
     const fetchdata = async () => {
       const token = localStorage.getItem('serviceToken');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}company`, {
-        headers: {
-          Authorization: `${token}`
-        }
-      });
+      const response = await axiosServices.get(`/company`);
       const result = response.data.data.result.map((company, index) => ({
         id: index + 1,
         company_name: company.company_name,
