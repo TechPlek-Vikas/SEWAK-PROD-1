@@ -30,10 +30,10 @@ import EmptyTableDemo from 'components/tables/EmptyTable';
 const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading }) => {
   const navigate = useNavigate();
   const handleAddCompany = () => {
-    navigate('add-company');
+    navigate('/management/company/add-company');
   };
   const handleAddCompanyBranch = () => {
-    navigate('add-company-branch');
+    navigate('/management/company/add-company-branch');
   };
 
   const columns = useMemo(
@@ -62,7 +62,7 @@ const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loadin
         accessor: 'company_name',
         Cell: ({ row, value }) => {
           // Capitalize the first letter of the company name
-          const formattedValue = value.charAt(0).toUpperCase() + value.slice(1);
+          const formattedValue = value ? value.charAt(0).toUpperCase() + value.slice(1) : '';
 
           return (
             <Typography>

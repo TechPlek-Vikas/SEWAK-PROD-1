@@ -14,7 +14,7 @@ import { openSnackbar } from 'store/reducers/snackbar';
 import { useNavigate } from 'react-router-dom';
 import { addCompany } from 'store/slice/cabProvidor/companySlice';
 import MultiFileUpload from 'components/third-party/dropzone/MultiFile';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
 import { Save2 } from 'iconsax-react';
 
@@ -204,7 +204,7 @@ function AddCompany() {
             })
           );
 
-          navigate('/management/company');
+          navigate('/management/company/view');
         }
       } catch (error) {
         dispatch(
@@ -532,7 +532,7 @@ function AddCompany() {
                 startIcon={<Save2 />}
                 sx={{ my: 3, ml: 1 }}
                 type="submit"
-                disabled={loading}
+                disabled={loading && !formik.errors} // Disable only if loading and no error
               >
                 {loading ? 'Saving...' : 'Save'}
               </LoadingButton>

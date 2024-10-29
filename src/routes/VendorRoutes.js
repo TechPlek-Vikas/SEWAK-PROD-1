@@ -131,10 +131,10 @@ const VendorRoutes = {
             {
               path: 'invoices',
               children: [
-                {
-                  path: 'dashboard',
-                  element: <UnderConstruction title="Invoice Dashboard" />
-                },
+                // {
+                //   path: 'dashboard',
+                //   element: <UnderConstruction title="Invoice Dashboard" />
+                // },
                 {
                   path: 'list',
                   element: <List />
@@ -174,10 +174,10 @@ const VendorRoutes = {
             {
               path: 'user',
               children: [
-                {
-                  path: 'dashboard',
-                  element: <UnderConstruction title="User Dashboard" />
-                },
+                // {
+                //   path: 'dashboard',
+                //   element: <UnderConstruction title="User Dashboard" />
+                // },
                 {
                   path: 'view',
                   element: <User />
@@ -194,10 +194,10 @@ const VendorRoutes = {
             {
               path: 'company',
               children: [
-                {
-                  path: 'dashboard',
-                  element: <UnderConstruction title="Company Dashboard" />
-                },
+                // {
+                //   path: 'dashboard',
+                //   element: <UnderConstruction title="Company Dashboard" />
+                // },
                 {
                   path: 'view',
                   element: <Company />
@@ -214,10 +214,10 @@ const VendorRoutes = {
             {
               path: 'driver',
               children: [
-                {
-                  path: 'dashboard',
-                  element: <UnderConstruction title="Driver Dashboard" />
-                },
+                // {
+                //   path: 'dashboard',
+                //   element: <UnderConstruction title="Driver Dashboard" />
+                // },
                 {
                   path: 'view',
                   element: <Driver />
@@ -238,10 +238,10 @@ const VendorRoutes = {
             {
               path: 'cab',
               children: [
-                {
-                  path: 'dashboard',
-                  element: <UnderConstruction title="Cab Dashboard" />
-                },
+                // {
+                //   path: 'dashboard',
+                //   element: <UnderConstruction title="Cab Dashboard" />
+                // },
                 {
                   path: 'view',
                   element: <Cab />

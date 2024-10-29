@@ -52,7 +52,7 @@ const ButtonComponent = ({loading}) => {
           <Button
             variant="contained"
             startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
-            onClick={() => navigate('add-cab')}
+            onClick={() => navigate('/management/cab/add-cab')}
             size="small"
             disabled={loading} // Disable button while loading
           >
