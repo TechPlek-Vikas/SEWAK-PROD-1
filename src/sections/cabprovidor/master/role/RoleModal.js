@@ -25,7 +25,7 @@ const x = {
   Invoice: ['Create', 'Read']
 };
 
-const RoleModal = ({ handleClose, roleId }) => {
+const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
   // const [existedPermissions, setExistedPermissions] = useState(x);
   const [existedPermissions, setExistedPermissions] = useState({});
   const [roleName, setRoleName] = useState('');
@@ -36,7 +36,7 @@ const RoleModal = ({ handleClose, roleId }) => {
   }, []);
 
   const handleButtonClick = useCallback(async () => {
-    alert('Button clicked');
+    // alert('Button clicked');
     console.log(existedPermissions);
 
     // const payload = {
@@ -77,13 +77,13 @@ const RoleModal = ({ handleClose, roleId }) => {
         };
 
         console.log('payload', payload);
-        response = await axios.put(`/cabProvidersRole2/${roleId}`, payload);
+        response = await axios.put(`/cabProvidersRole2/edit/permissions`, payload);
       }
 
       dispatch(
         openSnackbar({
           open: true,
-          message: 'Cab Type deleted successfully',
+          message: `Role ${roleId ? 'updated' : 'added'} successfully`,
           variant: 'alert',
           alert: {
             color: 'success'
@@ -91,6 +91,8 @@ const RoleModal = ({ handleClose, roleId }) => {
           close: true
         })
       );
+      handleRefetch();
+      handleClose();
     } catch (error) {
       console.log('Error at role api = ', error);
       dispatch(
@@ -107,8 +109,7 @@ const RoleModal = ({ handleClose, roleId }) => {
     } finally {
       setIsLoading(false);
     }
-    handleClose();
-  }, [handleClose, existedPermissions, roleName, roleDescription, roleId]);
+  }, [handleClose, existedPermissions, roleName, roleDescription, roleId, handleRefetch]);
 
   useEffect(() => {
     if (roleId) {
@@ -117,12 +118,41 @@ const RoleModal = ({ handleClose, roleId }) => {
           //   const result = await dispatch(fetchRoleDetails(roleId)).unwrap();
           setIsLoading(true); // Start loading
           // Simulate an API call delay
-          await new Promise((resolve) => setTimeout(resolve, 2000));
-          setRoleName('Admin');
-          setRoleDescription('Admin Role');
-          setExistedPermissions(x);
+          // await new Promise((resolve) => setTimeout(resolve, 2000));
+          // setRoleName('Admin');
+          // setRoleDescription('Admin Role');
+          // setExistedPermissions(x);
+
+          const response = await axios.get(`/cabProvidersRole2/all/permission`, {
+            params: {
+              roleId
+            }
+          });
+          console.log(`🚀 ~ response:`, response);
+          if (response.status === 200) {
+            const {
+              data: { role_name: roleName, role_description: roleDescription, permissions }
+            } = response.data;
+
+            console.log({ roleName, roleDescription, permissions });
+
+            setRoleName(roleName);
+            setRoleDescription(roleDescription);
+            setExistedPermissions(permissions);
+          }
         } catch (error) {
-          console.error(error);
+          console.log('Fetching role details error = ', error);
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: error?.message || 'Something went wrong',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              close: true
+            })
+          );
         } finally {
           setIsLoading(false); // Stop loading
         }
@@ -208,7 +238,8 @@ const RoleModal = ({ handleClose, roleId }) => {
 
 RoleModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
-  roleId: PropTypes.string
+  roleId: PropTypes.string,
+  handleRefetch: PropTypes.func.isRequired
 };
 
 export default RoleModal;

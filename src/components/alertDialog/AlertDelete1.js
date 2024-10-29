@@ -58,5 +58,6 @@ export default function AlertDelete1({ title, open, handleClose, handleConfirm }
 AlertDelete1.propTypes = {
   title: PropTypes.string.isRequired,
   open: PropTypes.bool,
-  handleClose: PropTypes.func
+  handleClose: PropTypes.func.isRequired,
+  handleConfirm: PropTypes.func.isRequired
 };

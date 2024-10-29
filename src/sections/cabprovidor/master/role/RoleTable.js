@@ -14,7 +14,7 @@ import WrapperButton from 'components/common/guards/WrapperButton';
 import { PERMISSIONS } from 'constant';
 
 /* eslint-disable no-unused-vars */
-const RoleTable = ({ data, page, setPage, limit, setLimit, lastPageNo, handleChangeRoleId }) => {
+const RoleTable = ({ data, page, setPage, limit, setLimit, lastPageNo, handleChangeRoleId, handleModalOpenRemove }) => {
   const theme = useTheme();
   // eslint-disable-next-line no-unused-vars
   const mode = theme.palette.mode;
@@ -24,8 +24,8 @@ const RoleTable = ({ data, page, setPage, limit, setLimit, lastPageNo, handleCha
       {
         Header: '_id',
         accessor: '_id',
-        className: 'cell-center',
-        disableSortBy: true
+        className: 'cell-center'
+        // disableSortBy: true
       },
       {
         Header: '#',
@@ -38,15 +38,15 @@ const RoleTable = ({ data, page, setPage, limit, setLimit, lastPageNo, handleCha
         accessor: 'role_name',
         minWidth: 100
       },
-      {
-        Header: 'Description',
-        accessor: 'description',
-        disableSortBy: true,
-        Cell: () => {
-          return 'vikas';
-        },
-        maxWidth: 100
-      },
+      // {
+      //   Header: 'Description',
+      //   accessor: 'description',
+      //   disableSortBy: true,
+      //   Cell: () => {
+      //     return 'vikas';
+      //   },
+      //   maxWidth: 100
+      // },
       {
         Header: 'Permissions',
         accessor: 'permissions',
@@ -106,7 +106,8 @@ const RoleTable = ({ data, page, setPage, limit, setLimit, lastPageNo, handleCha
                     color="primary"
                     onClick={(e) => {
                       e.stopPropagation();
-                      alert(`Edit = ${row.original._id}`);
+                      console.log('Row = ', row.original);
+                      // alert(`Edit = ${row.original._id}`);
                       handleChangeRoleId(row.original._id);
                     }}
                   >
@@ -131,7 +132,8 @@ const RoleTable = ({ data, page, setPage, limit, setLimit, lastPageNo, handleCha
                     color="error"
                     onClick={(e) => {
                       e.stopPropagation();
-                      alert(`Delete = ${row.original._id}`);
+                      // alert(`Delete = ${row.original._id}`);
+                      handleModalOpenRemove(row.original._id);
                     }}
                   >
                     <Trash />
@@ -171,7 +173,8 @@ RoleTable.propTypes = {
   setLimit: PropTypes.func,
   lastPageNo: PropTypes.number,
   setLastPageNo: PropTypes.func,
-  handleChangeRoleId: PropTypes.func
+  handleChangeRoleId: PropTypes.func.isRequired,
+  handleModalOpenRemove: PropTypes.func.isRequired
 };
 
 export default RoleTable;

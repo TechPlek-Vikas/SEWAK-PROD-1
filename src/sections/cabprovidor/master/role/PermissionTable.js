@@ -6,29 +6,54 @@ import { Box, Checkbox, Divider, Stack, Table, TableBody, TableCell, TableContai
 
 // project-imports
 import MainCard from 'components/MainCard';
-
-// table data
-function createData(moduleName, calories, permissions) {
-  return {
-    moduleName,
-    calories,
-    permissions
-  };
-}
-
-const permission_set1 = ['Create', 'Read', 'Update', 'Delete'];
-const permission_set2 = ['Create', 'Read'];
-const permission_set3 = ['Update', 'Delete'];
+import { MODULE } from 'constant';
 
 const permission_set = ['Create', 'Read', 'Update', 'Delete'];
 
 // table data
+function createData(moduleName, label, permissions = permission_set) {
+  return {
+    moduleName,
+    label,
+    permissions
+  };
+}
+
+// const permission_set1 = ['Create', 'Read', 'Update', 'Delete'];
+// const permission_set2 = ['Create', 'Read'];
+// const permission_set3 = ['Update', 'Delete'];
+
+// // table data
+// const rows = [
+//   createData('Dashboard', 305, permission_set),
+//   createData('Loan', 305, permission_set1),
+//   createData('Invoice', 452, permission_set2),
+//   createData('Advance', 262, permission_set3),
+//   createData('Reports', 159, permission_set1),
+//   createData('Zone', 356, permission_set2)
+// ];
+
 const rows = [
-  createData('Loan', 305, permission_set1),
-  createData('Invoice', 452, permission_set2),
-  createData('Advance', 262, permission_set3),
-  createData('Reports', 159, permission_set1),
-  createData('Zone', 356, permission_set2)
+  createData(MODULE.DASHBOARD, 'Dashboard'),
+  createData(MODULE.ROSTER, 'Roster'),
+  createData(MODULE.COMPANY, 'Company'),
+  createData(MODULE.VENDOR, 'Vendor'),
+  createData(MODULE.DRIVER, 'Driver'),
+  createData(MODULE.CAB, 'Cab'),
+  createData(MODULE.INVOICE, 'Invoice'),
+  createData(MODULE.LOAN, 'Loan'),
+  createData(MODULE.ADVANCE, 'Advance'),
+  createData(MODULE.REPORT, 'Report'),
+  createData(MODULE.ZONE, 'Zone'),
+  createData(MODULE.ZONE_TYPE, 'Zone Type'),
+  createData(MODULE.CAB_TYPE, 'Cab Type'),
+  createData(MODULE.STATE_TAX, 'State Tax'),
+  createData(MODULE.TAX_CHARGE, 'Tax Charge'),
+  createData(MODULE.CAB_RATE_VENDOR, 'Vendor Cab Rate'),
+  createData(MODULE.CAB_RATE_DRIVER, 'Driver Cab Rate'),
+  createData(MODULE.USER_SETTING, 'User Setting'),
+  createData(MODULE.INVOICE_SETTING, 'Invoice Setting'),
+  createData(MODULE.LOG, 'Log')
 ];
 
 console.log('rows = ', rows);
@@ -41,12 +66,12 @@ const headCells = [
     disablePadding: true,
     label: 'Module Name'
   },
-  {
-    id: 'calories',
-    numeric: true,
-    disablePadding: false,
-    label: 'Calories'
-  },
+  // {
+  //   id: 'calories',
+  //   numeric: true,
+  //   disablePadding: false,
+  //   label: 'Calories'
+  // },
   {
     id: 'permissions',
     numeric: false,
@@ -207,11 +232,12 @@ export default function PermissionTable({ existedPermissions = {}, parentFunctio
                       />
                     </TableCell>
                     <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.moduleName}
+                      {/* {row.moduleName } */}
+                      {row.label}
                     </TableCell>
-                    <TableCell align="right">{row.calories}</TableCell>
+                    {/* <TableCell align="right">{row.calories}</TableCell> */}
                     <TableCell align="left">
-                      <Stack spacing={1} direction="row">
+                      <Stack spacing={1} direction="row" justifyContent="space-between">
                         {row.permissions.map((permission, i) => (
                           <Box
                             key={i}
@@ -239,10 +265,10 @@ export default function PermissionTable({ existedPermissions = {}, parentFunctio
         </TableContainer>
         <Divider />
       </MainCard>
-      <Typography variant="h6" sx={{ mt: 2 }}>
+      {/* <Typography variant="h6" sx={{ mt: 2 }}>
         Selected Permissions:
-      </Typography>
-      <pre>{JSON.stringify(selectedPermissions, null, 2)}</pre>
+      </Typography> */}
+      {/* <pre>{JSON.stringify(selectedPermissions, null, 2)}</pre> */}
     </>
   );
 }
