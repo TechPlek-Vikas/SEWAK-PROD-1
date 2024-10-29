@@ -91,7 +91,7 @@ const CompanyRateListing = () => {
     fetchdata();
   }, [selectedCompany?._id, token]);
 
-  console.log("companyList",companyList);
+  console.log('companyList', companyList);
 
   const handleAddRate = () => {
     setShowCompanyList(true);
@@ -117,16 +117,16 @@ const CompanyRateListing = () => {
           <Header OtherComp={({ loading }) => <ButtonComponent loading={loading} onAddRate={handleAddRate} />} />
 
           {/* {companyList.length !== 0 && ( */}
-            <CompanyRateReactTable
-              data={companyList}
-              page={page}
-              setPage={setPage}
-              limit={limit}
-              setLimit={setLimit}
-              updateKey={updateKey}
-              setUpdateKey={setUpdateKey}
-              loading={loading}
-            />
+          <CompanyRateReactTable
+            data={companyList}
+            page={page}
+            setPage={setPage}
+            limit={limit}
+            setLimit={setLimit}
+            updateKey={updateKey}
+            setUpdateKey={setUpdateKey}
+            loading={loading}
+          />
           {/* )} */}
         </Stack>
       ) : (
