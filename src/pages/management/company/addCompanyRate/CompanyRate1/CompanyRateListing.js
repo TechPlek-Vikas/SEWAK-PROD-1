@@ -79,7 +79,7 @@ const CompanyRateListing = () => {
 
       setLoading(true); // Start loading
       try {
-        const response = await axiosServices.get(`/company/unwind/rates?companyId=${selectedCompany._id}`);
+        const response = await axiosServices.get(`/company/unwind/rates?companyId=${selectedCompany._id}` );
         setCompanyList(response.data.data);
       } catch (error) {
         console.error('Error fetching data', error);

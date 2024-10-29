@@ -26,7 +26,9 @@ const CompanyRateListing = ({ companyName, id }) => {
 
   useEffect(() => {
     const fetchdata = async () => {
-      const response = await axiosServices.get(`/company/unwind/rates?companyId=${id}`);
+      const response = await axiosServices.get(
+        `/company/unwind/rates?companyId=${id}`,
+      );
       setCompanyList(response.data.data);
       setLoading(false);
       console.log('response.data', response.data.data);

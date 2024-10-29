@@ -385,8 +385,8 @@ const List = () => {
 
           const confirmStatusChange = async () => {
             try {
-              const response = await axios.put(
-                `${process.env.REACT_APP_API_URL}/invoice/update/paymentStatus`,
+              const response = await axiosServices.put(
+                `/invoice/update/paymentStatus`,
                 {
                   data: {
                     invoiceId: row.original._id,
@@ -394,11 +394,6 @@ const List = () => {
                     remarks: newStatus === 3 ? remarks : undefined // Include remarks if cancelled
                   }
                 },
-                {
-                  headers: {
-                    Authorization: `${token}`
-                  }
-                }
               );
 
               if (response.status === 201) {

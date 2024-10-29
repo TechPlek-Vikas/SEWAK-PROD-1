@@ -13,6 +13,7 @@ import { useFormik, FormikProvider } from 'formik';
 // project-imports
 import { openSnackbar } from 'store/reducers/snackbar';
 import { useDispatch } from 'react-redux';
+import axiosServices from 'utils/axios';
 
 const CustomerSchema = Yup.object().shape({});
 
@@ -25,8 +26,8 @@ const AdvanceForm = ({ onCancel, advanceData, key, setKey }) => {
 
   const handleReject = async () => {
     try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}advance/status/update`,
+      const response = await axiosServices.put(
+        `/advance/status/update`,
         {
           data: {
             _id: advanceData._id, // Assuming `_id` is part of row data
@@ -34,11 +35,6 @@ const AdvanceForm = ({ onCancel, advanceData, key, setKey }) => {
             approved_amount: advanceData.approved_amount
           }
         },
-        {
-          headers: {
-            Authorization: `${token}` // Ensure `token` is defined in your component's scope
-          }
-        }
       );
 
       if (response.status === 200) {
@@ -86,8 +82,8 @@ const AdvanceForm = ({ onCancel, advanceData, key, setKey }) => {
     enableReinitialize: true,
     onSubmit: async (values) => {
       try {
-        const response = await axios.put(
-          `${process.env.REACT_APP_API_URL}advance/status/update`,
+        const response = await axiosServices.put(
+          `/advance/status/update`,
           {
             data: {
               _id: advanceData._id, // Assuming `_id` is part of row data
@@ -95,11 +91,6 @@ const AdvanceForm = ({ onCancel, advanceData, key, setKey }) => {
               approved_amount: values.approved_amount
             }
           },
-          {
-            headers: {
-              Authorization: `${token}` // Ensure `token` is defined in your component's scope
-            }
-          }
         );
 
         if (response.status === 200) {
