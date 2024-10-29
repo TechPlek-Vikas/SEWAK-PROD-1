@@ -2,12 +2,16 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { MenuBoard } from 'iconsax-react';
+import { Buliding, Car, MenuBoard, Profile, User } from 'iconsax-react';
 import { MODULE, PERMISSIONS } from 'constant';
 
 // icons
 const icons = {
-  samplePage: MenuBoard
+  samplePage: MenuBoard,
+  user:User,
+  company:Buliding,
+  driver:Profile,
+  cab:Car,
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -24,21 +28,21 @@ const management = {
       title: <FormattedMessage id="user" />,
       type: 'collapse',
       url: '/management/user/dashboard',
-      icon: icons.samplePage,
+      icon: icons.user,
       children: [
         {
           id: 'view',
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/management/user/view',
-          icon: icons.samplePage
+          // icon: icons.samplePage
         },
         {
           id: 'create',
           title: <FormattedMessage id="create user" />,
           type: 'item',
           url: '/management/user/add-user',
-          icon: icons.samplePage
+          // icon: icons.samplePage
         }
       ]
     },
@@ -49,14 +53,14 @@ const management = {
       title: <FormattedMessage id="company" />,
       type: 'collapse',
       url: '/management/company/dashboard',
-      icon: icons.samplePage,
+      icon: icons.company,
       children: [
         {
           id: 'view',
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/management/company/view',
-          icon: icons.samplePage
+          // icon: icons.samplePage
         }
       ]
     },
@@ -67,14 +71,14 @@ const management = {
       title: <FormattedMessage id="driver" />,
       type: 'collapse',
       url: '/management/driver/dashboard',
-      icon: icons.samplePage,
+      icon: icons.driver,
       children: [
         {
           id: 'view',
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/management/driver/view',
-          icon: icons.samplePage
+          // icon: icons.samplePage
         }
       ]
     },
@@ -85,21 +89,21 @@ const management = {
       title: <FormattedMessage id="cab" />,
       type: 'collapse',
       url: '/management/cab/dashboard',
-      icon: icons.samplePage,
+      icon: icons.cab,
       children: [
         {
           id: 'view',
           title: <FormattedMessage id="view" />,
           type: 'item',
           url: '/management/cab/view',
-          icon: icons.samplePage
+          // icon: icons.samplePage
         },
         {
           id: 'create-cab',
           title: <FormattedMessage id="add cab" />,
           type: 'item',
           url: '/management/cab/add-cab',
-          icon: icons.samplePage
+          // icon: icons.samplePage
         }
       ]
     }

@@ -8,15 +8,13 @@ import MainCard from 'components/MainCard';
 import Avatar from 'components/@extended/Avatar';
 
 // assets
-import { ArchiveBook, CloseCircle, DocumentText, DocumentUpload, DollarCircle, Folder2, ShoppingBag } from 'iconsax-react';
+import { DocumentText, DocumentUpload } from 'iconsax-react';
 import { Box } from '@mui/material';
-import { useDrawer } from 'contexts/DrawerContext';
 import { useNavigate } from 'react-router';
 
 // ==============================|| INVOICE - CARD ||============================== //
 
 export default function InvoiceCard({ handleFileUploadDialogue }) {
-  const { isOpen, openDrawer } = useDrawer();
   const navigate=useNavigate();
   return (
     <MainCard>
