@@ -11,6 +11,7 @@ import { MODULE, PERMISSIONS } from 'constant';
 import List from 'pages/invoice/list/List';
 import Create from 'pages/invoice/create/Create';
 import { element } from 'prop-types';
+import AllRosters from 'pages/Roster/AllRosters';
 
 const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/error/404')));
 const MaintenanceError500 = Loadable(lazy(() => import('pages/maintenance/error/500')));
@@ -118,6 +119,10 @@ const VendorRoutes = {
                 {
                   path: 'assign-trips',
                   element: <AssignTrips />
+                },
+                {
+                  path: 'all-roster',
+                  element: <AllRosters /> 
                 }
               ]
             },
@@ -131,7 +136,7 @@ const VendorRoutes = {
                   element: <UnderConstruction title="Invoice Dashboard" />
                 },
                 {
-                  path: 'view',
+                  path: 'list',
                   element: <List />
                 },
                 {
