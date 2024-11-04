@@ -434,6 +434,7 @@ function AddCompany() {
                     id="MCDAmount"
                     name="MCDAmount"
                     type="number"
+                    disabled={formik.values.MCDTax === 0 || formik.values.MCDTax === ''}
                     value={formik.values.MCDAmount}
                     onChange={formik.handleChange}
                     error={formik.touched.MCDAmount && Boolean(formik.errors.MCDAmount)}
@@ -476,6 +477,7 @@ function AddCompany() {
                     id="stateTaxAmount"
                     name="stateTaxAmount"
                     type="number"
+                    disabled={formik.values.stateTax === 0 || formik.values.stateTax === ''}
                     value={formik.values.stateTaxAmount}
                     onChange={formik.handleChange}
                     error={formik.touched.stateTaxAmount && Boolean(formik.errors.stateTaxAmount)}
