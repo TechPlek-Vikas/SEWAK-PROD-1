@@ -24,6 +24,11 @@ import { openSnackbar } from 'store/reducers/snackbar';
 import { USERTYPE } from 'constant';
 import { useDispatch } from 'react-redux';
 
+const validationSchema = Yup.object().shape({
+  userName: Yup.string().required('Username is required'),
+  userEmail: Yup.string().email('Invalid email format').required('Email is required')
+});
+
 const DriverRegister = ({
   open,
   handleClose,
@@ -89,7 +94,7 @@ const DriverRegister = ({
 
   const formik = useFormik({
     initialValues: initialValuesFun(data),
-    validationSchema: yupSchema,
+    validationSchema: validationSchema,
     enableReinitialize: true,
     onSubmit: formikHandleSubmit
   });

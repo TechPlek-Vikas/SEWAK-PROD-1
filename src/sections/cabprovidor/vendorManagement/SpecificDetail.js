@@ -15,44 +15,46 @@ import { addSpecialDetails } from 'store/slice/cabProvidor/vendorSlice';
 import { useDispatch } from 'react-redux';
 
 const validationSchema = yup.object({
-  // vendorCompanyName: yup.string().required('Cab Provider Name is required').min(2, 'Name should be at least 2 characters long'),
-  // contactPersonName: yup.string().required('Contact Person Name is required').min(2, 'Name should be at least 2 characters long'),
-  // PAN: yup
-  //   .string()
-  //   .required('PAN is required')
-  //   .matches(/^([A-Z]){5}([0-9]){4}([A-Z]){1}$/, 'Enter a valid PAN'),
-  // GSTIN: yup
-  //   .string()
-  //   .required('GSTIN is required')
-  //   .matches(/^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z1-9]{1}Z[A-Z0-9]{1})$/, 'Enter a valid GSTIN'),
-  // workEmail: yup.string().required('Work Email is required').email('Enter a valid email'),
-  // workMobileNumber: yup
-  //   .string()
-  //   .required('Mobile Number is required')
-  //   .matches(/^[6-9]\d{9}$/, 'Enter a valid 10-digit mobile number'),
-  // workLandLineNumber: yup
-  //   .string()
-  //   .matches(/^\d{10}$/, 'Enter a valid 10-digit landline number')
-  //   .required('LandLine Number is required'),
-  // officePinCode: yup
-  //   .string()
-  //   .required('Pin Code is required')
-  //   .matches(/^\d{6}$/, 'Enter a valid 6-digit pin code'),
-  // officeCity: yup.string().required('City is required'),
-  // officeState: yup.string().required('State is required'),
-  // officeAddress: yup.string().required('Office Address is required'),
-  // bankName: yup.string().required('Bank Name is required'),
-  // branchName: yup.string().required('Branch Name is required'),
-  // IFSC_code: yup
-  //   .string()
-  //   .required('IFSC Code is required')
-  //   .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Enter a valid IFSC code'),
-  // accountNumber: yup
-  //   .string()
-  //   .required('Account Number is required')
-  //   .matches(/^\d{9,18}$/, 'Enter a valid account number'),
-  // accountHolderName: yup.string().required('Account Holder Name is required'),
-  // bankAddress: yup.string().required('Bank Address is required')
+  vendorCompanyName: yup.string().required('Cab Provider Name is required').min(2, 'Name should be at least 2 characters long'),
+  contactPersonName: yup.string().required('Contact Person Name is required').min(2, 'Name should be at least 2 characters long'),
+  PAN: yup
+    .string()
+    .required('PAN is required')
+    .matches(/^([A-Z]){5}([0-9]){4}([A-Z]){1}$/, 'Enter a valid PAN'),
+  GSTIN: yup
+    .string()
+    .required('GSTIN is required')
+    .matches(/^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z1-9]{1}Z[A-Z0-9]{1})$/, 'Enter a valid GSTIN'),
+  workEmail: yup.string().required('Work Email is required').email('Enter a valid email'),
+  workMobileNumber: yup
+    .string()
+    .required('Mobile Number is required')
+    .matches(/^[6-9]\d{9}$/, 'Enter a valid 10-digit mobile number'),
+  workLandLineNumber: yup
+    .string()
+    .matches(/^\d{10}$/, 'Enter a valid 10-digit landline number')
+    .required('LandLine Number is required'),
+  officePinCode: yup
+    .string()
+    .required('Pin Code is required')
+    .matches(/^\d{6}$/, 'Enter a valid 6-digit pin code'),
+  officeCity: yup.string().required('City is required'),
+  officeState: yup.string().required('State is required'),
+  officeAddress: yup.string().required('Office Address is required'),
+  bankName: yup.string().required('Bank Name is required'),
+  branchName: yup.string().required('Branch Name is required'),
+  IFSC_code: yup
+    .string()
+    .required('IFSC Code is required')
+    .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Enter a valid IFSC code'),
+  accountNumber: yup
+    .string()
+    .required('Account Number is required')
+    .matches(/^\d{9,18}$/, 'Enter a valid account number'),
+  accountHolderName: yup.string().required('Account Holder Name is required'),
+  bankAddress: yup.string().required('Bank Address is required'),
+  ESI_Number: yup.string().required('ESI Number is required'),
+  PF_Number: yup.string().required('PF Number is required')
 });
 
 // ==============================|| VALIDATION WIZARD - PAYMENT ||============================== //

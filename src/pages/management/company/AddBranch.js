@@ -67,7 +67,7 @@ function AddBranch() {
   };
 
   const validationSchema = yup.object({
-    parentCompanyID: yup.string().required('Company Name is required'),
+    parentCompanyID: yup.string().required('Company Name is required'),//
     companyBranchName: yup
       .string()
       .trim()
@@ -77,15 +77,15 @@ function AddBranch() {
         return /^[^0-9]/.test(value);
       })
       .required('Branch Name is required'),
-    contact_person: yup
-      .string()
-      .trim()
-      .min(YupValidationConfig.contact_person.min, ({ min }) => `Person Name must be at least ${min} characters`)
-      .max(YupValidationConfig.contact_person.max, ({ max }) => `Person Name must be at most ${max} characters`)
-      .test('no-leading-digit', 'Person Name cannot start with a number', (value) => {
-        return /^[^0-9]/.test(value);
-      })
-      .required('Person Name is required'),
+    // contact_person: yup
+    //   .string()
+    //   .trim()
+    //   .min(YupValidationConfig.contact_person.min, ({ min }) => `Person Name must be at least ${min} characters`)
+    //   .max(YupValidationConfig.contact_person.max, ({ max }) => `Person Name must be at most ${max} characters`)
+    //   .test('no-leading-digit', 'Person Name cannot start with a number', (value) => {
+    //     return /^[^0-9]/.test(value);
+    //   })
+    //   .required('Person Name is required'),
     company_email: yup.string().trim().email('Invalid email').required('Email is required'),
     mobile: yup
       .string()
@@ -95,18 +95,18 @@ function AddBranch() {
         excludeEmptyString: false
       })
       .required('Mobile Number is required'),
-    landline: yup
-      .string()
-      .trim()
-      .matches(/^[0-9]{10}$/, {
-        message: 'Please enter valid landline number',
-        excludeEmptyString: false
-      })
-      .test('not-same-as-phone', 'Landline phone number should be different from mobile number', function (value) {
-        const { mobile: phone } = this.parent;
-        return typeof phone === 'undefined' ? true : value !== phone;
-      })
-      .required('Landline Number is required'),
+    // landline: yup
+    //   .string()
+    //   .trim()
+    //   .matches(/^[0-9]{10}$/, {
+    //     message: 'Please enter valid landline number',
+    //     excludeEmptyString: false
+    //   })
+    //   .test('not-same-as-phone', 'Landline phone number should be different from mobile number', function (value) {
+    //     const { mobile: phone } = this.parent;
+    //     return typeof phone === 'undefined' ? true : value !== phone;
+    //   })
+    //   .required('Landline Number is required'),
     // PAN: yup
     //   .string()
     //   .required('PAN is required')
@@ -133,24 +133,24 @@ function AddBranch() {
       .required('Address is required'),
     city: yup.string().trim().required('City is required'),
     state: yup.string().trim().required('State is required'),
-    MCDTax: yup.string().required('MCD Tax is required'),
-    MCDAmount: yup
-      .string()
-      .trim()
-      .matches(DIGITS_ONLY_PATTERN, {
-        message: 'Please enter valid rate',
-        excludeEmptyString: false
-      })
-      .required('MCD Amount is required'),
-    stateTax: yup.string().required('State Tax is required'),
-    stateTaxAmount: yup
-      .string()
-      .trim()
-      .matches(DIGITS_ONLY_PATTERN, {
-        message: 'Please enter valid rate',
-        excludeEmptyString: false
-      })
-      .required('State Amount is required'),
+    // MCDTax: yup.string().required('MCD Tax is required'),
+    // MCDAmount: yup
+    //   .string()
+    //   .trim()
+    //   .matches(DIGITS_ONLY_PATTERN, {
+    //     message: 'Please enter valid rate',
+    //     excludeEmptyString: false
+    //   })
+    //   .required('MCD Amount is required'),
+    // stateTax: yup.string().required('State Tax is required'),
+    // stateTaxAmount: yup
+    //   .string()
+    //   .trim()
+    //   .matches(DIGITS_ONLY_PATTERN, {
+    //     message: 'Please enter valid rate',
+    //     excludeEmptyString: false
+    //   })
+    //   .required('State Amount is required'),
     files: yup
       .mixed()
       .test('single-file', 'You can only upload one file', (value) => {
