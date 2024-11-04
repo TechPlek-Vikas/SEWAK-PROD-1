@@ -4,11 +4,6 @@ import ReactTable, { TableNoDataMessage } from 'components/tables/reactTable1/Re
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useDispatch } from 'react-redux';
-//   import { fetchAllZones } from "store/reducers/zone";
-//   import { fetchAllZoneTypes } from "store/reducers/zoneType";
-//   import { fetchAllVehicleTypesForAll } from "store/reducers/vehicleType";
-//   import { fetchAllVehicles } from "store/reducers/vehicle";
-//   import { fetchAllDrivers } from "store/reducers/driver";
 import { openDrawer } from 'store/reducers/menu';
 
 const CompanyWiseRoster = ({ rosterData, id }) => {
@@ -30,17 +25,6 @@ const CompanyWiseRoster = ({ rosterData, id }) => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
-
-  // dispatch(fetchAllZones()),
-  //   dispatch(fetchAllZoneTypes()),
-  //   dispatch(fetchAllVehicleTypesForAll()),
-  //   dispatch(fetchAllVehicles()),
-  //   dispatch(fetchAllDrivers());
-
-  // const handleAdd = (data) => {
-  //   setAdd(!add);
-  //   if (customer && !add) setCustomer(null);
-  // };
 
   const handletTrip = (data) => {
     setSelectedRowData(data); // Store the selected row data
@@ -199,12 +183,12 @@ const CompanyWiseRoster = ({ rosterData, id }) => {
             >
               <CircularProgress />
             </Box>
-          ) : data ? (
+          ) : data.length > 0 ? (
             <>
               <ReactTable columns={columns} data={data || []} handleAdd={handleAssignTrips} buttonTitle="Assigned Trip" search />
             </>
           ) : (
-            <TableNoDataMessage text="No Roster List Found" />
+            <TableNoDataMessage text="No Roster Found" />
           )}
         </ScrollX>
 

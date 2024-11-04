@@ -5,9 +5,12 @@ import { Button, CircularProgress, Stack } from '@mui/material';
 import CompanyRateReactTable from './CompanyRateReactTable';
 import Header from 'components/tables/genericTable/Header';
 import WrapperButton from 'components/common/guards/WrapperButton';
-import { Add } from 'iconsax-react';
+import { Add, Box } from 'iconsax-react';
 import CompanyRate from './CompanyRate';
 import axiosServices from 'utils/axios';
+import { TableNoDataMessage } from 'components/tables/reactTable1/ReactTable';
+import MainCard from 'components/MainCard';
+import ScrollX from 'components/ScrollX';
 
 // ==============================|| REACT TABLE - EDITABLE CELL ||============================== //
 
@@ -26,9 +29,7 @@ const CompanyRateListing = ({ companyName, id }) => {
 
   useEffect(() => {
     const fetchdata = async () => {
-      const response = await axiosServices.get(
-        `/company/unwind/rates?companyId=${id}`,
-      );
+      const response = await axiosServices.get(`/company/unwind/rates?companyId=${id}`);
       setCompanyList(response.data.data);
       setLoading(false);
       console.log('response.data', response.data.data);
@@ -52,7 +53,21 @@ const CompanyRateListing = ({ companyName, id }) => {
         <Stack gap={1} spacing={1}>
           <Header OtherComp={({ loading }) => <ButtonComponent loading={loading} onAddRate={handleAddRate} />} />
 
-          {companyList.length !== 0 && (
+          <MainCard title="Company Rates" content={false}>
+          <ScrollX>
+          {loading ? (
+            <Box
+              sx={{
+                height: '100vh',
+                width: 'inherit',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : companyList.length !== 0 ? (
             <CompanyRateReactTable
               data={companyList}
               page={page}
@@ -63,7 +78,24 @@ const CompanyRateListing = ({ companyName, id }) => {
               setUpdateKey={setUpdateKey}
               loading={loading}
             />
+          ) : (
+            <TableNoDataMessage text="No Rates Found" />
           )}
+            </ScrollX>
+            </MainCard>
+
+          {/* {companyList.length !== 0 && (
+            <CompanyRateReactTable
+              data={companyList}
+              page={page}
+              setPage={setPage}
+              limit={limit}
+              setLimit={setLimit}
+              updateKey={updateKey}
+              setUpdateKey={setUpdateKey}
+              loading={loading}
+            />
+          )} */}
         </Stack>
       ) : (
         <CompanyRate id={id} companyName={companyName} /> // Render CompanyList1 when the state is true
