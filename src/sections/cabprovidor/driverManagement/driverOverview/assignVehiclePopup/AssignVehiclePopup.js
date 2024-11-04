@@ -11,7 +11,6 @@ import { openSnackbar } from 'store/reducers/snackbar';
 
 // assets
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useDispatch } from 'react-redux';
 // import { fetchAllDrivers, fetchDriverDetails } from 'store/reducers/driver';
 // import DriverRegister from 'pages/driver/DriverRegister';
@@ -26,7 +25,6 @@ const yupSchema = yup.object().shape({
   contactNumber: yup.string().required('Contact Number is required'),
   vendorId: yup.string().required('Vendor is required')
 });
-const token = localStorage.getItem('serviceToken');
 
 const AssignVehiclePopup = ({ handleClose,driverId }) => {
   const [vehicleList, setVehicleList] = useState([]);
@@ -76,8 +74,6 @@ const AssignVehiclePopup = ({ handleClose,driverId }) => {
       handleClose();
     }
   };
-
-  console.log('vehicleList', vehicleList);
 
   const formik = useFormik({
     initialValues: {

@@ -20,20 +20,20 @@ const application = {
   icon: icons.samplePage,
   children: [
     // Roster
-    {
-      id: 'roster',
-      title: <FormattedMessage id="roster" />,
-      type: 'collapse',
-      icon: icons.samplePage,
-      children: [
-        {
-          id: 'list',
-          title: <FormattedMessage id="list" />,
-          type: 'item',
-          url: '/apps/roster/all-roster',
-        },
-      ]
-    },
+    // {
+    //   id: 'roster',
+    //   title: <FormattedMessage id="roster" />,
+    //   type: 'collapse',
+    //   icon: icons.samplePage,
+    //   children: [
+    //     {
+    //       id: 'list',
+    //       title: <FormattedMessage id="list" />,
+    //       type: 'item',
+    //       url: '/apps/roster/all-roster',
+    //     },
+    //   ]
+    // },
 
     // Invoices
     {
