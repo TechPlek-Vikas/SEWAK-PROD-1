@@ -23,11 +23,11 @@ const API = {
     ALL: '/cabProvidersRole2/all'
   },
   [USERTYPE.isVendor]: {
-    CREATE: '/vendorsRole/add',
-    UPDATE: '/vendorsRole/edit/permissions',
-    DELETE: '/vendorsRole/delete',
-    DETAILS: '/vendorsRole?roleID=',
-    ALL: '/vendorsRole/all'
+    CREATE: '/vendorsRole2/add',
+    UPDATE: '/vendorsRole2/edit/permissions',
+    DELETE: '/vendorsRole2/delete?roleId=',
+    DETAILS: '/vendorsRole2/all/permission?roleId=',
+    ALL: '/vendorsRole2/all'
   }
 };
 
@@ -37,6 +37,50 @@ export const fetchAllRoles = createAsyncThunk('roles/fetchAll', async (_, { getS
     const userType = state.auth.userType;
     const response = await axios.get(API[userType].ALL);
     return response?.data?.data;
+  } catch (error) {
+    return rejectWithValue(error.response ? error.response.data : error.message);
+  }
+});
+
+export const fetchRoleDetails = createAsyncThunk('roles/fetchRoleDetails', async (id, { getState, rejectWithValue }) => {
+  try {
+    const state = getState();
+    const userType = state.auth.userType;
+    const response = await axios.get(API[userType].DETAILS + id);
+    return response.data.data;
+  } catch (error) {
+    return rejectWithValue(error.response ? error.response.data : error.message);
+  }
+});
+
+export const addRole = createAsyncThunk('roles/addRole', async (payload, { getState, rejectWithValue }) => {
+  try {
+    const state = getState();
+    const userType = state.auth.userType;
+    const response = await axios.post(API[userType].CREATE, payload);
+    return response.data.data;
+  } catch (error) {
+    return rejectWithValue(error.response ? error.response.data : error.message);
+  }
+});
+
+export const updateRole = createAsyncThunk('roles/updateRole', async (payload, { getState, rejectWithValue }) => {
+  try {
+    const state = getState();
+    const userType = state.auth.userType;
+    const response = await axios.put(API[userType].UPDATE, payload);
+    return response.data.data;
+  } catch (error) {
+    return rejectWithValue(error.response ? error.response.data : error.message);
+  }
+});
+
+export const deleteRole = createAsyncThunk('roles/deleteRole', async (id, { getState, rejectWithValue }) => {
+  try {
+    const state = getState();
+    const userType = state.auth.userType;
+    const response = await axios.delete(API[userType].DELETE + id);
+    return response.data.data;
   } catch (error) {
     return rejectWithValue(error.response ? error.response.data : error.message);
   }

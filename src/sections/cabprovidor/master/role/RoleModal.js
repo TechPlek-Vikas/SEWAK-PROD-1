@@ -15,10 +15,11 @@ import {
 } from '@mui/material';
 import { Add } from 'iconsax-react';
 import PermissionTable from 'sections/cabprovidor/master/role/PermissionTable';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'utils/axios';
 import { dispatch } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
+import { addRole, fetchRoleDetails, updateRole } from 'store/slice/cabProvidor/roleSlice';
 
 const x = {
   Loan: ['Create', 'Read', 'Update'],
@@ -31,6 +32,11 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
   const [roleName, setRoleName] = useState('');
   const [roleDescription, setRoleDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const roleNameRef = useRef('');
+  const roleDescriptionRef = useRef('');
+  const existedPermissionsRef = useRef({});
+
   const parentFunction = useCallback((data) => {
     setExistedPermissions(data);
   }, []);
@@ -64,7 +70,7 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
 
         console.log('payload', payload);
 
-        response = await axios.post('/cabProvidersRole2/add', payload);
+        response = await dispatch(addRole(payload)).unwrap();
       } else {
         // TODO : UPDATE API
         const payload = {
@@ -77,7 +83,7 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
         };
 
         console.log('payload', payload);
-        response = await axios.put(`/cabProvidersRole2/edit/permissions`, payload);
+        response = await dispatch(updateRole(payload)).unwrap();
       }
 
       dispatch(
@@ -95,6 +101,11 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
       handleClose();
     } catch (error) {
       console.log('Error at role api = ', error);
+
+      setRoleName(roleNameRef.current);
+      setRoleDescription(roleDescriptionRef.current);
+      setExistedPermissions(existedPermissionsRef.current);
+
       dispatch(
         openSnackbar({
           open: true,
@@ -115,7 +126,6 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
     if (roleId) {
       (async () => {
         try {
-          //   const result = await dispatch(fetchRoleDetails(roleId)).unwrap();
           setIsLoading(true); // Start loading
           // Simulate an API call delay
           // await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -123,25 +133,23 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
           // setRoleDescription('Admin Role');
           // setExistedPermissions(x);
 
-          const response = await axios.get(`/cabProvidersRole2/all/permission`, {
-            params: {
-              roleId
-            }
-          });
-          console.log(`🚀 ~ response:`, response);
-          if (response.status === 200) {
-            const {
-              data: { role_name: roleName, role_description: roleDescription, permissions }
-            } = response.data;
+          const response = await dispatch(fetchRoleDetails(roleId)).unwrap();
+          console.log(`🚀 ~ a:`, response);
 
-            console.log({ roleName, roleDescription, permissions });
+          const { role_name: roleName, role_description: roleDescription, permissions } = response;
 
-            setRoleName(roleName);
-            setRoleDescription(roleDescription);
-            setExistedPermissions(permissions);
-          }
+          console.log({ roleName, roleDescription, permissions });
+
+          setRoleName(roleName);
+          setRoleDescription(roleDescription);
+          setExistedPermissions(permissions);
+
+          roleNameRef.current = roleName;
+          roleDescriptionRef.current = roleDescription;
+          existedPermissionsRef.current = permissions;
         } catch (error) {
           console.log('Fetching role details error = ', error);
+
           dispatch(
             openSnackbar({
               open: true,

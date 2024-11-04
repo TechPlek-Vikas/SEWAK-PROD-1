@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router';
 import BasicInfo from 'sections/cabprovidor/userManagement/BasicInfo';
 import SpecificInfo from 'sections/cabprovidor/userManagement/SpecificInfo';
 import { openSnackbar } from 'store/reducers/snackbar';
-import { addSpecificUserDetails, addUserDetails, registerUser, reset } from 'store/slice/cabProvidor/userSlice';
+import { addSpecificUserDetails, addUserDetails, clearUserDetails, registerUser, reset } from 'store/slice/cabProvidor/userSlice';
 import axiosServices from 'utils/axios';
 
 const steps = ['Basic details', 'Specific details'];
@@ -222,6 +222,9 @@ const AddUser = () => {
                 close: true
               })
             );
+
+            dispatch(clearUserDetails());
+
             navigate('/management/user/view', { replace: true });
           }
         }

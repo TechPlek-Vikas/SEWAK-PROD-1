@@ -68,6 +68,9 @@ const CabType = Loadable(lazy(() => import('pages/master/CabType')));
 const CabRate = Loadable(lazy(() => import('pages/master/CabRate')));
 const AddCabRateVendor = Loadable(lazy(() => import('pages/master/CabRate/Vendor')));
 const AddCabRateDriver = Loadable(lazy(() => import('pages/master/CabRate/Driver')));
+
+
+
 // ==============================|| MAIN ROUTES ||============================== //
 
 const VendorRoutes = {
@@ -122,7 +125,7 @@ const VendorRoutes = {
                 },
                 {
                   path: 'all-roster',
-                  element: <AllRosters /> 
+                  element: <AllRosters />
                 }
               ]
             },
@@ -261,6 +264,17 @@ const VendorRoutes = {
         {
           path: 'reports',
           element: <Reports />
+        },
+
+        // Master
+        {
+          path: 'master',
+          children: [
+            {
+              path: 'role',
+              element: <Role />
+            },
+          ]
         }
       ]
     },
