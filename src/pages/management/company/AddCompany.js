@@ -113,23 +113,23 @@ function AddCompany() {
     city: yup.string().trim().required('City is required'),
     state: yup.string().trim().required('State is required'),
     MCDTax: yup.string().required('MCD Tax is required'),
-    MCDAmount: yup
-      .string()
-      .trim()
-      .matches(DIGITS_ONLY_PATTERN, {
-        message: 'Please enter valid rate',
-        excludeEmptyString: false
-      })
-      .required('MCD Amount is required'),
+    // MCDAmount: yup
+    //   .string()
+    //   .trim()
+    //   .matches(DIGITS_ONLY_PATTERN, {
+    //     message: 'Please enter valid rate',
+    //     excludeEmptyString: false
+    //   })
+    //   .required('MCD Amount is required'),
     stateTax: yup.string().required('State Tax is required'),
-    stateTaxAmount: yup
-      .string()
-      .trim()
-      .matches(DIGITS_ONLY_PATTERN, {
-        message: 'Please enter valid rate',
-        excludeEmptyString: false
-      })
-      .required('State Amount is required'),
+    // stateTaxAmount: yup
+    //   .string()
+    //   .trim()
+    //   .matches(DIGITS_ONLY_PATTERN, {
+    //     message: 'Please enter valid rate',
+    //     excludeEmptyString: false
+    //   })
+    //   .required('State Amount is required'),
     files: yup
       .mixed()
       .test('fileSize', 'File size is too large', (value) => {
