@@ -3,13 +3,14 @@ import AnimateButton from 'components/@extended/AnimateButton';
 import MainCard from 'components/MainCard';
 import { USERTYPE } from 'constant';
 import { Form, FormikProvider, useFormik } from 'formik';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import BasicInfo from 'sections/cabprovidor/userManagement/BasicInfo';
 import SpecificInfo from 'sections/cabprovidor/userManagement/SpecificInfo';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { addSpecificUserDetails, addUserDetails, registerUser, reset } from 'store/slice/cabProvidor/userSlice';
+import axiosServices from 'utils/axios';
 
 const steps = ['Basic details', 'Specific details'];
 
@@ -70,12 +71,12 @@ const getInitialValuesForCreation = (step, userType) => {
   }
 };
 
-function getStepContent(step) {
+function getStepContent(step, handlePermission) {
   switch (step) {
     case 0:
       return <BasicInfo />;
     case 1:
-      return <SpecificInfo />;
+      return <SpecificInfo handlePermission={handlePermission} />;
     default:
       throw new Error('Unknown step');
   }
@@ -123,11 +124,17 @@ const getPayloadForSpecificDetailsCreation = (data, userType, userID) => {
 
 const AddUser = () => {
   const dispatch = useDispatch();
-  const [activeStep, setActiveStep] = useState(0);
   const navigate = useNavigate();
+
+  const [activeStep, setActiveStep] = useState(0);
+  const [permission, setPermission] = useState(null);
 
   const userType = useSelector((state) => state.auth.userType);
   const userID = useSelector((state) => state.users.userDetails?._id);
+
+  const handlePermission = useCallback((result) => {
+    setPermission(result);
+  }, []);
 
   const formik = useFormik({
     initialValues: getInitialValuesForCreation(activeStep, userType),
@@ -172,11 +179,35 @@ const AddUser = () => {
             setSubmitting(false);
           }
         } else {
+          if (!permission) {
+            alert('Please select role');
+
+            return;
+          }
+
           const payload = getPayloadForSpecificDetailsCreation(values, userType, userID);
 
-          const response = await dispatch(addSpecificUserDetails(payload)).unwrap();
+          // const response = await dispatch(addSpecificUserDetails(payload)).unwrap();
 
-          if (response?.status === 201) {
+          const payload2 = {
+            data: {
+              uid: userID,
+              permissions: permission
+            }
+          };
+
+          // const response2 = await axiosServices.post('/user/assign/specific/permission', payload2);
+
+          const callFirstAPI = () => dispatch(addSpecificUserDetails(payload)).unwrap();
+
+          const callSecondAPI = () => axiosServices.post('/user/assign/specific/permission', payload2);
+
+          const results = await Promise.allSettled([callFirstAPI(), callSecondAPI()]);
+
+          const [response, response2] = results;
+
+          // if (response?.status === 201) {
+          if (response?.status === 'fulfilled' && response2?.status === 'fulfilled') {
             resetForm(); // Reset the form after successful submission
             setSubmitting(false);
 
@@ -191,7 +222,7 @@ const AddUser = () => {
                 close: true
               })
             );
-            navigate('/management/user');
+            navigate('/management/user/view', { replace: true });
           }
         }
         // alert(JSON.stringify(values, null, 2));
@@ -247,7 +278,7 @@ const AddUser = () => {
                     </Grid>
 
                     <Grid item xs={12}>
-                      {getStepContent(activeStep)}
+                      {getStepContent(activeStep, handlePermission)}
                     </Grid>
 
                     <Grid item xs={12}>

@@ -18,7 +18,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     // dispatch(fetchAllVehicleTypesForAll());
-    // dispatch(fetchAllRoles());
+    dispatch(fetchAllRoles());
     // dispatch(fetchAllVehicleTypes());
     // dispatch(fetchZoneNames());
     // dispatch(fetchAllZoneTypes());

@@ -16,11 +16,11 @@ const initialState = {
 
 const API = {
   [USERTYPE.iscabProvider]: {
-    CREATE: '/cabProvidersRole/add',
-    UPDATE: '/cabProvidersRole/edit/permissions',
-    DELETE: '/cabProvidersRole/delete',
-    DETAILS: '/cabProvidersRole?roleID=',
-    ALL: '/cabProvidersRole/all'
+    CREATE: '/cabProvidersRole2/add',
+    UPDATE: '/cabProvidersRole2/edit/permissions',
+    DELETE: '/cabProvidersRole2/delete?roleId=',
+    DETAILS: '/cabProvidersRole2/all/permission?roleId=',
+    ALL: '/cabProvidersRole2/all'
   },
   [USERTYPE.isVendor]: {
     CREATE: '/vendorsRole/add',

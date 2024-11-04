@@ -125,7 +125,7 @@ const BasicInfo = () => {
                 <Grid item xs={12} md={6}>
                   <Stack spacing={1}>
                     <FormLabel>Username</FormLabel>
-                    <FormikTextField name="userName" placeholder="Enter Username" fullWidth autoComplete="off" />
+                    <FormikTextField name="userName" placeholder="Enter Username" fullWidth inputProps={{ autoComplete: 'off' }} />
                   </Stack>
                 </Grid>
 
@@ -133,7 +133,7 @@ const BasicInfo = () => {
                 <Grid item xs={12} md={6}>
                   <Stack spacing={1}>
                     <FormLabel>Email</FormLabel>
-                    <FormikTextField name="userEmail" placeholder="Enter Email" fullWidth />
+                    <FormikTextField name="userEmail" placeholder="Enter Email" fullWidth inputProps={{ autoComplete: 'off' }} />
                   </Stack>
                 </Grid>
 
@@ -142,7 +142,7 @@ const BasicInfo = () => {
                   <Stack spacing={1}>
                     <FormLabel>Password</FormLabel>
 
-                    <PasswordField name="userPassword" placeholder="Enter Password" />
+                    <PasswordField name="userPassword" placeholder="Enter Password" inputProps={{ autoComplete: 'new-password' }} />
                   </Stack>
                 </Grid>
 
