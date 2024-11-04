@@ -108,6 +108,7 @@ const Role = () => {
           close: true
         })
       );
+      handleModalCloseRemove();
     } finally {
       setIsLoading(false);
     }
