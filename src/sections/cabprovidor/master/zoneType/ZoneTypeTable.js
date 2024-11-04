@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Button, CircularProgress, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, useTheme } from '@mui/material';
+import { alpha, Button, CircularProgress, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, useTheme } from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { Fragment, useMemo, useState } from 'react';
@@ -111,7 +111,9 @@ const ZoneTypeTable = ({ data, updateKey, setUpdateKey,loading }) => {
       //   );
       // }
     } catch (error) {
-      console.error('Error deleting advance type:', error.response?.data || error.message);
+      console.log("error",error);
+      
+      // console.error('Error deleting advance type:', error.response?.data || error.message);
       dispatch(
         openSnackbar({
           open: true,

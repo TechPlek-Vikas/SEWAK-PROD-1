@@ -45,10 +45,11 @@ const ZonetypeAddForm = ({ zoneType, onCancel, updateKey, setUpdateKey }) => {
 
           if (addZoneType.fulfilled.match(resultAction)) {
             setUpdateKey(updateKey + 1);
+            formik.resetForm();
             dispatch(
               openSnackbar({
                 open: true,
-                message: 'Zone Type added successfully.',
+                message: resultAction.payload?.message || 'Zone Type added successfully.',
                 variant: 'alert',
                 alert: {
                   color: 'success'
@@ -60,7 +61,7 @@ const ZonetypeAddForm = ({ zoneType, onCancel, updateKey, setUpdateKey }) => {
             dispatch(
               openSnackbar({
                 open: true,
-                message: 'Error adding Zone Type.',
+                message: resultAction.payload?.message || 'Error adding Zone Type.',
                 variant: 'alert',
                 alert: {
                   color: 'error'
@@ -89,17 +90,17 @@ const ZonetypeAddForm = ({ zoneType, onCancel, updateKey, setUpdateKey }) => {
           //   setUpdateKey(updateKey + 1);
           // }
 
-          dispatch(
-            openSnackbar({
-              open: true,
-              message: 'Zone Type added successfully.',
-              variant: 'alert',
-              alert: {
-                color: 'success'
-              },
-              close: false
-            })
-          );
+          // dispatch(
+          //   openSnackbar({
+          //     open: true,
+          //     message: 'Zone Type added successfully.',
+          //     variant: 'alert',
+          //     alert: {
+          //       color: 'success'
+          //     },
+          //     close: false
+          //   })
+          // );
         } else {
           // PUT request for editing existing record
           const resultAction = await dispatch(

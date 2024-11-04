@@ -230,6 +230,8 @@ const AddUser = () => {
         }
         // alert(JSON.stringify(values, null, 2));
       } catch (error) {
+        console.log("error",error);
+        
         dispatch(
           openSnackbar({
             open: true,
