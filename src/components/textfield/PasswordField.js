@@ -5,7 +5,7 @@ import { OutlinedInput, InputAdornment, IconButton } from '@mui/material';
 import { Eye, EyeSlash } from 'iconsax-react';
 import { useFormikContext } from 'formik';
 
-const PasswordField = ({ name, placeholder }) => {
+const PasswordField = ({ name, placeholder, ...others }) => {
   const [showPassword, setShowPassword] = useState(false);
   const { getFieldProps, touched, errors } = useFormikContext();
 
@@ -15,6 +15,7 @@ const PasswordField = ({ name, placeholder }) => {
 
   return (
     <OutlinedInput
+      {...others}
       fullWidth
       type={showPassword ? 'text' : 'password'}
       placeholder={placeholder || 'Enter password .......'}
