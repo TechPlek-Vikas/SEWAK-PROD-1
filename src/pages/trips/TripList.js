@@ -38,7 +38,7 @@ import TripCard from 'components/cards/trips/TripCard';
 import { CSVExport, HeaderSort, IndeterminateCheckbox, TablePagination, TableRowSelection } from 'components/third-party/ReactTable';
 import AlertColumnDelete from 'sections/apps/kanban/Board/AlertColumnDelete';
 
-import { dispatch, useSelector } from 'store';
+import { dispatch, set, useSelector } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { alertPopupToggle, getInvoiceDelete, getInvoiceList } from 'store/reducers/invoice';
 import { renderFilterTypes, GlobalFilter, DateColumnFilter } from 'utils/react-table';
@@ -47,8 +47,53 @@ import { renderFilterTypes, GlobalFilter, DateColumnFilter } from 'utils/react-t
 import { Edit, Eye, InfoCircle, More, ProfileTick, Trash } from 'iconsax-react';
 import TripChart from 'components/cards/trips/TripChart';
 import AlertDialog from 'components/alertDialog/AlertDialog';
+import axiosServices from 'utils/axios';
+import FormDialog from 'components/alertDialog/FormDialog';
+import { convertToDateUsingMoment, formattedDate } from 'utils/helper';
 
 const avatarImage = require.context('assets/images/users', true);
+
+const TRIP_STATUS = {
+  PENDING: 1,
+  COMPLETED: 2,
+  CANCELLED: 3
+};
+
+const POPUP_TYPE = {
+  ALERT_DIALOG: 'ALERT_DIALOG',
+  FORM_DIALOG: 'FORM_DIALOG'
+};
+
+const getTabName = (status) => {
+  switch (status) {
+    case TRIP_STATUS.PENDING:
+      return 'Pending';
+    case TRIP_STATUS.COMPLETED:
+      return 'Completed';
+    case TRIP_STATUS.CANCELLED:
+      return 'Cancelled';
+    default:
+      return 'All';
+  }
+};
+
+const changeStatusFromAPI = async (tripId, updatedStatus, remarks) => {
+  try {
+    console.log('Api calling ...........');
+    const response = await axiosServices.put('/assignTrip/update/status', {
+      data: {
+        tripId: tripId,
+        assignedStatus: updatedStatus,
+        ...(updatedStatus === TRIP_STATUS.CANCELLED && { remarks: remarks })
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log('Out of service for change status', error);
+    throw error;
+  }
+};
 
 // ==============================|| REACT TABLE ||============================== //
 
@@ -60,7 +105,7 @@ function ReactTable({ columns, data }) {
   const initialState = useMemo(
     () => ({
       filters: [{ id: 'status', value: '' }],
-      hiddenColumns: ['avatar', 'email'],
+      hiddenColumns: ['avatar', 'email', '_id'],
       pageIndex: 0,
       pageSize: 5
     }),
@@ -99,20 +144,25 @@ function ReactTable({ columns, data }) {
 
   // ================ Tab ================
 
-  const groups = ['All', ...new Set(data.map((item) => item.status))];
-  const countGroup = data.map((item) => item.status);
-  const counts = countGroup.reduce(
-    (acc, value) => ({
-      ...acc,
-      [value]: (acc[value] || 0) + 1
-    }),
-    {}
-  );
+  const groups = ['All', ...new Set(data.map((item) => item.assignedStatus))];
+  // const groups = ['All', 'Pending', 'Completed', 'Cancelled'];
+
+  console.log('Data = ', data);
+
+  const countGroup = data.map((item) => item.assignedStatus);
+  const counts = {
+    Pending: countGroup.filter((status) => status === TRIP_STATUS.PENDING).length,
+    Completed: countGroup.filter((status) => status === TRIP_STATUS.COMPLETED).length,
+    Cancelled: countGroup.filter((status) => status === TRIP_STATUS.CANCELLED).length
+  };
 
   const [activeTab, setActiveTab] = useState(groups[0]);
 
+  console.log({ groups, countGroup, counts, activeTab });
+
   useEffect(() => {
-    setFilter('status', activeTab === 'All' ? '' : activeTab);
+    console.log('Tab = ', activeTab);
+    setFilter('status', activeTab === 'All' ? '' : activeTab === TRIP_STATUS.PENDING ? 1 : activeTab === TRIP_STATUS.COMPLETED ? 2 : 3);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
@@ -123,20 +173,28 @@ function ReactTable({ columns, data }) {
           {groups.map((status, index) => (
             <Tab
               key={index}
-              label={status}
+              label={getTabName(status)}
               value={status}
               icon={
                 <Chip
                   label={
                     status === 'All'
                       ? data.length
-                      : status === 'Completed'
+                      : status === TRIP_STATUS.COMPLETED
                       ? counts.Completed
-                      : status === 'Pending'
+                      : status === TRIP_STATUS.PENDING
                       ? counts.Pending
                       : counts.Cancelled
                   }
-                  color={status === 'All' ? 'primary' : status === 'Completed' ? 'success' : status === 'Pending' ? 'warning' : 'error'}
+                  color={
+                    status === 'All'
+                      ? 'primary'
+                      : status === TRIP_STATUS.COMPLETED
+                      ? 'success'
+                      : status === TRIP_STATUS.PENDING
+                      ? 'warning'
+                      : 'error'
+                  }
                   variant="light"
                   size="small"
                 />
@@ -149,23 +207,9 @@ function ReactTable({ columns, data }) {
       <TableRowSelection selected={Object.keys(selectedRowIds).length} />
       <Stack direction={matchDownSM ? 'column' : 'row'} spacing={1} justifyContent="space-between" alignItems="center" sx={{ p: 3, pb: 3 }}>
         <Stack direction={matchDownSM ? 'column' : 'row'} spacing={2}>
-          <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+          {/* <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} /> */}
         </Stack>
         <Stack direction={matchDownSM ? 'column' : 'row'} alignItems="center" spacing={matchDownSM ? 1 : 2}>
-          {/* <>
-            {headerGroups.map((group) => (
-              <Stack key={group} direction={matchDownSM ? 'column' : 'row'} spacing={2} {...group.getHeaderGroupProps()}>
-                {group.headers.map(
-                  (column) =>
-                    column.canFilter && (
-                      <Box key={column} {...column.getHeaderProps([{ className: column.className }])}>
-                        {column.render('Filter')}
-                      </Box>
-                    )
-                )}
-              </Stack>
-            ))}
-          </> */}
           <CSVExport data={data} filename={'invoice-list.csv'} />
         </Stack>
       </Stack>
@@ -225,8 +269,14 @@ ReactTable.propTypes = {
 const TripList = () => {
   const [loading, setLoading] = useState(true);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
   const [alertCancelOpen, setAlertCancelOpen] = useState(false);
+  const [popup, setPopup] = useState('');
+  const [updatedStatus, setUpdatedStatus] = useState(-1);
   const { alertPopup } = useSelector((state) => state.invoice);
+  const [cancelText, setCancelText] = useState('');
+  const [data, setData] = useState(null);
+  const [refetch, setRefetch] = useState(false);
 
   useEffect(() => {
     dispatch(getInvoiceList()).then(() => setLoading(false));
@@ -301,6 +351,19 @@ const TripList = () => {
       rate: 120, // Rate for the trip
       driver: 'James White', // Driver for the trip
       remarks: 'Awaiting pickup' // Remarks for the trip
+    },
+    {
+      id: 6,
+      customer_name: 'Alice Brown',
+      email: 'steve.brown@example.com',
+      date: '2024-09-15',
+      due_date: '2024-10-15',
+      quantity: 12,
+      status: 'Pending',
+      avatar: 5,
+      rate: 120, // Rate for the trip
+      driver: 'James White', // Driver for the trip
+      remarks: 'Awaiting pickup' // Remarks for the trip
     }
   ];
 
@@ -329,8 +392,109 @@ const TripList = () => {
   };
 
   const handleCloseAlert = () => {
+    console.log('handleCloseAlert');
+    setSelectedRow(null);
+    setPopup('');
+    setUpdatedStatus(-1);
     setAlertOpen(false);
   };
+
+  const handleConfirmAlert = () => {
+    console.log('handleConfirmAlert , ', selectedRow);
+    setAlertOpen(false);
+    // setPopup('');
+  };
+
+  const handleTextChange = (event) => {
+    console.log('handleTextChange', event.target.value);
+    setCancelText(event.target.value);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // TODO : GET ALL TRIPS
+        const response = await axiosServices.get('/assignTrip/all/trips/cabProvider');
+        setData(response.data.data);
+      } catch (error) {
+        console.log('Error at fetching trips = ', error);
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: error?.message || 'Something went wrong',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            close: true
+          })
+        );
+      }
+    };
+
+    fetchData();
+  }, [refetch]);
+
+  useEffect(() => {
+    console.log('UseEffect1 running ......... ');
+    console.log({
+      selectedRow,
+      updatedStatus,
+      alertOpen
+    });
+
+    if (selectedRow && !alertOpen && updatedStatus !== -1) {
+      // TODO : Change Api status
+      console.log('Row Selected', selectedRow);
+      console.log('UseEffect1 running ......... ');
+
+      const changeStatus = async () => {
+        try {
+          // const response = await axiosServices.put('/assignTrip/update/status', {
+          //   data: {
+          //     tripId: selectedRow.id,
+          //     assignedStatus: updatedStatus
+          //   }
+          // });
+
+          console.log('Api calling for complete');
+
+          await changeStatusFromAPI(selectedRow._id, updatedStatus, cancelText);
+
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Trips Status changed successfully',
+              variant: 'alert',
+              alert: {
+                color: 'success'
+              },
+              close: true
+            })
+          );
+          setRefetch((prev) => !prev);
+          setUpdatedStatus(-1);
+          setSelectedRow(null);
+          setPopup('');
+        } catch (error) {
+          console.log('Error while changing status = ', error);
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: error?.message || 'Something went wrong',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              close: true
+            })
+          );
+        }
+      };
+
+      changeStatus();
+    }
+  }, [selectedRow, alertOpen, updatedStatus, cancelText]);
 
   const columns = useMemo(
     () => [
@@ -343,53 +507,30 @@ const TripList = () => {
         disableFilters: true
       },
       {
-        Header: 'Trip Id',
-        accessor: 'id',
-        className: 'cell-center',
-        disableFilters: true
+        title: '_id',
+        Header: '_id'
       },
       {
         Header: 'Company Name',
-        accessor: 'customer_name',
-        disableFilters: true,
-        Cell: ({ row }) => {
-          const { values } = row;
-          return (
-            <Stack direction="row" spacing={1.5} alignItems="center">
-              <Avatar alt="Avatar" size="sm" src={avatarImage(`./avatar-${!values.avatar ? 1 : values.avatar}.png`)} />
-              <Stack spacing={0}>
-                <Typography variant="subtitle1">{values.customer_name}</Typography>
-                <Typography variant="caption" color="textSecondary">
-                  {values.email}
-                </Typography>
-              </Stack>
-            </Stack>
-          );
-        }
-      },
-      {
-        Header: 'Avatar',
-        accessor: 'avatar',
-        disableSortBy: true,
-        disableFilters: true
-      },
-      {
-        Header: 'Email',
-        accessor: 'email',
+        accessor: 'companyID.company_name',
         disableFilters: true
       },
       {
         Header: 'Trip Date',
-        accessor: 'date'
+        accessor: 'tripDate',
+        disableFilters: true,
+        Cell: ({ value }) => {
+          // console.log(`🚀 ~ TripList ~ value:`, value);
+          return formattedDate(value, 'DD/MM/YYYY');
+        }
+      },
+      {
+        Header: 'Trip Time',
+        accessor: 'tripTime'
       },
       {
         Header: 'Driver',
-        accessor: 'due_date'
-      },
-      {
-        Header: 'Trip Rate',
-        accessor: 'rate', // Updated to use the new rate field
-        disableFilters: true
+        accessor: 'driverId.userName'
       },
       {
         Header: 'Remarks',
@@ -397,18 +538,24 @@ const TripList = () => {
       },
       {
         Header: 'Status',
-        accessor: 'status',
+        accessor: 'assignedStatus',
+        id: 'status', // Explicitly set id to 'status' for clarity
         disableFilters: true,
-        filter: 'includes',
+        // filter: 'includes',
         Cell: ({ value }) => {
           switch (value) {
-            case 'Cancelled':
-              return <Chip color="error" label="Cancelled" size="small" variant="light" />;
-            case 'Completed':
-              return <Chip color="success" label="Completed" size="small" variant="light" />;
-            case 'Pending':
-            default:
-              return <Chip color="info" label="Pending" size="small" variant="light" />;
+            case TRIP_STATUS.PENDING: {
+              return <Chip label="Pending" color="warning" variant="light" />;
+            }
+            case TRIP_STATUS.COMPLETED: {
+              return <Chip label="Completed" color="success" variant="light" />;
+            }
+            case TRIP_STATUS.CANCELLED: {
+              return <Chip label="Cancelled" color="error" variant="light" />;
+            }
+            default: {
+              return <Chip label="Not Defined" color="error" variant="light" />;
+            }
           }
         }
       },
@@ -417,7 +564,7 @@ const TripList = () => {
         className: 'cell-center',
         disableSortBy: true,
         Cell: ({ row }) => {
-          console.log('row', row);
+          // console.log('row', row);
 
           const [anchorEl, setAnchorEl] = useState(null);
           const [status, setStatus] = useState(null);
@@ -434,6 +581,10 @@ const TripList = () => {
             alert('Completed');
             console.log('row', row.original);
             row.original.status = 'Completed'; // Update the row's status
+            setSelectedRow(row.original);
+
+            setUpdatedStatus(TRIP_STATUS.COMPLETED);
+            setPopup(POPUP_TYPE.ALERT_DIALOG);
             setAlertOpen(true);
             handleMenuClose(); // Close the menu after selecting an option
           };
@@ -442,7 +593,8 @@ const TripList = () => {
             alert('Pending');
             console.log('row', row.original);
             row.original.status = 'Pending'; // Update the row's status
-            setAlertOpen(true);
+            setSelectedRow(row.original);
+            // setAlertOpen(true);
             handleMenuClose(); // Close the menu after selecting an option
           };
 
@@ -450,6 +602,13 @@ const TripList = () => {
             alert('Cancelled');
             console.log('row', row.original);
             row.original.status = 'Cancelled'; // Update the row's status
+            setSelectedRow(row.original);
+            setUpdatedStatus(TRIP_STATUS.CANCELLED);
+            // setAlertCancelOpen(true);
+            setPopup(POPUP_TYPE.FORM_DIALOG);
+
+            setAlertOpen(true);
+
             handleMenuClose(); // Close the menu after selecting an option
           };
 
@@ -478,9 +637,9 @@ const TripList = () => {
                   horizontal: 'right'
                 }}
               >
-                {row.original.status !== 'Completed' && <MenuItem onClick={handleCompleted}>Completed</MenuItem>}
-                {row.original.status !== 'Pending' && <MenuItem onClick={handlePending}>Pending</MenuItem>}
-                {row.original.status !== 'Cancelled' && <MenuItem onClick={handleCancelled}>Cancelled</MenuItem>}
+                {row.original.assignedStatus !== TRIP_STATUS.COMPLETED && <MenuItem onClick={handleCompleted}>Completed</MenuItem>}
+                {/* {row.original.assignedStatus !== TRIP_STATUS.PENDING && <MenuItem onClick={handlePending}>Pending</MenuItem>} */}
+                {row.original.assignedStatus !== TRIP_STATUS.CANCELLED && <MenuItem onClick={handleCancelled}>Cancelled</MenuItem>}
               </Menu>
             </Stack>
           );
@@ -522,6 +681,8 @@ const TripList = () => {
       chartData: [100, 550, 200, 300, 100, 200, 300]
     }
   ];
+
+  // console.log('Data = ', data);
 
   if (loading) return <Loader />;
 
@@ -599,19 +760,32 @@ const TripList = () => {
 
       <MainCard content={false}>
         <ScrollX>
-          <ReactTable columns={columns} data={dummyData} />
+          {/* <ReactTable columns={columns} data={dummyData} /> */}
+          {data?.length > 0 && <ReactTable columns={columns} data={data} />}
         </ScrollX>
       </MainCard>
       <AlertColumnDelete title={`${getInvoiceId}`} open={alertPopup} handleClose={handleClose} />
 
-      {alertOpen && (
+      {alertOpen && popup === POPUP_TYPE.ALERT_DIALOG && (
         <AlertDialog
           open={alertOpen}
           handleClose={handleCloseAlert}
-          // title="Delete Trip"
-          // content="Are you sure you want to delete this trip?"
+          handleConfirm={handleConfirmAlert}
+          title="Change Trip Status"
+          content="Are you sure you want to change this trip status?"
           // cancelledButtonTitle="Disagree"
           // confirmedButtonTitle="Agree"
+        />
+      )}
+
+      {alertOpen && popup === POPUP_TYPE.FORM_DIALOG && (
+        <FormDialog
+          open={alertOpen}
+          handleClose={handleCloseAlert}
+          handleConfirm={handleConfirmAlert}
+          handleTextChange={handleTextChange}
+          title="Cancel Trip"
+          content="Are you sure you want to cancel this trip?"
         />
       )}
     </>

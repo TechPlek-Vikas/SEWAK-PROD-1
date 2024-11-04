@@ -17,11 +17,11 @@ const Dashboard = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchAllVehicleTypesForAll());
+    // dispatch(fetchAllVehicleTypesForAll());
     dispatch(fetchAllRoles());
     // dispatch(fetchAllVehicleTypes());
-    dispatch(fetchZoneNames());
-    dispatch(fetchAllZoneTypes());
+    // dispatch(fetchZoneNames());
+    // dispatch(fetchAllZoneTypes());
   }, [dispatch]);
 
   return (

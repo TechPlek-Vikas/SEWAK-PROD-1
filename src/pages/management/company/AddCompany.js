@@ -14,7 +14,7 @@ import { openSnackbar } from 'store/reducers/snackbar';
 import { useNavigate } from 'react-router-dom';
 import { addCompany } from 'store/slice/cabProvidor/companySlice';
 import MultiFileUpload from 'components/third-party/dropzone/MultiFile';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
 import { Save2 } from 'iconsax-react';
 
@@ -204,7 +204,7 @@ function AddCompany() {
             })
           );
 
-          navigate('/management/company');
+          navigate('/management/company/view');
         }
       } catch (error) {
         dispatch(
@@ -434,6 +434,7 @@ function AddCompany() {
                     id="MCDAmount"
                     name="MCDAmount"
                     type="number"
+                    disabled={formik.values.MCDTax === 0 || formik.values.MCDTax === ''}
                     value={formik.values.MCDAmount}
                     onChange={formik.handleChange}
                     error={formik.touched.MCDAmount && Boolean(formik.errors.MCDAmount)}
@@ -476,6 +477,7 @@ function AddCompany() {
                     id="stateTaxAmount"
                     name="stateTaxAmount"
                     type="number"
+                    disabled={formik.values.stateTax === 0 || formik.values.stateTax === ''}
                     value={formik.values.stateTaxAmount}
                     onChange={formik.handleChange}
                     error={formik.touched.stateTaxAmount && Boolean(formik.errors.stateTaxAmount)}
@@ -532,7 +534,7 @@ function AddCompany() {
                 startIcon={<Save2 />}
                 sx={{ my: 3, ml: 1 }}
                 type="submit"
-                disabled={loading}
+                disabled={loading && !formik.errors} // Disable only if loading and no error
               >
                 {loading ? 'Saving...' : 'Save'}
               </LoadingButton>

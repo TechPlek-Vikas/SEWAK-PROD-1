@@ -1,36 +1,62 @@
 // eslint-disable-next-line no-unused-vars
-import { Box, Button, Chip, IconButton, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, Button, Chip, Dialog, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 import ScrollX from 'components/ScrollX';
 import PaginationBox from 'components/tables/Pagination';
 import ReactTable from 'components/tables/reactTable/ReactTable';
 // eslint-disable-next-line no-unused-vars
-import { Edit, Eye, Trash } from 'iconsax-react';
+import { Edit, Eye, Setting3, Setting5, Trash } from 'iconsax-react';
 import PropTypes from 'prop-types';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { formattedDate } from 'utils/helper';
 import MainCard from 'components/MainCard';
 import { Link } from 'react-router-dom';
 import { USERTYPE } from 'constant';
 import { useSelector } from 'react-redux';
+import ManagePermissionModal from './ManagePermissionModal';
+import { dispatch } from 'store';
+import { clearUserDetails } from 'store/slice/cabProvidor/userSlice';
 
 const KEYS = {
   [USERTYPE.iscabProvider]: {
     CREATED_AT: 'cabProviderUserId',
     UPDATED_AT: 'cabProviderUserId',
     USERNAME: 'cabProviderUserId',
-    ROLE_NAME: 'cabProviderUserRoleId'
+    ROLE_NAME: 'cabProviderUserRoleId',
+    PERMISSION: 'cabProviderUserId'
   },
   [USERTYPE.isVendor]: {
     CREATED_AT: 'vendorUserId',
     UPDATED_AT: 'vendorUserId',
     USERNAME: 'vendorUserId',
-    ROLE_NAME: 'vendorUserRoleId'
+    ROLE_NAME: 'vendorUserRoleId',
+    PERMISSION: 'vendorUserId'
   }
 };
 
 const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
   const theme = useTheme();
+
+  const [open, setOpen] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  const handleModalOpen = useCallback(() => {
+    setOpen(true);
+    setUserId(null);
+  }, []);
+
+  const handleModalClose = useCallback(() => {
+    setOpen(false);
+    setUserId(null);
+    // dispatch(clearUserDetails());
+  }, []);
+
+  const handleChangeUserId = useCallback((id) => {
+    console.log(`🚀 ~ handleChangeUserId ~ id:`, id);
+    setOpen(true);
+    setUserId(id);
+  }, []);
+
   // eslint-disable-next-line no-unused-vars
   const mode = theme.palette.mode;
   const userType = useSelector((state) => state.auth.userType);
@@ -80,25 +106,40 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
         Header: 'Role Name',
         accessor: 'role_name',
         Cell: ({ row }) => {
+          console.log(row.original);
           const val = KEYS?.[userType].ROLE_NAME;
           const key = row.original[val];
           const roleName = key?.['role_name'];
           return <>{roleName}</>;
         }
       },
-      {
-        Header: 'Manage Permission',
-        accessor: 'manage_permission',
-        Cell: ({ row }) => {
-          return (
-            <>
-              <Button variant="outlined" size="small" color="info" onClick={() => alert(`Manage Permission = ${row.original._id}`)}>
-                Manage Permission
-              </Button>
-            </>
-          );
-        }
-      },
+      // {
+      //   Header: 'Manage Permission',
+      //   accessor: 'manage_permission',
+      //   Cell: ({ row }) => {
+      //     return (
+      //       <>
+      //         {/* <Button variant="outlined" size="small" color="info" onClick={() => alert(`Manage Permission = ${row.original._id}`)}> */}
+      //         <Button
+      //           variant="outlined"
+      //           size="small"
+      //           color="info"
+      //           onClick={() => {
+      //             alert(`Manage Permission = ${row.original._id}`);
+      //             const val = KEYS?.[userType].PERMISSION;
+      //             const key = row.original[val];
+      //             const uid = key?.['_id'];
+
+      //             // handleChangeUserId(row.original._id);
+      //             handleChangeUserId(uid);
+      //           }}
+      //         >
+      //           Manage Permission
+      //         </Button>
+      //       </>
+      //     );
+      //   }
+      // },
       {
         Header: 'Created At',
         accessor: 'createdAt',
@@ -119,6 +160,32 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
           const key = row.original[val];
           const time = key?.['updatedAt'];
           return <>{time ? formattedDate(time, 'DD MMMM YYYY, hh:mm A') : ''}</>;
+        }
+      },
+      {
+        Header: 'Manage Permission',
+        accessor: 'manage_permission',
+        className: 'cell-center',
+        Cell: ({ row }) => {
+          return (
+            <IconButton
+              size="medium"
+              color="error"
+              title="Manage Permission"
+              onClick={() => {
+                alert(`Manage Permission = ${row.original._id}`);
+                console.log('Vii = ', row.original);
+                const val = KEYS?.[userType].PERMISSION;
+                const key = row.original[val];
+                const uid = key?.['_id'];
+
+                // handleChangeUserId(row.original._id);
+                handleChangeUserId(uid);
+              }}
+            >
+              <Setting3 />
+            </IconButton>
+          );
         }
       }
     ],
@@ -141,6 +208,20 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
           )}
         </Box>
       </Stack>
+
+      {open && (
+        <Dialog
+          open={open}
+          onClose={handleModalClose}
+          scroll="body"
+          maxWidth="md"
+          fullWidth
+          aria-labelledby="scroll-dialog-title"
+          aria-describedby="scroll-dialog-description"
+        >
+          <ManagePermissionModal handleClose={handleModalClose} userId={userId} />
+        </Dialog>
+      )}
     </>
   );
 };

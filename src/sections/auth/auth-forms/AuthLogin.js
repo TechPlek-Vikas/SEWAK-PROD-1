@@ -53,9 +53,7 @@ const AuthLogin = () => {
               setSubmitting(false);
             }
           } catch (err) {
-            console.error(err);
-            console.log("error",err);
-            
+          
             if(err.response.status === 400){
  
               dispatch(
@@ -146,11 +144,11 @@ const AuthLogin = () => {
                 </Stack>
               </Grid>
 
-              {errors.submit && (
+              {/* {errors.submit && (
                 <Grid item xs={12}>
                   <FormHelperText error>{errors.submit}</FormHelperText>
                 </Grid>
-              )}
+              )} */}
               <Grid item xs={9}>
                 <AnimateButton>
                   <Button

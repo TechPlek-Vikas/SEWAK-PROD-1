@@ -15,6 +15,7 @@ import SalaryDetail from 'sections/cabprovidor/driverManagement/driverOverview/S
 import Advance from 'sections/cabprovidor/driverManagement/driverOverview/Advance';
 import Loan from 'sections/cabprovidor/driverManagement/driverOverview/Loan';
 import axios from 'axios';
+import axiosServices from 'utils/axios';
 
 const DriverOverview = () => {
   const { id } = useParams(); // used to extract companyId to fetch company Data
@@ -116,11 +117,7 @@ const DriverOverview = () => {
       const fetchDriverData = async () => {
         const token = localStorage.getItem('serviceToken');
         try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}driver/by?driverId=${driverId}`, {
-            headers: {
-              Authorization: `${token}`
-            }
-          });
+          const response = await axiosServices.get(`/driver/by?driverId=${driverId}`);
 
           if (response.status === 200) {
             setDriverDetail(response.data.data.userData);

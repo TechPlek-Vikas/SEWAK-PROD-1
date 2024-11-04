@@ -37,68 +37,62 @@ const InvoiceSettingsFormContent = ({ redirect }) => {
   return (
     <>
       <Stack gap={2}>
-        {/* <Typography variant="subtitle1">Do you give discounts?</Typography>
-        <RadioGroup
-          name="discountType" // Formik's field name
-          value={formik.values.discountType} // Bind value to Formik's values
-          onChange={formik.handleChange} // Handle change to update Formik's state
-        >
-          <FormControlLabel
-            value={DISCOUNT_TYPE.NO} // Corresponds to DISCOUNT_TYPE.NO
-            control={<Radio />}
-            label="I don't give discounts"
-          />
-          <FormControlLabel
-            value={DISCOUNT_TYPE.INDIVIDUAL} // Corresponds to DISCOUNT_TYPE.INDIVIDUAL
-            control={<Radio />}
-            label="At Line Item Level"
-          />
-          <FormControlLabel
-            value={DISCOUNT_TYPE.GROUP} // Corresponds to DISCOUNT_TYPE.GROUP
-            control={<Radio />}
-            label="At Transaction Level"
-          />
-        </RadioGroup> */}
+        <Grid container spacing={2}>
+          {/* Tax Handling Option */}
+          <Grid item xs={12} sm={6} md={4}>
+            <CustomRadioGroup
+              label="Handle Tax at:"
+              name="taxType"
+              value={formik.values.taxType}
+              onChange={formik.handleChange}
+              options={taxOptions}
+            />
+          </Grid>
 
-        <CustomRadioGroup
-          label="Handle Tax at:"
-          name="taxType"
-          value={formik.values.taxType}
-          onChange={formik.handleChange}
-          options={taxOptions}
-        />
+          {/* Discount Option */}
+          <Grid item xs={12} sm={6} md={4}>
+            <CustomRadioGroup
+              label="Do you give discounts?"
+              name="discountType"
+              value={formik.values.discountType}
+              onChange={formik.handleChange}
+              options={discountOptions}
+            />
+          </Grid>
 
-        <CustomRadioGroup
-          label="Do you give discounts?"
-          name="discountType"
-          value={formik.values.discountType}
-          onChange={formik.handleChange}
-          options={discountOptions}
-        />
+          {/* Discount By */}
+          <Grid item xs={12} sm={6} md={4}>
+            <CustomRadioGroup
+              label="Discount by?"
+              name="discountBy"
+              value={formik.values.discountBy}
+              onChange={formik.handleChange}
+              options={discountByOptions}
+            />
+          </Grid>
 
-        <CustomRadioGroup
-          label="Discount by?"
-          name="discountBy"
-          value={formik.values.discountBy}
-          onChange={formik.handleChange}
-          options={discountByOptions}
-        />
+          {/* Additional Charges Option */}
+          <Grid item xs={12} sm={6} md={4}>
+            <CustomRadioGroup
+              label="Do you want to add any additional charges?"
+              name="additionalCharges"
+              value={formik.values.additionalCharges}
+              onChange={formik.handleChange}
+              options={additionalChargesOptions}
+            />
+          </Grid>
 
-        <CustomRadioGroup
-          label="Do you want to add any additional charges?"
-          name="additionalCharges"
-          value={formik.values.additionalCharges}
-          onChange={formik.handleChange}
-          options={additionalChargesOptions}
-        />
-
-        <CustomRadioGroup
-          label="Rounding off in Transactions?"
-          name="roundOff"
-          value={formik.values.roundOff}
-          onChange={formik.handleChange}
-          options={roundingOptions}
-        />
+          {/* Rounding Off Option */}
+          <Grid item xs={12} sm={6} md={4}>
+            <CustomRadioGroup
+              label="Rounding off in Transactions?"
+              name="roundOff"
+              value={formik.values.roundOff}
+              onChange={formik.handleChange}
+              options={roundingOptions}
+            />
+          </Grid>
+        </Grid>
 
         {!redirect && (
           <>

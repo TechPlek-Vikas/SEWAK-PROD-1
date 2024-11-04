@@ -95,7 +95,7 @@ export default function CreateRosterTemplate() {
     });
 
     console.log(response.data);
-
+      closeDrawer();
     // Save to local storage or handle as needed
     localStorage.setItem('template', JSON.stringify(templateData));
     console.log('Template saved:', templateData);

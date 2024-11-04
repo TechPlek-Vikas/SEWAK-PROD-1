@@ -11,6 +11,7 @@ import { MODULE, PERMISSIONS } from 'constant';
 import List from 'pages/invoice/list/List';
 import Create from 'pages/invoice/create/Create';
 import { element } from 'prop-types';
+import AllRosters from 'pages/Roster/AllRosters';
 
 const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/error/404')));
 const MaintenanceError500 = Loadable(lazy(() => import('pages/maintenance/error/500')));
@@ -67,6 +68,9 @@ const CabType = Loadable(lazy(() => import('pages/master/CabType')));
 const CabRate = Loadable(lazy(() => import('pages/master/CabRate')));
 const AddCabRateVendor = Loadable(lazy(() => import('pages/master/CabRate/Vendor')));
 const AddCabRateDriver = Loadable(lazy(() => import('pages/master/CabRate/Driver')));
+
+
+
 // ==============================|| MAIN ROUTES ||============================== //
 
 const VendorRoutes = {
@@ -118,6 +122,10 @@ const VendorRoutes = {
                 {
                   path: 'assign-trips',
                   element: <AssignTrips />
+                },
+                {
+                  path: 'all-roster',
+                  element: <AllRosters />
                 }
               ]
             },
@@ -126,12 +134,12 @@ const VendorRoutes = {
             {
               path: 'invoices',
               children: [
+                // {
+                //   path: 'dashboard',
+                //   element: <UnderConstruction title="Invoice Dashboard" />
+                // },
                 {
-                  path: 'dashboard',
-                  element: <UnderConstruction title="Invoice Dashboard" />
-                },
-                {
-                  path: 'view',
+                  path: 'list',
                   element: <List />
                 },
                 {
@@ -169,10 +177,10 @@ const VendorRoutes = {
             {
               path: 'user',
               children: [
-                {
-                  path: 'dashboard',
-                  element: <UnderConstruction title="User Dashboard" />
-                },
+                // {
+                //   path: 'dashboard',
+                //   element: <UnderConstruction title="User Dashboard" />
+                // },
                 {
                   path: 'view',
                   element: <User />
@@ -189,10 +197,10 @@ const VendorRoutes = {
             {
               path: 'company',
               children: [
-                {
-                  path: 'dashboard',
-                  element: <UnderConstruction title="Company Dashboard" />
-                },
+                // {
+                //   path: 'dashboard',
+                //   element: <UnderConstruction title="Company Dashboard" />
+                // },
                 {
                   path: 'view',
                   element: <Company />
@@ -209,10 +217,10 @@ const VendorRoutes = {
             {
               path: 'driver',
               children: [
-                {
-                  path: 'dashboard',
-                  element: <UnderConstruction title="Driver Dashboard" />
-                },
+                // {
+                //   path: 'dashboard',
+                //   element: <UnderConstruction title="Driver Dashboard" />
+                // },
                 {
                   path: 'view',
                   element: <Driver />
@@ -233,10 +241,10 @@ const VendorRoutes = {
             {
               path: 'cab',
               children: [
-                {
-                  path: 'dashboard',
-                  element: <UnderConstruction title="Cab Dashboard" />
-                },
+                // {
+                //   path: 'dashboard',
+                //   element: <UnderConstruction title="Cab Dashboard" />
+                // },
                 {
                   path: 'view',
                   element: <Cab />
@@ -256,6 +264,17 @@ const VendorRoutes = {
         {
           path: 'reports',
           element: <Reports />
+        },
+
+        // Master
+        {
+          path: 'master',
+          children: [
+            {
+              path: 'role',
+              element: <Role />
+            },
+          ]
         }
       ]
     },

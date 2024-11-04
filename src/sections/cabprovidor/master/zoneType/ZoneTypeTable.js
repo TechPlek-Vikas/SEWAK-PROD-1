@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types';
-import { Button, CircularProgress, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, useTheme } from '@mui/material';
+import { alpha, Button, CircularProgress, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, useTheme } from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { Fragment, useMemo, useState } from 'react';
-import { useExpanded, useTable } from 'react-table';
-import PaginationBox from 'components/tables/Pagination';
+import { useExpanded, useFilters, useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
 import { ThemeMode } from 'config';
 import { PopupTransition } from 'components/@extended/Transitions';
 import { Add, Edit, Trash } from 'iconsax-react';
@@ -18,8 +17,10 @@ import WrapperButton from 'components/common/guards/WrapperButton';
 import { MODULE, PERMISSIONS } from 'constant';
 import TableSkeleton from 'components/tables/TableSkeleton';
 import EmptyTableDemo from 'components/tables/EmptyTable';
+import { renderFilterTypes } from 'utils/react-table';
+import { HeaderSort, TablePagination } from 'components/third-party/ReactTable';
 
-const ZoneTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo, updateKey, setUpdateKey,loading }) => {
+const ZoneTypeTable = ({ data, updateKey, setUpdateKey,loading }) => {
   const theme = useTheme();
   const mode = theme.palette.mode;
   const [, setAdvanceData] = useState(null);
@@ -110,7 +111,9 @@ const ZoneTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo, updat
       //   );
       // }
     } catch (error) {
-      console.error('Error deleting advance type:', error.response?.data || error.message);
+      console.log("error",error);
+      
+      // console.error('Error deleting advance type:', error.response?.data || error.message);
       dispatch(
         openSnackbar({
           open: true,
@@ -271,9 +274,6 @@ const ZoneTypeTable = ({ data, page, setPage, limit, setLimit, lastPageNo, updat
           )}
         </ScrollX>
       </MainCard>
-      <div style={{ marginTop: '20px' }}>
-        <PaginationBox pageIndex={page} gotoPage={setPage} pageSize={limit} setPageSize={setLimit} lastPageIndex={lastPageNo} />
-      </div>
       <Dialog
         maxWidth="sm"
         TransitionComponent={PopupTransition}
@@ -314,53 +314,114 @@ export default ZoneTypeTable;
 
 // ==============================|| REACT TABLE ||============================== //
 
-function ReactTable({ columns: userColumns, data }) {
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
+function ReactTable({
+  columns,
+  data,
+  renderRowSubComponent,
+}) {
+  const theme = useTheme();
+
+  const filterTypes = useMemo(() => renderFilterTypes, []);
+  const sortBy = { id: 'id', desc: false };
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    prepareRow,
+    visibleColumns,
+    rows,
+    page,
+    gotoPage,
+    setPageSize,
+    state: { pageIndex, pageSize, expanded },
+  } = useTable(
     {
-      columns: userColumns,
+      columns,
       data,
+      filterTypes,
       initialState: {
-        hiddenColumns: ['_id', 'zoneTypeDescription', 'zoneId._id']
+        pageIndex: 0,
+        pageSize: 10,
+        hiddenColumns: ['_id', 'zoneTypeDescription', 'zoneId._id'],
+        sortBy: [sortBy]
       }
     },
-    useExpanded
+    useGlobalFilter,
+    useFilters,
+    useSortBy,
+    useExpanded,
+    usePagination,
+    useRowSelect
   );
 
   return (
-    <Table {...getTableProps()}>
-      <TableHead>
-        {headerGroups.map((headerGroup) => (
-          <TableRow key={headerGroup} {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column) => (
-              <TableCell key={column} {...column.getHeaderProps([{ className: column.className }])}>
-                {column.render('Header')}
-              </TableCell>
-            ))}
-          </TableRow>
-        ))}
-      </TableHead>
-      <TableBody {...getTableBodyProps()}>
-        {rows.map((row, i) => {
-          prepareRow(row);
-
-          return (
-            <Fragment key={i}>
-              <TableRow {...row.getRowProps()}>
-                {row.cells.map((cell) => (
-                  <TableCell key={cell} {...cell.getCellProps([{ className: cell.column.className }])}>
-                    {cell.render('Cell')}
+    <>
+      <Stack spacing={3}>
+        <Table {...getTableProps()}>
+          <TableHead>
+            {headerGroups.map((headerGroup) => (
+              <TableRow key={headerGroup} {...headerGroup.getHeaderGroupProps()} sx={{ '& > th:first-of-type': { width: '58px' } }}>
+                {headerGroup.headers.map((column) => (
+                  <TableCell key={column} {...column.getHeaderProps([{ className: column.className }])}>
+                    <HeaderSort column={column} sort />
                   </TableCell>
                 ))}
               </TableRow>
-            </Fragment>
-          );
-        })}
-      </TableBody>
-    </Table>
+            ))}
+          </TableHead>
+          <TableBody {...getTableBodyProps()}>
+            {page.map((row, i) => {
+              prepareRow(row);
+              const rowProps = row.getRowProps();
+
+              return (
+                <Fragment key={i}>
+                  <TableRow
+                    {...row.getRowProps()}
+                    onClick={() => {
+                      row.toggleRowSelected();
+                    }}
+                    sx={{
+                      // cursor: 'pointer',
+                      bgcolor: row.isSelected ? alpha(theme.palette.primary.lighter, 0.35) : 'inherit'
+                    }}
+                  >
+                    {row.cells.map((cell) => (
+                      <TableCell key={cell} {...cell.getCellProps([{ className: cell.column.className }])}>
+                        {cell.render('Cell')}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  {row.isExpanded &&
+                    renderRowSubComponent({
+                      row,
+                      rowProps,
+                      visibleColumns,
+                      expanded
+                    })}
+                </Fragment>
+              );
+            })}
+            <TableRow sx={{ '&:hover': { bgcolor: 'transparent !important' } }}>
+              <TableCell sx={{ p: 2, py: 3 }} colSpan={9}>
+                <TablePagination gotoPage={gotoPage} rows={rows} setPageSize={setPageSize} pageSize={pageSize} pageIndex={pageIndex} />
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </Stack>
+    </>
   );
 }
+
 ReactTable.propTypes = {
-  columns: PropTypes.array,
-  data: PropTypes.array,
-  renderRowSubComponent: PropTypes.any
+  columns: PropTypes.array.isRequired,
+  data: PropTypes.array.isRequired,
+  getHeaderProps: PropTypes.func,
+  handleAdd: PropTypes.func.isRequired,
+  renderRowSubComponent: PropTypes.any,
+  search: PropTypes.bool,
+  csvExport: PropTypes.bool,
+  buttonTitle: PropTypes.string.isRequired
 };

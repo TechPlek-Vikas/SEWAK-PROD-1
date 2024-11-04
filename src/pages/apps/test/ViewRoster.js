@@ -54,7 +54,7 @@ const avatarImage = require.context('assets/images/users', true);
 
 // ==============================|| REACT TABLE ||============================== //
 
-function ReactTable({ columns, data, selectedData, handleSetSelectedData, handleAssignDialogOpen}) {
+function ReactTable({ columns, data, selectedData, handleSetSelectedData, handleAssignDialogOpen }) {
   const theme = useTheme();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
   const defaultColumn = useMemo(() => ({ Filter: DateColumnFilter }), []);
@@ -101,18 +101,18 @@ function ReactTable({ columns, data, selectedData, handleSetSelectedData, handle
   const componentRef = useRef(null);
 
   // ================ Tab ================
-  const groups = ['All', 'Unverified', 'Verified', 'Discarded'];
+  const groups = ['All', 'Unverified', 'Trips', 'Discarded'];
   const countGroup = data.map((item) => item.status);
   const counts = {
     Unverified: countGroup.filter((status) => status === 0).length,
-    Verified: countGroup.filter((status) => status === 1).length,
+    Trips: countGroup.filter((status) => status === 3).length,
     Discarded: countGroup.filter((status) => status === 2).length
   };
 
   const [activeTab, setActiveTab] = useState(groups[0]);
 
   useEffect(() => {
-    setFilter('status', activeTab === 'All' ? '' : activeTab === 'Unverified' ? 0 : activeTab === 'Verified' ? 1 : 2);
+    setFilter('status', activeTab === 'All' ? '' : activeTab === 'Unverified' ? 0 : activeTab === 'Trips' ? 3 : 2);
   }, [activeTab]);
 
   useEffect(() => {
@@ -134,7 +134,7 @@ function ReactTable({ columns, data, selectedData, handleSetSelectedData, handle
                 icon={
                   <Chip
                     label={status === 'All' ? data.length : counts[status]}
-                    color={status === 'All' ? 'primary' : status === 'Verified' ? 'success' : status === 'Discarded' ? 'error' : 'warning'}
+                    color={status === 'All' ? 'primary' : status === 'Trips' ? 'success' : status === 'Discarded' ? 'error' : 'warning'}
                     variant="light"
                     size="small"
                   />
@@ -250,6 +250,7 @@ const ViewRosterTest1 = () => {
   const [rosterData, setRosterData] = useState([]);
   const { rosterData: stateData, fileData } = location.state || {};
   const [selectedData, setSelectedData] = useState([]);
+  const [initateRender, setInitateRender] = useState(0);
 
   const handleAssignTrips = () => {
     console.log(selectedData);
@@ -279,7 +280,7 @@ const ViewRosterTest1 = () => {
     if (fileData?._id) {
       fetchRosterData(fileData._id);
     }
-  }, []);
+  }, [initateRender]);
 
   const [invoiceId, setInvoiceId] = useState(0);
   const [getInvoiceId, setGetInvoiceId] = useState(0);
@@ -343,14 +344,14 @@ const ViewRosterTest1 = () => {
         accessor: 'zoneName',
         disableFilters: true,
         Cell: ({ row }) => {
-          const { zoneName, zoneNameArray } = row.original;
+          const { zoneName, zoneNameArray,status } = row.original;
           const hasError = !zoneNameArray || zoneNameArray.length !== 1;
           const errorMessage =
             zoneNameArray.length > 1 ? `multiple zone with name : ${zoneName} found` : `zone name : ${zoneName} not found`;
           return (
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               {zoneName}
-              {hasError && (
+              {hasError && status!==3&& (
                 <Tooltip title={errorMessage}>
                   <IconButton size="small" color="error">
                     <InfoCircle />
@@ -450,6 +451,8 @@ const ViewRosterTest1 = () => {
               return <Chip color="info" label="Unverified" size="small" variant="light" />; // Change as needed
             case 1:
               return <Chip color="success" label="Verified" size="small" variant="light" />; // Change as needed
+            case 3:
+              return <Chip color="success" label="Trip generated" size="small" variant="light" />; // Change as needed
             default:
               return <Chip color="error" label="Discarded" size="small" variant="light" />;
           }
@@ -457,7 +460,7 @@ const ViewRosterTest1 = () => {
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [initateRender]
   );
 
   let breadcrumbLinks = [
@@ -466,16 +469,16 @@ const ViewRosterTest1 = () => {
     { title: 'Generate Trips' }
   ];
 
-     const [openAssignTripDialog, setOpenAssignTripDialog] = useState(false);
-  
-    const handleAssignDialogOpen = () => {
-        setOpenAssignTripDialog(true);
-    };
-  
-    const handleAssignDialogClose = () => {
-        setOpenAssignTripDialog(false);
-    };
-  
+  const [openAssignTripDialog, setOpenAssignTripDialog] = useState(false);
+
+  const handleAssignDialogOpen = () => {
+    setOpenAssignTripDialog(true);
+  };
+
+  const handleAssignDialogClose = () => {
+    setOpenAssignTripDialog(false);
+  };
+
 
   if (loading) return <Loader />;
 
@@ -496,7 +499,13 @@ const ViewRosterTest1 = () => {
           )}
         </ScrollX>
       </MainCard>
-      <AssignTripsDialog data={selectedData}  open={openAssignTripDialog}  handleClose={handleAssignDialogClose} handleAssignTrips={handleAssignTrips}/>
+      <AssignTripsDialog
+        setSelectedData={setSelectedData}
+        data={selectedData}
+        open={openAssignTripDialog}
+        handleClose={handleAssignDialogClose}
+        setInitateRender={setInitateRender}
+      />
       <AlertColumnDelete title={`${getInvoiceId}`} open={alertPopup} handleClose={handleClose} />
     </>
   );

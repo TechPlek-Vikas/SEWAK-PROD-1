@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 // material-ui
 // import { useTheme } from "@mui/material/styles";
@@ -15,40 +15,34 @@ import {
   Stack,
   TextField,
   Typography,
-  CircularProgress,
-} from "@mui/material";
+  CircularProgress
+} from '@mui/material';
 
 // third-party
-import { SearchNormal1 } from "iconsax-react";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { SearchNormal1 } from 'iconsax-react';
+import { useEffect, useState } from 'react';
+import axios from 'utils/axios';
+import axiosServices from 'utils/axios';
 
 // ==============================|| INVOICE - SELECT ADDRESS ||============================== //
 
 const AddressModal = ({ open, setOpen, handlerAddress }) => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchInitialData = async () => {
       setLoading(true);
-      const token = localStorage.getItem("serviceToken");
+      const token = localStorage.getItem('serviceToken');
 
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/company`,
-          {
-            headers: {
-              Authorization: `${token}`,
-            },
-          }
-        );
+        const response = await axios.get(`/company`);
         if (response.status === 200) {
           setResults(response.data.data.result);
         }
       } catch (error) {
-        console.error("Error fetching initial company data:", error);
+        console.error('Error fetching initial company data:', error);
       } finally {
         setLoading(false);
       }
@@ -61,22 +55,16 @@ const AddressModal = ({ open, setOpen, handlerAddress }) => {
     if (!searchQuery) return; // Don't make API calls if the search query is empty
 
     const fetchFilteredData = async () => {
-      const token = localStorage.getItem("serviceToken");
+      const token = localStorage.getItem('serviceToken');
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/company/getCompanyByName`,
-          {
-            params: { filter: searchQuery },
-            headers: {
-              Authorization: `${token}`,
-            },
-          }
-        );
+        const response = await axiosServices.get(`/company/getCompanyByName`, {
+          params: { filter: searchQuery },
+        });
         if (response.status === 200) {
           setResults(response.data.data.result); // Update results with the filtered data
         }
       } catch (error) {
-        console.error("Error fetching filtered company data:", error);
+        console.error('Error fetching filtered company data:', error);
       }
     };
 
@@ -97,28 +85,24 @@ const AddressModal = ({ open, setOpen, handlerAddress }) => {
       open={open}
       onClose={closeAddressModal}
       sx={{
-        "& .MuiDialog-paper": {
+        '& .MuiDialog-paper': {
           p: 0,
-          width: "600px",
-          maxWidth: "100%",
-          height: "400px",
-          overflowY: "auto",
+          width: '600px',
+          maxWidth: '100%',
+          height: '400px',
+          overflowY: 'auto'
         },
-        "& .MuiBackdrop-root": { opacity: "0.5 !important" },
+        '& .MuiBackdrop-root': { opacity: '0.5 !important' }
       }}
     >
       <DialogTitle>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography variant="h5">Select Address</Typography>
         </Stack>
       </DialogTitle>
       <Divider />
       <DialogContent sx={{ p: 2.5 }}>
-        <FormControl sx={{ width: "100%", pb: 2 }}>
+        <FormControl sx={{ width: '100%', pb: 2 }}>
           <TextField
             autoFocus
             id="name"
@@ -127,7 +111,7 @@ const AddressModal = ({ open, setOpen, handlerAddress }) => {
                 <InputAdornment position="start">
                   <SearchNormal1 size={18} />
                 </InputAdornment>
-              ),
+              )
             }}
             placeholder="Search"
             fullWidth
@@ -141,11 +125,7 @@ const AddressModal = ({ open, setOpen, handlerAddress }) => {
               <CircularProgress />
             </Box>
           ) : (
-            <Address
-              handlerAddress={handlerAddress}
-              results={results}
-              setOpen={setOpen}
-            />
+            <Address handlerAddress={handlerAddress} results={results} setOpen={setOpen} />
           )}
         </Stack>
       </DialogContent>
@@ -162,7 +142,7 @@ const AddressModal = ({ open, setOpen, handlerAddress }) => {
 AddressModal.propTypes = {
   open: PropTypes.bool,
   setOpen: PropTypes.func,
-  handlerAddress: PropTypes.func,
+  handlerAddress: PropTypes.func
 };
 
 const Address = ({ handlerAddress, results, setOpen }) => {
@@ -176,21 +156,21 @@ const Address = ({ handlerAddress, results, setOpen }) => {
           }}
           key={address.company_email}
           sx={{
-            width: "100%",
-            border: "1px solid",
-            borderColor: "secondary.200",
+            width: '100%',
+            border: '1px solid',
+            borderColor: 'secondary.200',
             borderRadius: 1,
             p: 1.25,
-            "&:hover": {
-              bgcolor: "primary.lighter",
-              borderColor: "primary.lighter",
-            },
+            '&:hover': {
+              bgcolor: 'primary.lighter',
+              borderColor: 'primary.lighter'
+            }
           }}
         >
           <Typography textAlign="left" variant="subtitle1">
             {address.company_name}
           </Typography>
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
             <Typography textAlign="left" variant="body2" color="secondary">
               {`${address.address}, ${address.city}, ${address.state}-${address.postal_code}`}
             </Typography>
@@ -210,7 +190,7 @@ const Address = ({ handlerAddress, results, setOpen }) => {
 Address.propTypes = {
   handlerAddress: PropTypes.func,
   results: PropTypes.array.isRequired, // Results should always be passed
-  setOpen: PropTypes.func, // Pass setOpen to control the modal from Address component
+  setOpen: PropTypes.func // Pass setOpen to control the modal from Address component
 };
 
 export default AddressModal;

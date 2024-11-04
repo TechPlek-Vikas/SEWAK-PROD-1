@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux';
 // import { fetchAllDrivers, fetchDriverDetails } from 'store/reducers/driver';
 // import DriverRegister from 'pages/driver/DriverRegister';
 import { useNavigate } from 'react-router';
+import axiosServices from 'utils/axios';
 
 // ==============================|| FORM VALIDATION - AUTOCOMPLETE  ||============================== //
 
@@ -46,17 +47,12 @@ const AssignVehiclePopup = ({ handleClose,driverId }) => {
   const handleAssign = async () => {
     try {
       
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/vehicleAssignment/to/driver`,
+      const response = await axiosServices.post(
+        `/vehicleAssignment/to/driver`,
         {
           data: {
             vehicleId: selectedVehicles[0]._id,
             driverId: driverId
-          }
-        },
-        {
-          headers: {
-            Authorization: `${token}`
           }
         }
       );
@@ -107,11 +103,7 @@ const AssignVehiclePopup = ({ handleClose,driverId }) => {
   useEffect(() => {
     const fetchdata = async () => {
       const token = localStorage.getItem('serviceToken');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/vehicle/all?id=${CabproviderId}`, {
-        headers: {
-          Authorization: `${token}`
-        }
-      });
+      const response = await axiosServices.get(`/vehicle/all?id=${CabproviderId}`);
       if (response.status === 200) {
         setLoading(false);
         console.log('response', response);
