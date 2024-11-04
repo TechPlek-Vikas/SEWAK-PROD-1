@@ -65,30 +65,30 @@ function AddCompany() {
         return /^[^0-9]/.test(value);
       })
       .required('Company Name is required'),
-    contact_person: yup
-      .string()
-      .trim()
-      .min(YupValidationConfig.contact_person.min, ({ min }) => `Person Name must be at least ${min} characters`)
-      .max(YupValidationConfig.contact_person.max, ({ max }) => `Person Name must be at most ${max} characters`)
-      .test('no-leading-digit', 'Person Name cannot start with a number', (value) => {
-        return /^[^0-9]/.test(value);
-      })
-      .required('Person Name is required'),
-    company_email: yup.string().trim().email('Invalid email').required('Email is required'),
-    mobile: yup
-      .string()
-      .trim()
-      .matches(/^[0-9]{10}$/, { message: 'Please enter valid mobile number', excludeEmptyString: false })
-      .required('Mobile Number is required'),
-    landline: yup
-      .string()
-      .trim()
-      .matches(/^[0-9]{10}$/, { message: 'Please enter valid landline number', excludeEmptyString: false })
-      .test('not-same-as-phone', 'Landline phone number should be different from mobile number', function (value) {
-        const { mobile: phone } = this.parent;
-        return typeof phone === 'undefined' ? true : value !== phone;
-      })
-      .required('Landline Number is required'),
+    // contact_person: yup
+    //   .string()
+    //   .trim()
+    //   .min(YupValidationConfig.contact_person.min, ({ min }) => `Person Name must be at least ${min} characters`)
+    //   .max(YupValidationConfig.contact_person.max, ({ max }) => `Person Name must be at most ${max} characters`)
+    //   .test('no-leading-digit', 'Person Name cannot start with a number', (value) => {
+    //     return /^[^0-9]/.test(value);
+    //   })
+    //   .required('Person Name is required'),
+    // company_email: yup.string().trim().email('Invalid email').required('Email is required'),
+    // mobile: yup
+    //   .string()
+    //   .trim()
+    //   .matches(/^[0-9]{10}$/, { message: 'Please enter valid mobile number', excludeEmptyString: false })
+    //   .required('Mobile Number is required'),
+    // landline: yup
+    //   .string()
+    //   .trim()
+    //   .matches(/^[0-9]{10}$/, { message: 'Please enter valid landline number', excludeEmptyString: false })
+    //   .test('not-same-as-phone', 'Landline phone number should be different from mobile number', function (value) {
+    //     const { mobile: phone } = this.parent;
+    //     return typeof phone === 'undefined' ? true : value !== phone;
+    //   })
+    //   .required('Landline Number is required'),
     // PAN: yup
     //   .string()
     //   .required('PAN is required')
@@ -98,38 +98,38 @@ function AddCompany() {
     //   .string()
     //   .required('GSTIN is required')
     //   .matches(/^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z1-9]{1}Z[A-Z0-9]{1})$/, 'Enter a valid GSTIN'),
-    postal_code: yup
-      .string()
-      .matches(/^[0-9]{6}$/, { message: 'Please enter valid pin code', excludeEmptyString: false })
-      .required('Pin Code is required'),
-    address: yup
-      .string()
-      .trim()
-      .test('is-not-only-whitespace', 'Permanent Address cannot contain only whitespace', (value) =>
-        typeof value === 'undefined' ? true : value.length !== 0
-      )
-      .max(MAX_TEXTFIELD_LENGTH.address, 'Address is too long')
-      .required('Address is required'),
-    city: yup.string().trim().required('City is required'),
-    state: yup.string().trim().required('State is required'),
-    MCDTax: yup.string().required('MCD Tax is required'),
-    MCDAmount: yup
-      .string()
-      .trim()
-      .matches(DIGITS_ONLY_PATTERN, {
-        message: 'Please enter valid rate',
-        excludeEmptyString: false
-      })
-      .required('MCD Amount is required'),
-    stateTax: yup.string().required('State Tax is required'),
-    stateTaxAmount: yup
-      .string()
-      .trim()
-      .matches(DIGITS_ONLY_PATTERN, {
-        message: 'Please enter valid rate',
-        excludeEmptyString: false
-      })
-      .required('State Amount is required'),
+    // postal_code: yup
+    //   .string()
+    //   .matches(/^[0-9]{6}$/, { message: 'Please enter valid pin code', excludeEmptyString: false })
+    //   .required('Pin Code is required'),
+    // address: yup
+    //   .string()
+    //   .trim()
+    //   .test('is-not-only-whitespace', 'Permanent Address cannot contain only whitespace', (value) =>
+    //     typeof value === 'undefined' ? true : value.length !== 0
+    //   )
+    //   .max(MAX_TEXTFIELD_LENGTH.address, 'Address is too long')
+    //   .required('Address is required'),
+    // city: yup.string().trim().required('City is required'),
+    // state: yup.string().trim().required('State is required'),
+    // MCDTax: yup.string().required('MCD Tax is required'),
+    // MCDAmount: yup
+    //   .string()
+    //   .trim()
+    //   .matches(DIGITS_ONLY_PATTERN, {
+    //     message: 'Please enter valid rate',
+    //     excludeEmptyString: false
+    //   })
+    //   .required('MCD Amount is required'),
+    // stateTax: yup.string().required('State Tax is required'),
+    // stateTaxAmount: yup
+    //   .string()
+    //   .trim()
+    //   .matches(DIGITS_ONLY_PATTERN, {
+    //     message: 'Please enter valid rate',
+    //     excludeEmptyString: false
+    //   })
+    //   .required('State Amount is required'),
     files: yup
       .mixed()
       .test('fileSize', 'File size is too large', (value) => {
