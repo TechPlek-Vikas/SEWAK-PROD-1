@@ -509,6 +509,7 @@ function AddBranch() {
                     id="MCDAmount"
                     name="MCDAmount"
                     type="number"
+                    disabled={formik.values.MCDTax === 0 || formik.values.MCDTax === ''}
                     value={branchData.MCDAmount || formik.values.MCDAmount}
                     onChange={formik.handleChange}
                     error={formik.touched.MCDAmount && Boolean(formik.errors.MCDAmount)}
@@ -552,6 +553,7 @@ function AddBranch() {
                     id="stateTaxAmount"
                     name="stateTaxAmount"
                     type="number"
+                    disabled={formik.values.stateTax === 0 || formik.values.stateTax === ''}
                     value={branchData.stateTaxAmount || formik.values.stateTaxAmount}
                     onChange={formik.handleChange}
                     error={formik.touched.stateTaxAmount && Boolean(formik.errors.stateTaxAmount)}
