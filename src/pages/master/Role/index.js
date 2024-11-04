@@ -9,11 +9,11 @@ import RoleTable from 'sections/cabprovidor/master/role/RoleTable';
 import RoleModal from 'sections/cabprovidor/master/role/RoleModal';
 import WrapperButton from 'components/common/guards/WrapperButton';
 import { MODULE, PERMISSIONS } from 'constant';
-import axiosServices from 'utils/axios';
 import { dispatch } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { TableNoDataMessage } from 'components/tables/reactTable1/ReactTable';
 import AlertDelete1 from 'components/alertDialog/AlertDelete1';
+import { deleteRole, fetchAllRoles } from 'store/slice/cabProvidor/roleSlice';
 
 const dummyData = [
   {
@@ -77,16 +77,9 @@ const Role = () => {
 
   const handleDelete = useCallback(async () => {
     try {
-      // alert('Vikas = ', roleId);
-      console.log('Vikas = ', roleId);
-
       setIsLoading(true);
 
-      const response = await axiosServices.delete(`/cabProvidersRole2/delete`, {
-        params: {
-          roleId
-        }
-      });
+      const response = await dispatch(deleteRole(roleId)).unwrap();
       console.log(`🚀 ~ handleDelete ~ response:`, response);
 
       dispatch(
@@ -124,11 +117,11 @@ const Role = () => {
     (async () => {
       try {
         setIsLoading(true);
-        const response = await axiosServices.get('/cabProvidersRole2/all');
 
-        if (response.status === 200) {
-          setData(response.data.data);
-        }
+        const response = await dispatch(fetchAllRoles()).unwrap();
+        console.log('a', response);
+
+        setData(response);
       } catch (error) {
         console.log('Error fetching role all  data:', error);
         dispatch(
