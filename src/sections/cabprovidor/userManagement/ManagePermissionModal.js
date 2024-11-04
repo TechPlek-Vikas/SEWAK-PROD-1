@@ -19,6 +19,7 @@ import { useCallback, useEffect, useState } from 'react';
 import axios from 'utils/axios';
 import { dispatch } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
+import { fetchUserPermissions } from 'store/slice/cabProvidor/userSlice';
 
 const x = {
   Loan: ['Create', 'Read', 'Update']
@@ -38,7 +39,7 @@ const ManagePermissionModal = ({ handleClose, userId }) => {
       const payload = {
         data: {
           permissions: existedPermissions,
-          userId
+          uid: userId
         }
       };
 
@@ -47,7 +48,7 @@ const ManagePermissionModal = ({ handleClose, userId }) => {
       setIsLoading(true);
 
       // TODO : UPDATE API
-      await axios.put(`/cabProvidersRole2/${userId}`, payload);
+      await axios.put(`/user/update/specific/permission`, payload);
 
       dispatch(
         openSnackbar({
@@ -77,7 +78,7 @@ const ManagePermissionModal = ({ handleClose, userId }) => {
       setIsLoading(false);
       handleClose();
     }
-  }, [handleClose, userId, existedPermissions, userId]);
+  }, [handleClose, userId, existedPermissions]);
 
   useEffect(() => {
     console.log('userId', userId);
@@ -86,10 +87,26 @@ const ManagePermissionModal = ({ handleClose, userId }) => {
         try {
           setIsLoading(true); // Start loading
           // Simulate an API call delay
-          await new Promise((resolve) => setTimeout(resolve, 7000));
-          setExistedPermissions(x);
+          // await new Promise((resolve) => setTimeout(resolve, 7000));
+          // setExistedPermissions(x);
+
+          const data = await dispatch(fetchUserPermissions(userId)).unwrap();
+          console.log(`🚀 ~ data:`, data);
+          setExistedPermissions(data?.permissions || {});
         } catch (error) {
-          console.error(error);
+          console.log('Error at All Permissions of A User API = ', error);
+
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: error?.message || 'Something went wrong',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              close: true
+            })
+          );
         } finally {
           setIsLoading(false); // Stop loading
         }

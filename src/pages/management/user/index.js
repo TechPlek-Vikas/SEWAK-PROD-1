@@ -4,6 +4,7 @@ import EmptyTableDemo from 'components/tables/EmptyTable';
 import Header from 'components/tables/genericTable/Header';
 import TableSkeleton from 'components/tables/TableSkeleton';
 import { MODULE, PERMISSIONS } from 'constant';
+import { usePopup } from 'hooks/usePopup';
 import { Add } from 'iconsax-react';
 import Error500 from 'pages/maintenance/error/500';
 import { useCallback, useEffect, useState } from 'react';
@@ -17,6 +18,7 @@ import { fetchUsers } from 'store/slice/cabProvidor/userSlice';
 const User = () => {
   const dispatch = useDispatch();
   const { users, metaData, loading, error } = useSelector((state) => state.users);
+  const { open, handleClose, handleOpen } = usePopup();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const lastPageIndex = metaData.lastPageNo;
@@ -52,7 +54,12 @@ const ButtonComponent = () => {
     <>
       <Stack direction="row" spacing={1} alignItems="center">
         <WrapperButton moduleName={MODULE.USER} permission={PERMISSIONS.CREATE}>
-          <Button variant="contained" startIcon={<Add />} size="small" onClick={() => navigate('/management/user/add-user', { state: { from: '/' } })}>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            size="small"
+            onClick={() => navigate('/management/user/add-user', { state: { from: '/' } })}
+          >
             Add User
           </Button>
         </WrapperButton>

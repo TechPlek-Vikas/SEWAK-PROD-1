@@ -4,7 +4,7 @@ import ScrollX from 'components/ScrollX';
 import PaginationBox from 'components/tables/Pagination';
 import ReactTable from 'components/tables/reactTable/ReactTable';
 // eslint-disable-next-line no-unused-vars
-import { Edit, Eye, Trash } from 'iconsax-react';
+import { Edit, Eye, Setting3, Setting5, Trash } from 'iconsax-react';
 import PropTypes from 'prop-types';
 import { useCallback, useMemo, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
@@ -14,13 +14,16 @@ import { Link } from 'react-router-dom';
 import { USERTYPE } from 'constant';
 import { useSelector } from 'react-redux';
 import ManagePermissionModal from './ManagePermissionModal';
+import { dispatch } from 'store';
+import { clearUserDetails } from 'store/slice/cabProvidor/userSlice';
 
 const KEYS = {
   [USERTYPE.iscabProvider]: {
     CREATED_AT: 'cabProviderUserId',
     UPDATED_AT: 'cabProviderUserId',
     USERNAME: 'cabProviderUserId',
-    ROLE_NAME: 'cabProviderUserRoleId'
+    ROLE_NAME: 'cabProviderUserRoleId',
+    PERMISSION: 'cabProviderUserId'
   },
   [USERTYPE.isVendor]: {
     CREATED_AT: 'vendorUserId',
@@ -44,6 +47,7 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
   const handleModalClose = useCallback(() => {
     setOpen(false);
     setUserId(null);
+    // dispatch(clearUserDetails());
   }, []);
 
   const handleChangeUserId = useCallback((id) => {
@@ -107,28 +111,33 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
           return <>{roleName}</>;
         }
       },
-      {
-        Header: 'Manage Permission',
-        accessor: 'manage_permission',
-        Cell: ({ row }) => {
-          return (
-            <>
-              {/* <Button variant="outlined" size="small" color="info" onClick={() => alert(`Manage Permission = ${row.original._id}`)}> */}
-              <Button
-                variant="outlined"
-                size="small"
-                color="info"
-                onClick={() => {
-                  alert(`Manage Permission = ${row.original._id}`);
-                  handleChangeUserId(row.original._id);
-                }}
-              >
-                Manage Permission
-              </Button>
-            </>
-          );
-        }
-      },
+      // {
+      //   Header: 'Manage Permission',
+      //   accessor: 'manage_permission',
+      //   Cell: ({ row }) => {
+      //     return (
+      //       <>
+      //         {/* <Button variant="outlined" size="small" color="info" onClick={() => alert(`Manage Permission = ${row.original._id}`)}> */}
+      //         <Button
+      //           variant="outlined"
+      //           size="small"
+      //           color="info"
+      //           onClick={() => {
+      //             alert(`Manage Permission = ${row.original._id}`);
+      //             const val = KEYS?.[userType].PERMISSION;
+      //             const key = row.original[val];
+      //             const uid = key?.['_id'];
+
+      //             // handleChangeUserId(row.original._id);
+      //             handleChangeUserId(uid);
+      //           }}
+      //         >
+      //           Manage Permission
+      //         </Button>
+      //       </>
+      //     );
+      //   }
+      // },
       {
         Header: 'Created At',
         accessor: 'createdAt',
@@ -149,6 +158,31 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
           const key = row.original[val];
           const time = key?.['updatedAt'];
           return <>{time ? formattedDate(time, 'DD MMMM YYYY, hh:mm A') : ''}</>;
+        }
+      },
+      {
+        Header: 'Manage Permission',
+        accessor: 'manage_permission',
+        className: 'cell-center',
+        Cell: ({ row }) => {
+          return (
+            <IconButton
+              size="medium"
+              color="error"
+              title='Manage Permission'
+              onClick={() => {
+                alert(`Manage Permission = ${row.original._id}`);
+                const val = KEYS?.[userType].PERMISSION;
+                const key = row.original[val];
+                const uid = key?.['_id'];
+
+                // handleChangeUserId(row.original._id);
+                handleChangeUserId(uid);
+              }}
+            >
+              <Setting3 />
+            </IconButton>
+          );
         }
       }
     ],
