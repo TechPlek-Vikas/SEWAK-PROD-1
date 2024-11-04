@@ -29,7 +29,8 @@ const KEYS = {
     CREATED_AT: 'vendorUserId',
     UPDATED_AT: 'vendorUserId',
     USERNAME: 'vendorUserId',
-    ROLE_NAME: 'vendorUserRoleId'
+    ROLE_NAME: 'vendorUserRoleId',
+    PERMISSION: 'vendorUserId'
   }
 };
 
@@ -105,6 +106,7 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
         Header: 'Role Name',
         accessor: 'role_name',
         Cell: ({ row }) => {
+          console.log(row.original);
           const val = KEYS?.[userType].ROLE_NAME;
           const key = row.original[val];
           const roleName = key?.['role_name'];
@@ -169,9 +171,10 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
             <IconButton
               size="medium"
               color="error"
-              title='Manage Permission'
+              title="Manage Permission"
               onClick={() => {
                 alert(`Manage Permission = ${row.original._id}`);
+                console.log('Vii = ', row.original);
                 const val = KEYS?.[userType].PERMISSION;
                 const key = row.original[val];
                 const uid = key?.['_id'];

@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { Add } from 'iconsax-react';
 import PermissionTable from 'sections/cabprovidor/master/role/PermissionTable';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'utils/axios';
 import { dispatch } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
@@ -32,6 +32,11 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
   const [roleName, setRoleName] = useState('');
   const [roleDescription, setRoleDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const roleNameRef = useRef('');
+  const roleDescriptionRef = useRef('');
+  const existedPermissionsRef = useRef({});
+
   const parentFunction = useCallback((data) => {
     setExistedPermissions(data);
   }, []);
@@ -96,6 +101,11 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
       handleClose();
     } catch (error) {
       console.log('Error at role api = ', error);
+
+      setRoleName(roleNameRef.current);
+      setRoleDescription(roleDescriptionRef.current);
+      setExistedPermissions(existedPermissionsRef.current);
+
       dispatch(
         openSnackbar({
           open: true,
@@ -133,8 +143,13 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
           setRoleName(roleName);
           setRoleDescription(roleDescription);
           setExistedPermissions(permissions);
+
+          roleNameRef.current = roleName;
+          roleDescriptionRef.current = roleDescription;
+          existedPermissionsRef.current = permissions;
         } catch (error) {
           console.log('Fetching role details error = ', error);
+
           dispatch(
             openSnackbar({
               open: true,
