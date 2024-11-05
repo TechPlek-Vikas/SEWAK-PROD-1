@@ -320,7 +320,7 @@ const ViewRosterTest = () => {
               }
 
               if (key === 'tripType' && value) {
-                value = value.toLowerCase() === pickupType ? 1 : value.toLowerCase() === dropType ? 2 : value;
+                value = value?.toLowerCase() === pickupType ? 1 : value?.toLowerCase() === dropType ? 2 : value;
               }
 
               rowObject[key] = value;
