@@ -13,6 +13,8 @@ const FormikAutocomplete = ({
   autoHighlight = true,
   value = null,
   saveValue,
+  otherValue,
+  extraWork,
   disableClearable = false,
   defaultValue = '',
   ...props
@@ -28,6 +30,7 @@ const FormikAutocomplete = ({
         value={value}
         onChange={(event, value) => {
           setFieldValue(name, value?.[saveValue] || defaultValue);
+          extraWork?.(value?.[otherValue] || defaultValue);
         }}
         options={options}
         fullWidth={fullWidth}
@@ -70,6 +73,8 @@ FormikAutocomplete.propTypes = {
   autoHighlight: PropTypes.bool,
   value: PropTypes.object,
   saveValue: PropTypes.string.isRequired,
+  otherValue: PropTypes.string,
+  extraWork: PropTypes.func,
   disableClearable: PropTypes.bool,
   defaultValue: PropTypes.any
 };

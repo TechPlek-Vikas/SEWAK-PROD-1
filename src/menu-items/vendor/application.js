@@ -2,12 +2,13 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { MenuBoard } from 'iconsax-react';
+import { Bill, MenuBoard } from 'iconsax-react';
 import { MODULE, PERMISSIONS } from 'constant';
 
 // icons
 const icons = {
-  samplePage: MenuBoard
+  samplePage: MenuBoard,
+  invoice: Bill
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -19,43 +20,42 @@ const application = {
   icon: icons.samplePage,
   children: [
     // Roster
-    {
-      id: 'roster',
-      title: <FormattedMessage id="roster" />,
-      type: 'collapse',
-      icon: icons.samplePage,
-      children: [
-        {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
-          type: 'item',
-          url: '/apps/roster/view',
-          icon: icons.samplePage,
-        }
-      ]
-    },
+    // {
+    //   id: 'roster',
+    //   title: <FormattedMessage id="roster" />,
+    //   type: 'collapse',
+    //   icon: icons.samplePage,
+    //   children: [
+    //     {
+    //       id: 'list',
+    //       title: <FormattedMessage id="list" />,
+    //       type: 'item',
+    //       url: '/apps/roster/all-roster',
+    //     },
+    //   ]
+    // },
 
     // Invoices
     {
       id: 'invoices',
       title: <FormattedMessage id="invoices" />,
       type: 'collapse',
-      url: '/apps/invoices/dashboard',
-      icon: icons.samplePage,
+      // url: '/apps/invoices/dashboard',
+      icon: icons.invoice,
       children: [
         {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
+          id: 'list',
+          title: <FormattedMessage id="list" />,
           type: 'item',
-          url: '/apps/invoices/view',
-          icon: icons.samplePage,
+          url: '/apps/invoices/list',
+          // icon: icons.samplePage,
         },
         {
-          id: 'upload',
-          title: <FormattedMessage id="upload" />,
+          id: 'create',
+          title: <FormattedMessage id="create" />,
           type: 'item',
           url: '/apps/invoices/create',
-          icon: icons.samplePage,
+          // icon: icons.samplePage,
         }
       ]
     }

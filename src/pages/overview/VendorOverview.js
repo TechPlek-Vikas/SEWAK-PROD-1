@@ -104,6 +104,38 @@ const VendorOverview = () => {
     return (Math.random() * 500).toFixed(2); // Random balance due between 0 and 500
   };
 
+    // Function to generate a random vehicle
+    const getRandomVehicle = () => {
+      const vehicles = ['Car', 'Truck', 'Bike', 'Bus', 'Van'];
+      return vehicles[Math.floor(Math.random() * vehicles.length)];
+    };
+
+     // Function to generate random advance rate
+  const getRandomAdvanceRate = () => {
+    return `${Math.floor(Math.random() * 20) + 1}%`; // Random advance rate between 1% and 20%
+  };
+
+   // Function to generate random description
+   const getRandomDescription = () => {
+    return `Installment ${Math.floor(Math.random() * 52) + 1}`; // Random installment between 1 and 52
+  };
+
+  // Function to generate random company names
+  const getRandomCompanyName = () => {
+    const companies = [
+      'ABC Corp',
+      'Global Tech',
+      'Innovative Solutions',
+      'Bright Future',
+      'Tech Wizards',
+      'NextGen Industries',
+      'BlueSky Ventures',
+      'Dynamic Group'
+    ];
+    return companies[Math.floor(Math.random() * companies.length)];
+  };
+
+
   // Function to generate random data for the table
   const generateRandomTransactions = (num) => {
     return Array.from({ length: num }, (_, index) => ({
@@ -112,7 +144,19 @@ const VendorOverview = () => {
       invoiceNumber: getRandomInvoiceNumber(),
       amount: getRandomAmount(),
       balanceDue: getRandomBalanceDue(),
-      status: Math.random() > 0.5 ? 'Active' : 'Inactive' // Randomly assign status
+      status: Math.random() > 0.5 ? 'Active' : 'Inactive' ,
+      vehicle: getRandomVehicle(),
+      advanceRate: getRandomAdvanceRate(),
+      advanceType: 'Full', 
+      description: getRandomDescription(),
+      company_name: getRandomCompanyName(),
+      totalLoanAmount: `₹${(Math.random() * 10000).toFixed(2)}`, 
+      totalPaid: `₹${(Math.random() * 5000).toFixed(2)}`,
+      totalBalance: `₹${(Math.random() * 5000).toFixed(2)}`,
+      loanTerm: `${Math.floor(Math.random() * 10) + 1} years`, 
+      totalWeek: Math.floor(Math.random() * 52), 
+      termPaid: Math.floor(Math.random() * 52), 
+      endDate: '2025-12-31'
     }));
   };
 
@@ -152,7 +196,7 @@ const VendorOverview = () => {
               {activeTab === 1 && <Transaction data={data} />}
               {activeTab === 2 && <Mails />}
               {activeTab === 3 && <Statement />}
-              {activeTab === 4 && <Loan />}
+              {activeTab === 4 && <Loan data={data}/>}
               {activeTab === 5 && <AttachedCompany data={vendorData} loading={loading} />}
             </Box>
           </Box>

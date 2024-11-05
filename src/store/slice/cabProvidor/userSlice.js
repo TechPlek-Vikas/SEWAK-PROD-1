@@ -110,6 +110,18 @@ export const addSpecificUserDetails = createAsyncThunk('users/addSpecificUserDet
   }
 });
 
+// Get All Permissions of a single user
+export const fetchUserPermissions = createAsyncThunk('users/fetchUserPermissions', async (uid, { rejectWithValue }) => {
+  try {
+    // Send a GET request to fetch details of a specific user by userId
+    const response = await axios.get(`/user/all/permission?uid=${uid}`);
+    return response.data.data; // Ensure this matches the shape of the data you expect
+  } catch (error) {
+    // Return a rejected value with error details
+    return rejectWithValue(error.response ? error.response.data : error.message);
+  }
+});
+
 const initialState = {
   users: [], // Empty array initially
   metaData: {

@@ -1,220 +1,13 @@
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useMemo, useState, Fragment } from 'react';
-
-// material-ui
-import { alpha, useTheme } from '@mui/material/styles';
-import {
-  Chip,
-  CircularProgress,
-  Dialog,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-  useMediaQuery
-} from '@mui/material';
-
-// third-party
-import { useFilters, useExpanded, useGlobalFilter, useRowSelect, useSortBy, useTable, usePagination } from 'react-table';
-
-// project-imports
+import { Chip, Link, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, useTheme } from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
-import { PopupTransition } from 'components/@extended/Transitions';
+import { Fragment, useMemo } from 'react';
+import { useExpanded, useTable } from 'react-table';
+import PaginationBox from 'components/tables/Pagination';
 
-// import makeData from 'data/react-table';
-import { renderFilterTypes, GlobalFilter } from 'utils/react-table';
-
-// assets
-import { Box } from 'iconsax-react';
-import axios from 'axios';
-import Loader from 'components/Loader';
-import { TableNoDataMessage } from 'components/tables/reactTable1/ReactTable';
-import { HeaderSort, TablePagination, TableRowSelection } from 'components/tables/reactTable2/ReactTable';
-import AddCustomer from './AddCustomer';
-import CustomerView from './CustomerView';
-import AlertCustomerDelete from './AlertCustomerDelete';
-import axiosServices from 'utils/axios';
-
-// ==============================|| REACT TABLE ||============================== //
-
-function ReactTable({ columns, data, renderRowSubComponent }) {
+const Loan = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
   const theme = useTheme();
-  const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const filterTypes = useMemo(() => renderFilterTypes, []);
-  const sortBy = { id: 'fatherName', desc: false };
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-    setHiddenColumns,
-    // allColumns,
-    visibleColumns,
-    rows,
-    page,
-    gotoPage,
-    setPageSize,
-    state: { globalFilter, selectedRowIds, pageIndex, pageSize, expanded },
-    preGlobalFilteredRows,
-    setGlobalFilter
-    // setSortBy,
-  } = useTable(
-    {
-      columns,
-      data,
-      filterTypes,
-      initialState: {
-        pageIndex: 0,
-        pageSize: 10,
-        hiddenColumns: ['avatar', 'email'],
-        sortBy: [sortBy]
-      }
-    },
-    useGlobalFilter,
-    useFilters,
-    useSortBy,
-    useExpanded,
-    usePagination,
-    useRowSelect
-  );
-
-  useEffect(() => {
-    if (matchDownSM) {
-      setHiddenColumns(['age', 'contact', 'visits', 'email', 'status', 'avatar']);
-    } else {
-      setHiddenColumns(['avatar', 'email']);
-    }
-    // eslint-disable-next-line
-  }, [matchDownSM]);
-
-  return (
-    <>
-      <TableRowSelection selected={Object.keys(selectedRowIds).length} />
-      <Stack spacing={3}>
-        <Stack
-          direction={matchDownSM ? 'column' : 'row'}
-          spacing={1}
-          justifyContent="space-between"
-          alignItems="center"
-          sx={{ p: 3, pb: 0 }}
-        >
-          <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
-        </Stack>
-        <Table {...getTableProps()}>
-          <TableHead>
-            {headerGroups.map((headerGroup) => (
-              <TableRow key={headerGroup} {...headerGroup.getHeaderGroupProps()} sx={{ '& > th:first-of-type': { width: '58px' } }}>
-                {headerGroup.headers.map((column) => (
-                  <TableCell key={column} {...column.getHeaderProps([{ className: column.className }])}>
-                    <HeaderSort column={column} sort />
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableHead>
-          <TableBody {...getTableBodyProps()}>
-            {page.map((row, i) => {
-              prepareRow(row);
-              const rowProps = row.getRowProps();
-
-              return (
-                <Fragment key={i}>
-                  <TableRow
-                    {...row.getRowProps()}
-                    onClick={() => {
-                      row.toggleRowSelected();
-                    }}
-                    sx={{
-                      cursor: 'pointer',
-                      bgcolor: row.isSelected ? alpha(theme.palette.primary.lighter, 0.35) : 'inherit'
-                    }}
-                  >
-                    {row.cells.map((cell) => (
-                      <TableCell key={cell} {...cell.getCellProps([{ className: cell.column.className }])}>
-                        {cell.render('Cell')}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                  {row.isExpanded &&
-                    renderRowSubComponent({
-                      row,
-                      rowProps,
-                      visibleColumns,
-                      expanded
-                    })}
-                </Fragment>
-              );
-            })}
-            <TableRow sx={{ '&:hover': { bgcolor: 'transparent !important' } }}>
-              <TableCell sx={{ p: 2, py: 3 }} colSpan={9}>
-                <TablePagination gotoPage={gotoPage} rows={rows} setPageSize={setPageSize} pageSize={pageSize} pageIndex={pageIndex} />
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </Stack>
-    </>
-  );
-}
-
-ReactTable.propTypes = {
-  columns: PropTypes.array,
-  data: PropTypes.array,
-  getHeaderProps: PropTypes.func,
-  handleAdd: PropTypes.func,
-  renderRowSubComponent: PropTypes.any
-};
-
-// ==============================|| CUSTOMER - LIST ||============================== //
-
-const Loan = () => {
-  const theme = useTheme();
-  // const data = useMemo(() => makeData(200), []);
-  const [data, setData] = useState(null);
-  const [loading] = useState(null);
-
-  useEffect(() => {
-    const fetchdata = async () => {
-      const token = localStorage.getItem('serviceToken');
-      const response = await axiosServices.get(`/company`);
-      const result = response.data.data.result.map((company, index) => ({
-        id: index + 1,
-        company_name: company.company_name,
-        totalLoanAmount: `₹${(Math.random() * 10000).toFixed(2)}`,
-        totalPaid: `₹${(Math.random() * 5000).toFixed(2)}`,
-        totalBalance: `₹${(Math.random() * 5000).toFixed(2)}`,
-        loanTerm: `${Math.floor(Math.random() * 10) + 1} years`,
-        totalWeek: Math.floor(Math.random() * 52),
-        termPaid: Math.floor(Math.random() * 52),
-        startDate: '2023-01-01',
-        endDate: '2025-12-31',
-        status: index % 2 === 0 ? 'Active' : 'Inactive'
-      }));
-      setData(result);
-    };
-
-    fetchdata();
-  }, []);
-
-  const [open, setOpen] = useState(false);
-  const [customer, setCustomer] = useState(null);
-  const [customerDeleteId] = useState('');
-  const [add, setAdd] = useState(false);
-
-  const handleAdd = () => {
-    setAdd(!add);
-    if (customer && !add) setCustomer(null);
-  };
-
-  const handleClose = () => {
-    setOpen(!open);
-  };
 
   const columns = useMemo(
     () => [
@@ -235,9 +28,7 @@ const Loan = () => {
             <Stack direction="row" spacing={1.5} alignItems="center">
               <Stack spacing={3}>
                 <Typography variant="subtitle1">
-                  <a href={`/company/${company_name}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    {company_name}
-                  </a>
+                  <Link style={{ textDecoration: 'none', color: 'inherit' }}>{company_name}</Link>
                 </Typography>
               </Stack>
             </Stack>
@@ -295,46 +86,91 @@ const Loan = () => {
     [theme]
   );
 
-  const renderRowSubComponent = useCallback(({ row }) => <CustomerView data={data[Number(row.id)]} />, [data]);
-
-  if (!data) return <Loader />;
   return (
-    <MainCard content={false}>
-      <ScrollX>
-        {loading ? (
-          <Box
-            sx={{
-              height: '100vh',
-              width: 'inherit',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        ) : data.length > 0 ? (
-          <ReactTable columns={columns} data={data} handleAdd={handleAdd} renderRowSubComponent={renderRowSubComponent} />
-        ) : (
-          <TableNoDataMessage text="No Loan Details Found" />
-        )}
-      </ScrollX>
-      <AlertCustomerDelete title={customerDeleteId} open={open} handleClose={handleClose} />
-      {/* add customer dialog */}
-      <Dialog
-        maxWidth="sm"
-        TransitionComponent={PopupTransition}
-        keepMounted
-        fullWidth
-        onClose={handleAdd}
-        open={add}
-        sx={{ '& .MuiDialog-paper': { p: 0 }, transition: 'transform 225ms' }}
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <AddCustomer customer={customer} onCancel={handleAdd} />
-      </Dialog>
-    </MainCard>
+    <>
+      {/* <Stack direction={'row'} spacing={1} justifyContent="flex-end" alignItems="center" sx={{ p: 0, pb: 3 }}>
+        <Button variant="contained" startIcon={<Add />} onClick={handleZone} size="small">
+          Add Zone
+        </Button>
+      </Stack> */}
+      <MainCard content={false}>
+        <ScrollX>
+          <ReactTable columns={columns} data={data} />
+        </ScrollX>
+      </MainCard>
+      <div style={{ marginTop: '20px' }}>
+        <PaginationBox pageIndex={page} gotoPage={setPage} pageSize={limit} setPageSize={setLimit} lastPageIndex={lastPageNo} />
+      </div>
+    </>
   );
 };
 
+Loan.propTypes = {
+  data: PropTypes.array,
+  row: PropTypes.object,
+  isExpanded: PropTypes.bool,
+  getToggleRowExpandedProps: PropTypes.func,
+  value: PropTypes.string,
+  page: PropTypes.number,
+  setPage: PropTypes.func,
+  limit: PropTypes.number,
+  setLimit: PropTypes.func,
+  lastPageNo: PropTypes.number,
+  setLastPageNo: PropTypes.func
+};
+
 export default Loan;
+
+// ==============================|| REACT TABLE ||============================== //
+
+function ReactTable({ columns: userColumns, data }) {
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
+    {
+      columns: userColumns,
+      data,
+      initialState: {
+        hiddenColumns: ['_id', 'zoneDescription']
+      }
+    },
+    useExpanded
+  );
+
+  return (
+    <Table {...getTableProps()}>
+      <TableHead>
+        {headerGroups.map((headerGroup) => (
+          <TableRow key={headerGroup} {...headerGroup.getHeaderGroupProps()}>
+            {headerGroup.headers.map((column) => (
+              <TableCell key={column} {...column.getHeaderProps([{ className: column.className }])}>
+                {column.render('Header')}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableHead>
+      <TableBody {...getTableBodyProps()}>
+        {rows.map((row, i) => {
+          prepareRow(row);
+
+          return (
+            <Fragment key={i}>
+              <TableRow {...row.getRowProps()}>
+                {row.cells.map((cell) => (
+                  <TableCell key={cell} {...cell.getCellProps([{ className: cell.column.className }])}>
+                    {cell.render('Cell')}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </Fragment>
+          );
+        })}
+      </TableBody>
+    </Table>
+  );
+}
+ReactTable.propTypes = {
+  columns: PropTypes.array,
+  data: PropTypes.array,
+  renderRowSubComponent: PropTypes.any
+};
+//

@@ -27,7 +27,7 @@ import MultipleAutoCompleteWithDeleteConfirmation1 from 'components/autocomplete
 import FormikSelectField1 from 'components/select/Select1';
 import FormikTextField from 'components/textfield/TextField';
 import AlertDelete from 'components/alertDialog/AlertDelete';
-import axios from 'axios';
+// import axios from 'axios';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { useNavigate } from 'react-router';
 import axiosServices from 'utils/axios';
@@ -59,30 +59,24 @@ const CompanyRate = ({ id, companyName }) => {
     rateData: [
       {
         zoneNameID: '',
-        zoneTypeID: '',
+        zoneTypeID: null,
         cabRate: 0,
         billingCycle: '',
         cabAmount: [
-          {
-            vehicleTypeID: '', 
-            amount: 0 
-          }
+          // {
+          //   vehicleTypeID: null,
+          //   amount: 0
+          // }
         ],
         dualTrip: 0,
-        dualTripAmount: [
-          {
-            vehicleTypeID: '', 
-            amount: 0 
-          }
-        ],
-        guard: 0, 
-        guardPrice: 0 
+        dualTripAmount: [],
+        guard: 0,
+        guardPrice: 0
       }
     ]
   };
 
   const handleSubmit = async (values, { resetForm }) => {
-
     // Process the rateData structure and ensure it aligns with the expected API structure
     const formValues = {
       rateData: values.rateData.map((rateData) => ({
@@ -102,9 +96,9 @@ const CompanyRate = ({ id, companyName }) => {
     const finalData = formValues.rateData.map((data) => ({
       zoneNameID: data.zoneNameID,
       zoneTypeID: data.zoneTypeID,
-      cabAmount: data.cabAmount, 
-      dualTrip: data.dualTrip, 
-      dualTripAmount: data.dualTripAmount, 
+      cabAmount: data.cabAmount,
+      dualTrip: data.dualTrip,
+      dualTripAmount: data.dualTripAmount,
       guard: data.guardPrice > 0 ? 1 : 0,
       guardPrice: data.guardPrice,
       cabRate: 0,
@@ -116,10 +110,15 @@ const CompanyRate = ({ id, companyName }) => {
         `/company/add/rates`,
         {
           data: {
-            companyID: id, 
-            ratesForCompany: finalData 
+            companyID: id,
+            ratesForCompany: finalData
           }
         },
+        {
+          headers: {
+            Authorization: `${token}`
+          }
+        }
       );
 
       if (response.status === 201) {
@@ -135,8 +134,8 @@ const CompanyRate = ({ id, companyName }) => {
           })
         );
       }
-      resetForm({ values: initialValues }); 
-      setSelectedVehicleTypes([]); 
+      resetForm({ values: initialValues });
+      setSelectedVehicleTypes([]);
     } catch (error) {
       console.error('Error submitting the form', error);
     }
@@ -161,9 +160,9 @@ const CompanyRate = ({ id, companyName }) => {
 
   const handleCloseDialog = (event, confirm, removeFn, rateIndex) => {
     if (confirm) {
-      removeFn(rateIndex); 
+      removeFn(rateIndex);
     }
-    setRemoveDialogOpen(false); 
+    setRemoveDialogOpen(false);
   };
 
   return (
@@ -174,37 +173,40 @@ const CompanyRate = ({ id, companyName }) => {
             {values.rateData.length > 0 && (
               <Box sx={{ p: 1 }}>
                 <Grid container spacing={3}>
-                  {values.rateData.map((item, index) => (
-                    <Grid item xs={12} key={index}>
-                      <MainCard
-                        title={
-                          <Stack direction="row" spacing={1} alignItems="center" gap={1}>
-                            Add Company Rate for <Chip label={companyName} color="primary" />
-                          </Stack>
-                        }
-                      >
-                        <FieldArray
-                          name="rateData"
-                          render={(arrayHelpers) => (
-                            <Stack spacing={2}>
-                              <TableContainer>
-                                <Box sx={{ overflowX: 'auto' }}>
-                                  <Table>
-                                    <TableHead>
-                                      <TableRow>
-                                        <TableCell>#</TableCell>
-                                        <TableCell>Zone Name</TableCell>
-                                        <TableCell>Zone Type</TableCell>
-                                        <TableCell>Vehicle Type</TableCell>
-                                        <TableCell>Amount</TableCell>
-                                        <TableCell>Dual Trip</TableCell>
-                                        <TableCell>Dual Trip Amount</TableCell>
-                                        {/* <TableCell>Guard</TableCell> */}
-                                        <TableCell>Guard Price</TableCell>
-                                        <TableCell>Action</TableCell>
-                                      </TableRow>
-                                    </TableHead>
-                                    <TableBody>
+                  {/* {values.rateData.map((item, index) => ( */}
+                  <Grid item xs={12}>
+                    <MainCard
+                      title={
+                        <Stack direction="row" spacing={1} alignItems="center" gap={1}>
+                          Add Company Rate for <Chip label={companyName} color="primary" />
+                        </Stack>
+                      }
+                    >
+                      {/* {values.rateData.map((item, index) => ( */}
+                      <FieldArray
+                        name="rateData"
+                        render={(arrayHelpers) => (
+                          <Stack spacing={2}>
+                            {/* {values.rateData.map((item, index) => ( */}
+                            <TableContainer>
+                              <Box sx={{ overflowX: 'auto' }}>
+                                <Table>
+                                  <TableHead>
+                                    <TableRow>
+                                      <TableCell>#</TableCell>
+                                      <TableCell>Zone Name</TableCell>
+                                      <TableCell>Zone Type</TableCell>
+                                      <TableCell>Vehicle Type</TableCell>
+                                      <TableCell>Amount</TableCell>
+                                      <TableCell>Dual Trip</TableCell>
+                                      <TableCell>Dual Trip Amount</TableCell>
+                                      {/* <TableCell>Guard</TableCell> */}
+                                      <TableCell>Guard Price</TableCell>
+                                      <TableCell>Action</TableCell>
+                                    </TableRow>
+                                  </TableHead>
+                                  {values.rateData.map((item, index) => (
+                                    <TableBody key={index}>
                                       <TableRow key={index}>
                                         <TableCell>{index + 1}</TableCell>
 
@@ -242,6 +244,7 @@ const CompanyRate = ({ id, companyName }) => {
                                             sx={{ width: '150px' }}
                                             getOptionLabel={(option) => option['zoneTypeName']}
                                             saveValue="_id"
+                                            defaultValue={null}
                                             value={
                                               zoneTypeList?.find(
                                                 (item) => item['_id'] === getNestedComplexProperty(values, `rateData.${index}.zoneTypeID`)
@@ -272,7 +275,7 @@ const CompanyRate = ({ id, companyName }) => {
                                                 `rateData.${index}.cabAmount`,
                                                 vehicleTypeIds.map((vehicleTypeID) => ({
                                                   vehicleTypeID,
-                                                  amount: 0 
+                                                  amount: 0
                                                 }))
                                               );
                                             }}
@@ -331,7 +334,7 @@ const CompanyRate = ({ id, companyName }) => {
                                               if (event.target.value === 1) {
                                                 setFieldValue(
                                                   `rateData.${index}.dualTripAmount`,
-                                                  selectedVehicleTypes.map(() => ({ amount: '', vehicleTypeID: '' })) 
+                                                  selectedVehicleTypes.map(() => ({ amount: '', vehicleTypeID: '' }))
                                                 );
                                               }
                                             }}
@@ -355,12 +358,10 @@ const CompanyRate = ({ id, companyName }) => {
                                             {selectedVehicleTypes.map((vehicleType, cabIndex) => (
                                               <TextField
                                                 key={vehicleType._id}
-                                                label={`Dual Trip Amount for ${vehicleType.vehicleTypeName}`} 
-                                                name={`rateData.${index}.dualTripAmount.${cabIndex}`} 
+                                                label={`Dual Trip Amount for ${vehicleType.vehicleTypeName}`}
+                                                name={`rateData.${index}.dualTripAmount.${cabIndex}`}
                                                 value={values.rateData[index].dualTripAmount[cabIndex]?.amount || ''}
-                                                disabled={
-                                                  getFieldProps(`rateData.${index}.dualTrip`).value !== 1 
-                                                }
+                                                disabled={getFieldProps(`rateData.${index}.dualTrip`).value !== 1}
                                                 sx={{ width: '150px' }}
                                                 onChange={(event) =>
                                                   setFieldValue(`rateData.${index}.dualTripAmount.${cabIndex}`, {
@@ -402,36 +403,39 @@ const CompanyRate = ({ id, companyName }) => {
                                         />
                                       </TableRow>
                                     </TableBody>
-                                  </Table>
-                                </Box>
-                              </TableContainer>
+                                  ))}
+                                </Table>
+                              </Box>
+                            </TableContainer>
+                            {/* ))} */}
 
-                              {/* Add Rate Button */}
-                              <Stack direction={'row'}>
-                                <Button
-                                  variant="outlined"
-                                  startIcon={<Add />}
-                                  onClick={() =>
-                                    arrayHelpers.push({
-                                      zoneNameID: '',
-                                      zoneTypeID: '',
-                                      cabAmount: [{ vehicleTypeID: '', amount: 0 }],
-                                      dualTrip: 0,
-                                      dualTripAmount: [{ vehicleTypeID: '', amount: 0 }],
-                                      guard: 0,
-                                      guardPrice: 0
-                                    })
-                                  }
-                                >
-                                  Add Rate
-                                </Button>
-                              </Stack>
+                            {/* Add Rate Button */}
+                            <Stack direction={'row'}>
+                              <Button
+                                variant="outlined"
+                                startIcon={<Add />}
+                                onClick={() =>
+                                  arrayHelpers.push({
+                                    zoneNameID: '',
+                                    zoneTypeID: null,
+                                    cabAmount: [],
+                                    dualTrip: 0,
+                                    dualTripAmount: [],
+                                    guard: 0,
+                                    guardPrice: 0
+                                  })
+                                }
+                              >
+                                Add Rate
+                              </Button>
                             </Stack>
-                          )}
-                        />
-                      </MainCard>
-                    </Grid>
-                  ))}
+                          </Stack>
+                        )}
+                      />
+                      {/* ))} */}
+                    </MainCard>
+                  </Grid>
+                  {/* ))} */}
                 </Grid>
               </Box>
             )}

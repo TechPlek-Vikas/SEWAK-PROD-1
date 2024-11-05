@@ -11,7 +11,6 @@ import { openSnackbar } from 'store/reducers/snackbar';
 
 // assets
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useDispatch } from 'react-redux';
 // import { fetchAllDrivers, fetchDriverDetails } from 'store/reducers/driver';
 // import DriverRegister from 'pages/driver/DriverRegister';
@@ -26,9 +25,8 @@ const yupSchema = yup.object().shape({
   contactNumber: yup.string().required('Contact Number is required'),
   vendorId: yup.string().required('Vendor is required')
 });
-const token = localStorage.getItem('serviceToken');
 
-const AssignVehiclePopup = ({ handleClose,driverId }) => {
+const AssignVehiclePopup = ({ handleClose, driverId, setUpdateKey, updateKey }) => {
   const [vehicleList, setVehicleList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -38,7 +36,7 @@ const AssignVehiclePopup = ({ handleClose,driverId }) => {
   const CabproviderId = userInfo.userId;
   const [selectedVehicles, setSelectedVehicles] = useState([]);
 
-  console.log("selectedVehicles",selectedVehicles);
+  console.log('selectedVehicles', selectedVehicles);
 
   const handleOpenDialog = () => {
     navigate('/management/cab/add-cab');
@@ -46,18 +44,17 @@ const AssignVehiclePopup = ({ handleClose,driverId }) => {
 
   const handleAssign = async () => {
     try {
-      
-      const response = await axiosServices.post(
-        `/vehicleAssignment/to/driver`,
-        {
-          data: {
-            vehicleId: selectedVehicles[0]._id,
-            driverId: driverId
-          }
+      const response = await axiosServices.post(`/vehicleAssignment/to/driver`, {
+        data: {
+          vehicleId: selectedVehicles[0]._id,
+          driverId: driverId
         }
-      );
-  
+      });
+
+      console.log(response);
+
       if (response.status === 201) {
+        setUpdateKey(updateKey + 1);
         dispatch(
           openSnackbar({
             open: true,
@@ -72,12 +69,21 @@ const AssignVehiclePopup = ({ handleClose,driverId }) => {
       }
     } catch (error) {
       console.error('Error assigning vehicle:', error);
-    }finally{
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: error.response.data?.message || 'Something went wrong',
+          variant: 'alert',
+          alert: {
+            color: 'error'
+          },
+          close: true
+        })
+      );
+    } finally {
       handleClose();
     }
   };
-
-  console.log('vehicleList', vehicleList);
 
   const formik = useFormik({
     initialValues: {
@@ -160,7 +166,7 @@ const AssignVehiclePopup = ({ handleClose,driverId }) => {
             <Autocomplete
               multiple
               options={vehicleList} // Replace driverList with the appropriate array
-              getOptionLabel={(option) => option.vehicleName}
+              getOptionLabel={(option) => option.vehicleNumber}
               value={selectedVehicles} // Set value to the selected vehicles
               onChange={handleChange} // Handle change to update selected vehicles
               loading={loading} // Showing loading state

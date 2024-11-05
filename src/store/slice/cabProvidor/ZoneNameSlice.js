@@ -39,7 +39,7 @@ export const deleteZoneName = createAsyncThunk('zoneNames/deleteZoneName', async
   try {
     // Replace with your actual endpoint
     await axios.put(`/zone/delete`, payload);
-    return id; // Return the id for deletion
+    return payload.data._id; // Return the id for deletion
   } catch (error) {
     return rejectWithValue(error.response ? error.response.data : error.message);
   }

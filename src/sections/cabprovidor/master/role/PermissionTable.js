@@ -1,33 +1,62 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // material-ui
 import { Box, Checkbox, Divider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 
 // project-imports
 import MainCard from 'components/MainCard';
+import { MODULE } from 'constant';
+
+const permission_set = ['Create', 'Read', 'Update', 'Delete'];
 
 // table data
-function createData(moduleName, calories, permissions) {
+function createData(moduleName, label, permissions = permission_set) {
   return {
     moduleName,
-    calories,
+    label,
     permissions
   };
 }
 
-const permission_set1 = ['Create', 'Read', 'Update', 'Delete'];
-const permission_set2 = ['Create', 'Read'];
-const permission_set3 = ['Update', 'Delete'];
+// const permission_set1 = ['Create', 'Read', 'Update', 'Delete'];
+// const permission_set2 = ['Create', 'Read'];
+// const permission_set3 = ['Update', 'Delete'];
 
-// table data
+// // table data
+// const rows = [
+//   createData('Dashboard', 305, permission_set),
+//   createData('Loan', 305, permission_set1),
+//   createData('Invoice', 452, permission_set2),
+//   createData('Advance', 262, permission_set3),
+//   createData('Reports', 159, permission_set1),
+//   createData('Zone', 356, permission_set2)
+// ];
+
 const rows = [
-  createData('Loan', 305, permission_set1),
-  createData('Invoice', 452, permission_set2),
-  createData('Advance', 262, permission_set3),
-  createData('Reports', 159, permission_set1),
-  createData('Zone', 356, permission_set2)
+  createData(MODULE.DASHBOARD, 'Dashboard'),
+  createData(MODULE.ROSTER, 'Roster'),
+  createData(MODULE.COMPANY, 'Company'),
+  createData(MODULE.VENDOR, 'Vendor'),
+  createData(MODULE.DRIVER, 'Driver'),
+  createData(MODULE.CAB, 'Cab'),
+  createData(MODULE.INVOICE, 'Invoice'),
+  createData(MODULE.LOAN, 'Loan'),
+  createData(MODULE.ADVANCE, 'Advance'),
+  createData(MODULE.REPORT, 'Report'),
+  createData(MODULE.ZONE, 'Zone'),
+  createData(MODULE.ZONE_TYPE, 'Zone Type'),
+  createData(MODULE.CAB_TYPE, 'Cab Type'),
+  createData(MODULE.STATE_TAX, 'State Tax'),
+  createData(MODULE.TAX_CHARGE, 'Tax Charge'),
+  createData(MODULE.CAB_RATE_VENDOR, 'Vendor Cab Rate'),
+  createData(MODULE.CAB_RATE_DRIVER, 'Driver Cab Rate'),
+  createData(MODULE.USER_SETTING, 'User Setting'),
+  createData(MODULE.INVOICE_SETTING, 'Invoice Setting'),
+  createData(MODULE.LOG, 'Log')
 ];
+
+console.log('rows = ', rows);
 
 // table header
 const headCells = [
@@ -37,12 +66,12 @@ const headCells = [
     disablePadding: true,
     label: 'Module Name'
   },
-  {
-    id: 'calories',
-    numeric: true,
-    disablePadding: false,
-    label: 'Calories'
-  },
+  // {
+  //   id: 'calories',
+  //   numeric: true,
+  //   disablePadding: false,
+  //   label: 'Calories'
+  // },
   {
     id: 'permissions',
     numeric: false,
@@ -110,14 +139,21 @@ export default function PermissionTable({ existedPermissions = {}, parentFunctio
     let newSelected = [];
 
     const newPermissions = { ...selectedPermissions };
+    console.log('newPermissions = ', newPermissions);
 
     if (selectedIndex === -1) {
+      console.log("No")
       newSelected = newSelected.concat(selected, moduleName);
       newPermissions[moduleName] = rows.find((row) => row.moduleName === moduleName).permissions;
     } else {
+      console.log("Yes")
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-      delete newPermissions[moduleName];
+      // delete newPermissions[moduleName];
+      newPermissions[moduleName] = [];
     }
+
+    console.log('newSelected = ', newSelected);
+    console.log('newPermissions = ', newPermissions);
 
     setSelected(newSelected);
     setSelectedPermissions(newPermissions);
@@ -155,9 +191,25 @@ export default function PermissionTable({ existedPermissions = {}, parentFunctio
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
+  useEffect(() => {
+    console.log('existedPermissions', existedPermissions);
+
+    const xPermissions = Object.fromEntries(rows.map((item) => [item.moduleName, item.permissions]));
+
+    const output = Object.keys(existedPermissions).filter((key) => {
+      const yPerms = existedPermissions[key];
+      const xPerms = xPermissions[key];
+
+      // Check if both permissions arrays exist, have the same length, and contain the same items
+      return xPerms && yPerms.length === xPerms.length && yPerms.every((perm) => xPerms.includes(perm));
+    });
+
+    setSelected(output);
+  }, [existedPermissions]);
+
   return (
     <>
-      <MainCard content={false} title={`Assign Permission to Roles :: ${Object.keys(existedPermissions).length === 0 ? 'Add' : 'Edit'}`}>
+      <MainCard content={false} title={`Assign Permission to Roles : ${Object.keys(existedPermissions).length === 0 ? 'Add' : 'Edit'}`}>
         {/* table */}
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
@@ -187,11 +239,12 @@ export default function PermissionTable({ existedPermissions = {}, parentFunctio
                       />
                     </TableCell>
                     <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.moduleName}
+                      {/* {row.moduleName } */}
+                      {row.label}
                     </TableCell>
-                    <TableCell align="right">{row.calories}</TableCell>
+                    {/* <TableCell align="right">{row.calories}</TableCell> */}
                     <TableCell align="left">
-                      <Stack spacing={1} direction="row">
+                      <Stack spacing={1} direction="row" justifyContent="space-between">
                         {row.permissions.map((permission, i) => (
                           <Box
                             key={i}
@@ -219,10 +272,10 @@ export default function PermissionTable({ existedPermissions = {}, parentFunctio
         </TableContainer>
         <Divider />
       </MainCard>
-      <Typography variant="h6" sx={{ mt: 2 }}>
+      {/* <Typography variant="h6" sx={{ mt: 2 }}>
         Selected Permissions:
-      </Typography>
-      <pre>{JSON.stringify(selectedPermissions, null, 2)}</pre>
+      </Typography> */}
+      {/* <pre>{JSON.stringify(selectedPermissions, null, 2)}</pre> */}
     </>
   );
 }

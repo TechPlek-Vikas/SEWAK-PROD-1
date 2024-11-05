@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { Box, Grid, InputLabel, Stack, TextField } from '@mui/material';
 import FormikAutocomplete from 'components/autocomplete/AutoComplete';
 import MainCard from 'components/MainCard';
@@ -6,7 +7,7 @@ import { USERTYPE } from 'constant';
 import { useFormikContext } from 'formik';
 import { useSelector } from 'react-redux';
 
-const SpecificInfo = () => {
+const SpecificInfo = ({ handlePermission }) => {
   const userType = useSelector((state) => state.auth.userType);
   // const userID = useSelector((state) => state.users.userDetails?._id);
   const roleOptions = useSelector((state) => state.roles.roles) || [];
@@ -103,6 +104,8 @@ const SpecificInfo = () => {
                     placeholder="Select Role"
                     getOptionLabel={(option) => option['role_name']}
                     saveValue="_id"
+                    otherValue="permissions"
+                    extraWork={handlePermission}
                     value={roleOptions?.find((item) => item['_id'] === values['roleId']) || null}
                     renderOption={(props, option) => (
                       <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
@@ -151,6 +154,10 @@ const SpecificInfo = () => {
       </Grid>
     </>
   );
+};
+
+SpecificInfo.propTypes = {
+  handlePermission: PropTypes.func.isRequired
 };
 
 export default SpecificInfo;
