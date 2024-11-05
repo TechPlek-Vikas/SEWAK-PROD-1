@@ -218,6 +218,8 @@ function AddCompany() {
             close: true
           })
         );
+      } finally {
+        setLoading(false);
       }
     }
   });
