@@ -26,7 +26,8 @@ import { useDispatch } from 'react-redux';
 
 const validationSchema = Yup.object().shape({
   userName: Yup.string().required('Username is required'),
-  userEmail: Yup.string().email('Invalid email format').required('Email is required')
+  userEmail: Yup.string().email('Invalid email format').required('Email is required'),
+  contactNumber: Yup.string().required('Contact Number is required')
 });
 
 const DriverRegister = ({
