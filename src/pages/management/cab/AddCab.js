@@ -788,7 +788,7 @@ const AddCab = () => {
                             <FormikAutocomplete
                               name="vendorId"
                               options={vendors}
-                              placeholder="Vendor company name"
+                              placeholder="Self"
                               getOptionLabel={(option) => option['vendorCompanyName']}
                               saveValue="vendorId"
                               value={vendors?.find((item) => item['vendorId'] === values['vendorId']) || null}
@@ -830,11 +830,11 @@ const AddCab = () => {
                         </Stack>
                       </Grid>
 
-                      {/* Vehicle Name */}
+                      {/* Modal Name */}
                       <Grid item xs={12} sm={style}>
                         <Stack spacing={1}>
-                          <InputLabel>Vehicle Name</InputLabel>
-                          <FormikTextField name="vehicleName" id="vehicleName" placeholder="Enter Vehicle Name" fullWidth />
+                          <InputLabel>Modal Name</InputLabel>
+                          <FormikTextField name="vehicleName" id="vehicleName" placeholder="Enter Modal Name" fullWidth />
                         </Stack>
                       </Grid>
                     </Grid>
