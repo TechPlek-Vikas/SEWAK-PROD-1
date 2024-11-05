@@ -139,14 +139,21 @@ export default function PermissionTable({ existedPermissions = {}, parentFunctio
     let newSelected = [];
 
     const newPermissions = { ...selectedPermissions };
+    console.log('newPermissions = ', newPermissions);
 
     if (selectedIndex === -1) {
+      console.log("No")
       newSelected = newSelected.concat(selected, moduleName);
       newPermissions[moduleName] = rows.find((row) => row.moduleName === moduleName).permissions;
     } else {
+      console.log("Yes")
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-      delete newPermissions[moduleName];
+      // delete newPermissions[moduleName];
+      newPermissions[moduleName] = [];
     }
+
+    console.log('newSelected = ', newSelected);
+    console.log('newPermissions = ', newPermissions);
 
     setSelected(newSelected);
     setSelectedPermissions(newPermissions);
