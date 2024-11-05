@@ -26,7 +26,7 @@ const yupSchema = yup.object().shape({
   vendorId: yup.string().required('Vendor is required')
 });
 
-const AssignVehiclePopup = ({ handleClose,driverId }) => {
+const AssignVehiclePopup = ({ handleClose, driverId, setUpdateKey, updateKey }) => {
   const [vehicleList, setVehicleList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -36,7 +36,7 @@ const AssignVehiclePopup = ({ handleClose,driverId }) => {
   const CabproviderId = userInfo.userId;
   const [selectedVehicles, setSelectedVehicles] = useState([]);
 
-  console.log("selectedVehicles",selectedVehicles);
+  console.log('selectedVehicles', selectedVehicles);
 
   const handleOpenDialog = () => {
     navigate('/management/cab/add-cab');
@@ -44,18 +44,17 @@ const AssignVehiclePopup = ({ handleClose,driverId }) => {
 
   const handleAssign = async () => {
     try {
-      
-      const response = await axiosServices.post(
-        `/vehicleAssignment/to/driver`,
-        {
-          data: {
-            vehicleId: selectedVehicles[0]._id,
-            driverId: driverId
-          }
+      const response = await axiosServices.post(`/vehicleAssignment/to/driver`, {
+        data: {
+          vehicleId: selectedVehicles[0]._id,
+          driverId: driverId
         }
-      );
-  
+      });
+
+      console.log(response);
+
       if (response.status === 201) {
+        setUpdateKey(updateKey + 1);
         dispatch(
           openSnackbar({
             open: true,
@@ -70,7 +69,18 @@ const AssignVehiclePopup = ({ handleClose,driverId }) => {
       }
     } catch (error) {
       console.error('Error assigning vehicle:', error);
-    }finally{
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: error.response.data?.message || 'Something went wrong',
+          variant: 'alert',
+          alert: {
+            color: 'error'
+          },
+          close: true
+        })
+      );
+    } finally {
       handleClose();
     }
   };

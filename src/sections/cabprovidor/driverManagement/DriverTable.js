@@ -13,7 +13,7 @@ import TableSkeleton from 'components/tables/TableSkeleton';
 import EmptyTableDemo from 'components/tables/EmptyTable';
 import AssignVehiclePopup from './driverOverview/assignVehiclePopup/AssignVehiclePopup';
 
-const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading }) => {
+const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading, setUpdateKey,updateKey }) => {
   const theme = useTheme();
   // eslint-disable-next-line no-unused-vars
   const mode = theme.palette.mode;
@@ -224,7 +224,7 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
       </Stack>
       {/* Pending Dialog */}
       <Dialog open={pendingDialogOpen} onClose={handleClosePendingDialog}>
-        <AssignVehiclePopup handleClose={handleClosePendingDialog} driverId={driverId} />
+        <AssignVehiclePopup handleClose={handleClosePendingDialog} driverId={driverId} setUpdateKey={setUpdateKey} updateKey={updateKey}/>
       </Dialog>
     </>
   );

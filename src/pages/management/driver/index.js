@@ -55,12 +55,13 @@ const Driver = () => {
   const { drivers, metaData, loading, error, open } = useSelector((state) => state.drivers);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [updateKey, setUpdateKey] = useState(0);
   const [driverType, setDriverType] = useState(1);
   const lastPageIndex = metaData.lastPageNo;
 
   useEffect(() => {
     dispatch(fetchDrivers({ page, limit, driverType }));
-  }, [page, limit, dispatch, driverType]);
+  }, [page, limit, dispatch, driverType, updateKey]);
 
   const handleLimitChange = useCallback((event) => {
     setLimit(+event.target.value);
@@ -121,10 +122,11 @@ const Driver = () => {
         };
 
         const response = await dispatch(registerDriver(payload)).unwrap();
-        if (response.status === 201 && !values.vendorId) {
+        if (response.status === 201) {
           setLimit(10);
           setPage(1);
           setDriverType(1);
+          dispatch(fetchDrivers({ page: 1, limit: 10, driverType: 1 }));
         }
       } else {
         // console.log('Update API call');
@@ -152,8 +154,22 @@ const Driver = () => {
   return (
     <>
       <Stack gap={1} spacing={1}>
-        <Header OtherComp={({loading}) => <ButtonComponent driverType={driverType} handleDriverTypeChange={handleDriverTypeChange} loading={loading}/>} />
-        <DriverTable data={drivers} page={page} setPage={setPage} limit={limit} setLimit={handleLimitChange} lastPageNo={lastPageIndex} loading={loading}/>
+        <Header
+          OtherComp={({ loading }) => (
+            <ButtonComponent driverType={driverType} handleDriverTypeChange={handleDriverTypeChange} loading={loading} />
+          )}
+        />
+        <DriverTable
+          data={drivers}
+          page={page}
+          setPage={setPage}
+          limit={limit}
+          setLimit={handleLimitChange}
+          lastPageNo={lastPageIndex}
+          loading={loading}
+          setUpdateKey={setUpdateKey}
+          updateKey={updateKey}
+        />
       </Stack>
 
       {open && (
@@ -176,7 +192,7 @@ const Driver = () => {
 
 export default Driver;
 
-const ButtonComponent = ({ driverType, handleDriverTypeChange,loading }) => {
+const ButtonComponent = ({ driverType, handleDriverTypeChange, loading }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleAdd = useCallback(() => {

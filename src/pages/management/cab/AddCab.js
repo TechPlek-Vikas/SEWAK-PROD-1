@@ -729,7 +729,7 @@ const AddCab = () => {
 
         setSubmitting(false);
         resetForm();
-        navigate('/management/cab', { replace: true });
+        navigate('/management/cab/view', { replace: true });
       } catch (error) {
         dispatch(
           openSnackbar({
