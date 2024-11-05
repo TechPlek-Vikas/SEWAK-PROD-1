@@ -51,6 +51,8 @@ const AssignVehiclePopup = ({ handleClose, driverId, setUpdateKey, updateKey }) 
         }
       });
 
+      console.log(response);
+
       if (response.status === 201) {
         setUpdateKey(updateKey + 1);
         dispatch(
@@ -67,6 +69,17 @@ const AssignVehiclePopup = ({ handleClose, driverId, setUpdateKey, updateKey }) 
       }
     } catch (error) {
       console.error('Error assigning vehicle:', error);
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: error.response.data?.message || 'Something went wrong',
+          variant: 'alert',
+          alert: {
+            color: 'error'
+          },
+          close: true
+        })
+      );
     } finally {
       handleClose();
     }
