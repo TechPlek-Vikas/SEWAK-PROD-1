@@ -21,7 +21,18 @@ const ZonetypeAddForm = ({ zoneType, onCancel, updateKey, setUpdateKey }) => {
     dispatch(fetchZoneNames());
   }, [dispatch, updateKey]);
 
-  const CustomerSchema = yup.object().shape({});
+  const CustomerSchema = yup.object().shape({
+    zoneTypeName: yup
+      .string()
+      .required('Zone Type Name is required')
+      .min(3, 'Zone Type Name must be at least 3 characters long')
+      .max(100, 'Zone Type Name cannot exceed 100 characters'),
+    zoneTypeDescription: yup
+      .string()
+      .required('Zone Type Description is required')
+      .min(5, 'Zone Type Description must be at least 5 characters long')
+      .max(255, 'Zone Type Description cannot exceed 255 characters')
+  });
 
   const formik = useFormik({
     initialValues: {

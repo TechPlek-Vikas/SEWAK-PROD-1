@@ -71,10 +71,29 @@ const CabTypeForm = ({ open, handleClose, sliceName, title, initialValuesFun, on
     }
   };
 
+  const validationSchema = Yup.object({
+    vehicleTypeName: Yup.string()
+      .required('Vehicle Type Name is required')
+      .min(3, 'Vehicle Type Name should be at least 3 characters')
+      .max(50, 'Vehicle Type Name should not exceed 50 characters'),
+    vehicleDescription: Yup.string()
+      .required('Description is required')
+      .min(5, 'Description should be at least 5 characters')
+      .max(200, 'Description should not exceed 200 characters'),
+    capacity: Yup.number()
+      .required('Capacity is required')
+      .min(1, 'Capacity should be at least 1')
+      .max(100, 'Capacity should not exceed 100'),
+    fuelType: Yup.string()
+      .required('Fuel Type is required')
+      .nullable()
+      .oneOf(optionsFuelType.map((option) => option.id), 'Invalid Fuel Type selected'),
+  });
+
   const formik = useFormik({
     initialValues: initialValuesFun(data),
     enableReinitialize: true,
-    // validationSchema: Yup.object().shape({}),
+    validationSchema,
     onSubmit: formikHandleSubmit
   });
 

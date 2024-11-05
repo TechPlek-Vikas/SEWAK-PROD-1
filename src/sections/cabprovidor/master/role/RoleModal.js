@@ -33,6 +33,11 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
   const [roleDescription, setRoleDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const [errors, setErrors] = useState({
+    roleName: '',
+    roleDescription: ''
+  });
+
   const roleNameRef = useRef('');
   const roleDescriptionRef = useRef('');
   const existedPermissionsRef = useRef({});
@@ -41,9 +46,47 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
     setExistedPermissions(data);
   }, []);
 
+  const validateForm = () => {
+    let isValid = true;
+    const validationErrors = {
+      roleName: '',
+      roleDescription: ''
+    };
+
+    if (!roleName || roleName.length < 3) {
+      validationErrors.roleName = 'Role name must be at least 3 characters long';
+      isValid = false;
+    }
+
+    if (!roleDescription || roleDescription.length < 5) {
+      validationErrors.roleDescription = 'Description must be at least 5 characters long';
+      isValid = false;
+    }
+
+    setErrors(validationErrors);
+
+    if (Object.keys(existedPermissions).length === 0) {
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: 'Please assign at least one permission to the role.',
+          variant: 'alert',
+          alert: {
+            color: 'error'
+          },
+          close: false
+        })
+      );
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
   const handleButtonClick = useCallback(async () => {
     // alert('Button clicked');
     console.log(existedPermissions);
+    if (!validateForm()) return;
 
     // const payload = {
     //   data: {
@@ -120,7 +163,7 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [handleClose, existedPermissions, roleName, roleDescription, roleId, handleRefetch]);
+  }, [existedPermissions, roleName, roleDescription, roleId]);
 
   useEffect(() => {
     if (roleId) {
@@ -198,6 +241,8 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
                 fullWidth
                 value={roleName}
                 onChange={(e) => setRoleName(e.target.value)}
+                error={!!errors.roleName}
+                helperText={errors.roleName}
               />
             </Stack>
 
@@ -211,6 +256,8 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
                 fullWidth
                 value={roleDescription}
                 onChange={(e) => setRoleDescription(e.target.value)}
+                error={!!errors.roleDescription}
+                helperText={errors.roleDescription}
               />
             </Stack>
             {/* Permission */}
