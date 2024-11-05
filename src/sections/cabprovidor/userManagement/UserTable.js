@@ -52,7 +52,6 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
   }, []);
 
   const handleChangeUserId = useCallback((id) => {
-    console.log(`🚀 ~ handleChangeUserId ~ id:`, id);
     setOpen(true);
     setUserId(id);
   }, []);
@@ -79,21 +78,17 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
         Header: 'User Name',
         accessor: 'userName',
         Cell: ({ row }) => {
-          console.log(row.original);
           // const formattedUserName = userName?.charAt(0).toUpperCase() + userName?.slice(1);
           const val = KEYS?.[userType].CREATED_AT;
-          console.log(`🚀 ~ UserTable ~ val:`, val);
           const key = row.original[val];
-          console.log(`🚀 ~ UserTable ~ key:`, key);
           const userName = key?.['userName'];
-          console.log(`🚀 ~ UserTable ~ userName:`, userName);
 
           //   return <>{userName}</>;
           return (
             <Typography>
               <Link
-                to={`/user/overview/${row.original._id}`}
-                onClick={(e) => e.stopPropagation()} // Prevent interfering with row expansion
+                // to={`/user/overview/${row.original._id}`}
+                // onClick={(e) => e.stopPropagation()} 
                 style={{ textDecoration: 'none' }}
               >
                 {userName}
@@ -106,7 +101,6 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
         Header: 'Role Name',
         accessor: 'role_name',
         Cell: ({ row }) => {
-          console.log(row.original);
           const val = KEYS?.[userType].ROLE_NAME;
           const key = row.original[val];
           const roleName = key?.['role_name'];
@@ -174,7 +168,6 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
               title="Manage Permission"
               onClick={() => {
                 alert(`Manage Permission = ${row.original._id}`);
-                console.log('Vii = ', row.original);
                 const val = KEYS?.[userType].PERMISSION;
                 const key = row.original[val];
                 const uid = key?.['_id'];
