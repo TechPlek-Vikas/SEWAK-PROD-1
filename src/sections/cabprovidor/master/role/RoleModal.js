@@ -32,6 +32,7 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
   const [roleName, setRoleName] = useState('');
   const [roleDescription, setRoleDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [hasChanged, setHasChanged] = useState(false);
 
   const [errors, setErrors] = useState({
     roleName: '',
@@ -64,8 +65,8 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
     }
 
     setErrors(validationErrors);
-
-    if (Object.keys(existedPermissions).length === 0) {
+    const allPermissionsEmpty = Object.values(existedPermissions).every((permissions) => permissions.length === 0);
+    if (allPermissionsEmpty) {
       dispatch(
         openSnackbar({
           open: true,
@@ -82,6 +83,22 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
 
     return isValid;
   };
+
+  const checkFormChanges = () => {
+    if (
+      roleName !== roleNameRef.current ||
+      roleDescription !== roleDescriptionRef.current ||
+      JSON.stringify(existedPermissions) !== JSON.stringify(existedPermissionsRef.current)
+    ) {
+      setHasChanged(true);
+    } else {
+      setHasChanged(false);
+    }
+  };
+
+  useEffect(() => {
+    checkFormChanges();
+  }, [roleName, roleDescription, existedPermissions]);
 
   const handleButtonClick = useCallback(async () => {
     // alert('Button clicked');
@@ -262,7 +279,7 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
             </Stack>
             {/* Permission */}
             <Stack gap={1}>
-              <Typography variant="subtitle1">Assign Permission to Roles</Typography>
+              {/* <Typography variant="subtitle1">Assign Permission to Roles</Typography> */}
               <PermissionTable existedPermissions={existedPermissions} parentFunction={parentFunction} />
               {/* <PermissionTable parentFunction={parentFunction} /> */}
             </Stack>
@@ -277,12 +294,12 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
         <Button
           variant="contained"
           onClick={handleButtonClick}
-          sx={{
-            mr: 1,
-            cursor: isLoading ? 'not-allowed' : 'pointer', // Show visual feedback
-            pointerEvents: isLoading ? 'none' : 'auto' // Prevent pointer events when loading
-          }}
-          // disabled={isLoading} // Disable button when loading
+          // sx={{
+          //   mr: 1,
+          //   cursor: isLoading ? 'not-allowed' : 'pointer', // Show visual feedback
+          //   pointerEvents: isLoading ? 'none' : 'auto' // Prevent pointer events when loading
+          // }}
+          disabled={isLoading || !hasChanged} // Disable button when loading
         >
           {isLoading ? 'Loading...' : roleId ? 'Update' : 'Add'}
         </Button>

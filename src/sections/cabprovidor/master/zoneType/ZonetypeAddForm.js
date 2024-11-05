@@ -269,7 +269,7 @@ const ZonetypeAddForm = ({ zoneType, onCancel, updateKey, setUpdateKey }) => {
               <Button color="error" onClick={onCancel}>
                 Cancel
               </Button>
-              <Button type="submit" variant="contained">
+              <Button type="submit" variant="contained" disabled={!formik.dirty || formik.isSubmitting}>
                 {isCreating ? 'Add' : 'Edit'}
               </Button>
             </Stack>
