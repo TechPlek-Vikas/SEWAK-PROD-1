@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 // assets
 import { Button, CircularProgress, Stack } from '@mui/material';
 import CompanyRateReactTable from './CompanyRateReactTable';
@@ -13,8 +12,6 @@ import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 
 // ==============================|| REACT TABLE - EDITABLE CELL ||============================== //
-
-const token = localStorage.getItem('serviceToken');
 
 const CompanyRateListing = ({ companyName, id }) => {
   const [data, setData] = useState([]);
