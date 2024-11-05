@@ -32,6 +32,12 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
   const [roleName, setRoleName] = useState('');
   const [roleDescription, setRoleDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [hasChanged, setHasChanged] = useState(false);
+
+  const [errors, setErrors] = useState({
+    roleName: '',
+    roleDescription: ''
+  });
 
   const roleNameRef = useRef('');
   const roleDescriptionRef = useRef('');
@@ -41,9 +47,63 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
     setExistedPermissions(data);
   }, []);
 
+  const validateForm = () => {
+    let isValid = true;
+    const validationErrors = {
+      roleName: '',
+      roleDescription: ''
+    };
+
+    if (!roleName || roleName.length < 3) {
+      validationErrors.roleName = 'Role name must be at least 3 characters long';
+      isValid = false;
+    }
+
+    if (!roleDescription || roleDescription.length < 5) {
+      validationErrors.roleDescription = 'Description must be at least 5 characters long';
+      isValid = false;
+    }
+
+    setErrors(validationErrors);
+    const allPermissionsEmpty = Object.values(existedPermissions).every((permissions) => permissions.length === 0);
+    if (allPermissionsEmpty) {
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: 'Please assign at least one permission to the role.',
+          variant: 'alert',
+          alert: {
+            color: 'error'
+          },
+          close: false
+        })
+      );
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
+  const checkFormChanges = () => {
+    if (
+      roleName !== roleNameRef.current ||
+      roleDescription !== roleDescriptionRef.current ||
+      JSON.stringify(existedPermissions) !== JSON.stringify(existedPermissionsRef.current)
+    ) {
+      setHasChanged(true);
+    } else {
+      setHasChanged(false);
+    }
+  };
+
+  useEffect(() => {
+    checkFormChanges();
+  }, [roleName, roleDescription, existedPermissions]);
+
   const handleButtonClick = useCallback(async () => {
     // alert('Button clicked');
     console.log(existedPermissions);
+    if (!validateForm()) return;
 
     // const payload = {
     //   data: {
@@ -120,7 +180,7 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [handleClose, existedPermissions, roleName, roleDescription, roleId, handleRefetch]);
+  }, [existedPermissions, roleName, roleDescription, roleId]);
 
   useEffect(() => {
     if (roleId) {
@@ -198,6 +258,8 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
                 fullWidth
                 value={roleName}
                 onChange={(e) => setRoleName(e.target.value)}
+                error={!!errors.roleName}
+                helperText={errors.roleName}
               />
             </Stack>
 
@@ -211,11 +273,13 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
                 fullWidth
                 value={roleDescription}
                 onChange={(e) => setRoleDescription(e.target.value)}
+                error={!!errors.roleDescription}
+                helperText={errors.roleDescription}
               />
             </Stack>
             {/* Permission */}
             <Stack gap={1}>
-              <Typography variant="subtitle1">Assign Permission to Roles</Typography>
+              {/* <Typography variant="subtitle1">Assign Permission to Roles</Typography> */}
               <PermissionTable existedPermissions={existedPermissions} parentFunction={parentFunction} />
               {/* <PermissionTable parentFunction={parentFunction} /> */}
             </Stack>
@@ -230,12 +294,12 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
         <Button
           variant="contained"
           onClick={handleButtonClick}
-          sx={{
-            mr: 1,
-            cursor: isLoading ? 'not-allowed' : 'pointer', // Show visual feedback
-            pointerEvents: isLoading ? 'none' : 'auto' // Prevent pointer events when loading
-          }}
-          // disabled={isLoading} // Disable button when loading
+          // sx={{
+          //   mr: 1,
+          //   cursor: isLoading ? 'not-allowed' : 'pointer', // Show visual feedback
+          //   pointerEvents: isLoading ? 'none' : 'auto' // Prevent pointer events when loading
+          // }}
+          disabled={isLoading || !hasChanged} // Disable button when loading
         >
           {isLoading ? 'Loading...' : roleId ? 'Update' : 'Add'}
         </Button>

@@ -21,7 +21,19 @@ const ZonetypeAddForm = ({ zoneType, onCancel, updateKey, setUpdateKey }) => {
     dispatch(fetchZoneNames());
   }, [dispatch, updateKey]);
 
-  const CustomerSchema = yup.object().shape({});
+  const CustomerSchema = yup.object().shape({
+    zoneTypeName: yup
+      .string()
+      .required('Zone Type Name is required')
+      .min(3, 'Zone Type Name must be at least 3 characters long')
+      .max(100, 'Zone Type Name cannot exceed 100 characters'),
+    zoneTypeDescription: yup
+      .string()
+      .required('Zone Type Description is required')
+      .min(5, 'Zone Type Description must be at least 5 characters long')
+      .max(255, 'Zone Type Description cannot exceed 255 characters'),
+    zoneId: yup.string().required('Zone is required')
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -216,7 +228,7 @@ const ZonetypeAddForm = ({ zoneType, onCancel, updateKey, setUpdateKey }) => {
                 />
               </Stack>
               <Stack spacing={1}>
-                <InputLabel htmlFor="zoneTypeDescription">Select Zone</InputLabel>
+                <InputLabel htmlFor="zoneId">Select Zone</InputLabel>
                 <Autocomplete
                   id="zoneId"
                   value={zoneNames.find((item) => item._id === formik.values.zoneId) || null}
@@ -228,7 +240,7 @@ const ZonetypeAddForm = ({ zoneType, onCancel, updateKey, setUpdateKey }) => {
                   autoHighlight
                   getOptionLabel={(option) => option.zoneName}
                   isOptionEqualToValue={(option) => {
-                    option._id === formik.values.zoneId;
+                    return option._id === formik.values.zoneId;
                   }}
                   renderOption={(props, option) => (
                     <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
@@ -241,8 +253,10 @@ const ZonetypeAddForm = ({ zoneType, onCancel, updateKey, setUpdateKey }) => {
                       placeholder="Choose a zone"
                       inputProps={{
                         ...params.inputProps,
-                        autoComplete: 'new-password' // Disable autocomplete and autofill
+                        autoComplete: 'new-password' 
                       }}
+                      error={Boolean(formik.touched.zoneId && formik.errors.zoneId)}
+                      helperText={formik.touched.zoneId && formik.errors.zoneId}
                     />
                   )}
                 />
@@ -255,7 +269,7 @@ const ZonetypeAddForm = ({ zoneType, onCancel, updateKey, setUpdateKey }) => {
               <Button color="error" onClick={onCancel}>
                 Cancel
               </Button>
-              <Button type="submit" variant="contained">
+              <Button type="submit" variant="contained" disabled={!formik.dirty || formik.isSubmitting}>
                 {isCreating ? 'Add' : 'Edit'}
               </Button>
             </Stack>

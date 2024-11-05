@@ -13,8 +13,19 @@ import { addZoneName, updateZoneName } from 'store/slice/cabProvidor/ZoneNameSli
 const ZoneAddForm = ({ zone, onCancel, updateKey, setUpdateKey }) => {
   const isCreating = !zone;
 
-  const CustomerSchema = yup.object().shape({});
-
+  const CustomerSchema = yup.object().shape({
+    zoneName: yup
+      .string()
+      .required('Zone Name is required') // Required field validation
+      .min(3, 'Zone Name must be at least 3 characters') // Minimum length validation
+      .max(50, 'Zone Name cannot exceed 50 characters'), // Maximum length validation
+    zoneDescription: yup
+      .string()
+      .required('Zone Description is required') // Required field validation
+      .min(5, 'Zone Description must be at least 5 characters') // Minimum length validation
+      .max(200, 'Zone Description cannot exceed 200 characters'), // Maximum length validation
+  });
+  
   const formik = useFormik({
     initialValues: { zoneName: zone?.zoneName || '', zoneDescription: zone?.zoneDescription || '' },
     validationSchema: CustomerSchema,
@@ -159,7 +170,7 @@ const ZoneAddForm = ({ zone, onCancel, updateKey, setUpdateKey }) => {
               <Button color="error" onClick={onCancel}>
                 Cancel
               </Button>
-              <Button type="submit" variant="contained">
+              <Button type="submit" variant="contained" disabled={!formik.dirty || formik.isSubmitting}>
                 {isCreating ? 'Add' : 'Edit'}
               </Button>
             </Stack>

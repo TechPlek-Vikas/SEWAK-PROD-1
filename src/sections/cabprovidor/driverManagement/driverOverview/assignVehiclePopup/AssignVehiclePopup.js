@@ -166,7 +166,7 @@ const AssignVehiclePopup = ({ handleClose, driverId, setUpdateKey, updateKey }) 
             <Autocomplete
               multiple
               options={vehicleList} // Replace driverList with the appropriate array
-              getOptionLabel={(option) => option.vehicleName}
+              getOptionLabel={(option) => option.vehicleNumber}
               value={selectedVehicles} // Set value to the selected vehicles
               onChange={handleChange} // Handle change to update selected vehicles
               loading={loading} // Showing loading state
