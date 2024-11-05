@@ -97,7 +97,7 @@ const CabTypeForm = ({ open, handleClose, sliceName, title, initialValuesFun, on
     onSubmit: formikHandleSubmit
   });
 
-  const { errors, touched, handleSubmit, handleBlur, isSubmitting, getFieldProps, setFieldValue, values, dirty, initialValues } = formik;
+  const { errors, touched, handleSubmit, handleBlur, getFieldProps, setFieldValue, values, dirty, initialValues } = formik;
 
   return (
     <>
@@ -217,7 +217,7 @@ const CabTypeForm = ({ open, handleClose, sliceName, title, initialValuesFun, on
                   <Button color="error" onClick={handleClose}>
                     Cancel
                   </Button>
-                  <Button variant="contained" type="submit" disabled={isSubmitting}>
+                  <Button variant="contained" type="submit" disabled={!formik.dirty || formik.isSubmitting}>
                     {isCreating ? 'Add' : 'Save'}
                   </Button>
                 </DialogActions>

@@ -209,7 +209,7 @@ export default function PermissionTable({ existedPermissions = {}, parentFunctio
 
   return (
     <>
-      <MainCard content={false} title={`Assign Permission to Roles :: ${Object.keys(existedPermissions).length === 0 ? 'Add' : 'Edit'}`}>
+      <MainCard content={false} title={`Assign Permission to Roles : ${Object.keys(existedPermissions).length === 0 ? 'Add' : 'Edit'}`}>
         {/* table */}
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
