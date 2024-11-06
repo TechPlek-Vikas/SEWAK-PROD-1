@@ -97,7 +97,7 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
       // state: basicInfo.state || '',
       // address: basicInfo.address || '',
       // files: null,
-      userType: 6
+      userType: 2
     },
     validationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
@@ -110,7 +110,7 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
         formData.append('userPassword', values.password);
         formData.append('contactNumber', values.contactNumber);
         formData.append('alternateContactNumber', values.alternateContactNumber);
-        formData.append('userType', 6);
+        formData.append('userType', 2);
         // formData.append('pinCode', values.pinCode);
         // formData.append('city', values.city);
         // formData.append('state', values.state);
