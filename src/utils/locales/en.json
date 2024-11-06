@@ -45,5 +45,7 @@
   "invoice setting": "Invoice Setting",
   "list": "List",
   "trips": "Trips",
-  "cab type": "Cab Type"
+  "cab type": "Cab Type",
+  "view-driver-rate":"View Driver Rate",
+  "view-vendor-rate":"View Vendor Rate"
 }

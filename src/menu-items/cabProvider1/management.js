@@ -117,6 +117,12 @@ const management = {
           type: 'item',
           url: '/management/vendor/add-vendor-rate',
           // icon: icons.add
+        },
+        {
+          id: 'view-vendor-rate',
+          title: <FormattedMessage id="view-vendor-rate" />,
+          type: 'item',
+          url: '/management/vendor/view-vendor-rate'
         }
       ]
     },
@@ -142,6 +148,12 @@ const management = {
           type: 'item',
           url: '/management/driver/add-driver-rate',
           // icon: icons.add
+        },
+        {
+          id: 'view-driver-rate',
+          title: <FormattedMessage id="view-driver-rate" />,
+          type: 'item',
+          url: '/management/driver/view-driver-rate'
         }
       ]
     },
