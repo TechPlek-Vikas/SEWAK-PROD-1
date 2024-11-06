@@ -4,7 +4,7 @@ export function getMergeResult(data, zone_zoneType, vehicleType) {
   // Create a map from zone_zoneType for quick lookup
   let zoneMap = new Map();
   zone_zoneType.forEach((zone) => {
-    zoneMap.set(zone.zoneName.replaceAll(/\s+/g, '').toLowerCase(), {
+    zoneMap.set(zone.zoneName.replaceAll(/\s+/g, '')?.toLowerCase(), {
       id: zone._id,
       zoneType: zone.zoneType.map((type) => ({
         id: type._id,
@@ -16,7 +16,7 @@ export function getMergeResult(data, zone_zoneType, vehicleType) {
   // Create a map from vehicleType for quick lookup
   let vehicleMap = new Map();
   vehicleType.forEach((vehicle) => {
-    vehicleMap.set(vehicle.vehicleTypeName.replaceAll(/\s+/g, '').toLowerCase(), vehicle);
+    vehicleMap.set(vehicle.vehicleTypeName.replaceAll(/\s+/g, '')?.toLowerCase(), vehicle);
   });
 
   data.forEach((val) => {
@@ -28,7 +28,7 @@ export function getMergeResult(data, zone_zoneType, vehicleType) {
     let vehicleTypeArray = [];
 
     // Get the zone data from the map
-    let zoneData = zoneMap.get(obj.zoneName.replaceAll(/\s+/g, '').toLowerCase());
+    let zoneData = zoneMap.get(obj.zoneName.replaceAll(/\s+/g, '')?.toLowerCase());
     if (zoneData) {
       zoneNameArray.push({ id: zoneData.id, name: obj.zoneName });
       zoneTypeArray.push(...zoneData.zoneType);
@@ -36,7 +36,7 @@ export function getMergeResult(data, zone_zoneType, vehicleType) {
 
     // Check if vehicleTypeName exists and is a string
     if (typeof obj.vehicleType === 'string') {
-      let vehicleData = vehicleMap.get(obj.vehicleType.replaceAll(/\s+/g, '').toLowerCase());
+      let vehicleData = vehicleMap.get(obj.vehicleType.replaceAll(/\s+/g, '')?.toLowerCase());
       if (vehicleData) {
         vehicleTypeArray.push(vehicleData);
       }
@@ -48,7 +48,7 @@ export function getMergeResult(data, zone_zoneType, vehicleType) {
     // Handle zoneTypeArray based on matching with zoneType in main data
     if (zoneTypeArray.length > 0) {
       // Find matches based on zoneType in the main data
-      let matchedZoneTypes = zoneTypeArray.filter((type) => type.zoneTypeName.toLowerCase() === obj.zoneType.toLowerCase());
+      let matchedZoneTypes = zoneTypeArray.filter((type) => type.zoneTypeName?.toLowerCase() === obj.zoneType?.toLowerCase());
 
       // If there's exactly one match, set zoneTypeArray to that match
       if (matchedZoneTypes.length === 1) {

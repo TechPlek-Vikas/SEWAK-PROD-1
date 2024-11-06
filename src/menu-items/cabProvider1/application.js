@@ -71,8 +71,8 @@ const application = {
           // icon: icons.view
         },
         {
-          id: 'upload',
-          title: <FormattedMessage id="upload" />,
+          id: 'create',
+          title: <FormattedMessage id="create" />,
           type: 'item',
           url: '/apps/invoices/create',
           // icon: icons.upload
