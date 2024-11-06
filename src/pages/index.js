@@ -13,7 +13,7 @@ import { fetchDashboardData } from 'store/slice/cabProvidor/dashboardSlice';
 import { fetchAllRoles } from 'store/slice/cabProvidor/roleSlice';
 
 import HoverSocialCard from 'components/cards/statistics/HoverSocialCard';
-import ReactTable from 'components/tables/reactTable1/ReactTable';
+import ReactTable, { TableNoDataMessage } from 'components/tables/reactTable1/ReactTable';
 import { Gps } from 'iconsax-react';
 import { useSelector } from 'store';
 
@@ -216,7 +216,11 @@ const Dashboard = () => {
         </Grid>
 
         <MainCard title="Company Wise Recent Earnings">
-          <ReactTable columns={columns} data={companyWiseEarningsData} hideHeader />
+          {companyWiseEarningsData?.length > 0 ? (
+            <ReactTable columns={columns} data={companyWiseEarningsData} hideHeader />
+          ) : (
+            <TableNoDataMessage text="Company Wise Recent Earnings Not Found" />
+          )}
         </MainCard>
       </Stack>
     </>
