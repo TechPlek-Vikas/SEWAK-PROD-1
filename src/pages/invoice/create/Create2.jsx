@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router';
+import { redirect, useNavigate } from 'react-router';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -65,6 +65,7 @@ import { formatDateUsingMoment } from 'utils/helper';
 import axios from 'utils/axios';
 import { getApiResponse } from 'utils/axiosHelper';
 import _ from 'lodash'; // For debouncing
+import useAuth from 'hooks/useAuth';
 
 export const TAX_TYPE = {
   INDIVIDUAL: 'Individual',
@@ -122,26 +123,29 @@ const item = {
   amount: 0
 };
 
-const getInitialValues = (data) => {
+const getInitialValues = (data, user, userSpecificData) => {
   console.log('data', data);
+  console.log('user', user);
+  console.log('userSpecificData', userSpecificData);
+  console.log('vie = ', user?.userEmail);
 
   const result = {
     id: 120,
     invoice_id: Date.now(),
-    status: '',
+    status: 'Unpaid' || '',
     date: new Date(), // For Invoice Date
     due_date: null, // For Invoice Due Date
     start_date: null, // For Start Date
     end_date: null, // For End Date
     cashierInfo: {
-      address: '3488 Arbutus Drive',
-      city: 'Miami',
-      state: 'FL',
-      postal_code: '33012',
-      GSTIN: '32JKLMN9101P2Q6',
-      company_name: 'Ritika Yohannan',
-      PAN: 'JKLMN9101P',
-      company_email: 'rtyhn65@gmail.com'
+      address: user?.address || '',
+      city: user?.city || '',
+      state: user?.state || '',
+      postal_code: user?.pinCode || '',
+      GSTIN: userSpecificData?.GSTIN || '',
+      company_name: userSpecificData?.cabProviderLegalName || '',
+      PAN: userSpecificData?.PAN || '',
+      company_email: user?.userEmail || ''
     },
     customerInfo: {
       address: '',
@@ -155,10 +159,10 @@ const getInitialValues = (data) => {
     },
     invoiceData: [item],
     bank_details: {
-      accountHolderName: 'John Doe',
-      accountNumber: '123456789012',
-      IFSCCode: 'SBIN0001234',
-      bankName: 'State Bank of India'
+      accountHolderName: userSpecificData?.cabProviderLegalName || '',
+      accountNumber: userSpecificData?.workMobileNumber || '',
+      IFSCCode: userSpecificData?.IFSC_code || '',
+      bankName: userSpecificData?.branchName || ''
     },
 
     subTotal: 0,
@@ -181,6 +185,8 @@ const getInitialValues = (data) => {
 };
 
 const getDiscountLabel = (val) => {
+  if (!val) return;
+
   const { by, currency = '₹' } = val;
   return by === DISCOUNT_BY.PERCENTAGE
     ? `Discount (%)` // Use percentage symbol for percentage discounts
@@ -199,11 +205,13 @@ const optionsForParticularType = [
   { value: PARTICULAR_TYPE.ZONE_TYPE, label: 'Zone Type' }
 ];
 
-const Create1 = () => {
+const Create2 = () => {
   console.log('Invoice Create2.jsx');
 
   const theme = useTheme();
   const navigation = useNavigate();
+
+  const { user, userSpecificData } = useAuth();
 
   const { isCustomerOpen, countries, country, lists, isOpen } = useSelector((state) => state.invoice);
   const [settings, setSettings] = useState({});
@@ -217,56 +225,16 @@ const Create1 = () => {
   const [nextNumber, setNextNumber] = useState('000001');
   const [invoiceId, setInvoiceId] = useState(`${prefix}${nextNumber}`);
   const [isBankDetailsEditing, setIsBankDetailsEditing] = useState(false);
-  const [formikInitialValues, setFormikInitialValues] = useState(getInitialValues(settings)); // NEW
+  const [formikInitialValues, setFormikInitialValues] = useState(getInitialValues(settings, user, userSpecificData)); // NEW
   const [loading, setLoading] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState(true); // Start with the dialog open
-  const [showCreatePage, setShowCreatePage] = useState(false); // Track if the create page should be visible
+  // const [showCreatePage, setShowCreatePage] = useState(false); // Track if the create page should be visible
+  const [showCreatePage, setShowCreatePage] = useState(true); // true because don't want to show popoup for settings
   const [loadingTable, setLoadingTable] = useState(true); // New state for table loading
   const [particularType, setParticularType] = useState(0);
   const [groupTax, setGroupTax] = useState(0);
   const [groupDiscount, setGroupDiscount] = useState(0);
-
-  useEffect(() => {
-    console.log('useEffect of invoice create');
-    console.log(dialogOpen);
-
-    async function fetchSettings() {
-      // TODO : Get settings from API
-      try {
-        console.log('Api call for get settings (At Invoice Creation)');
-        // await new Promise((resolve) => setTimeout(resolve, 3000));
-
-        const cabProviderId = JSON.parse(localStorage.getItem('userInformation'))?.userId || '';
-        const url = `/invoice/settings/list`;
-        const config = {
-          params: {
-            cabProviderId
-          }
-        };
-
-        const response = await getApiResponse(url, config);
-        console.log(`🚀 ~ response:`, response);
-
-        if (response.success) {
-          const { invoiceSetting } = response.data;
-          console.log(invoiceSetting);
-          setSettings(invoiceSetting);
-          setLoading(false);
-          console.log('Api call done .......');
-        }
-
-        console.log('Api call done get settings ........');
-        // setSettings(SETTINGS);
-      } catch (error) {
-        console.log('Error fetching settings: (Invoice Creation)', error);
-      }
-    }
-
-    if (!dialogOpen) {
-      fetchSettings();
-    }
-  }, [dialogOpen]);
 
   const handleFormikSubmit = async (values, { resetForm, setSubmitting }) => {
     try {
@@ -301,7 +269,7 @@ const Create1 = () => {
         }
       };
 
-      alert(JSON.stringify(payload, null, 2));
+      // alert(JSON.stringify(payload, null, 2));
       console.log('payload', payload);
 
       const response = await axios.post('/invoice/create', payload);
@@ -337,6 +305,71 @@ const Create1 = () => {
   });
 
   const { handleBlur, errors, handleChange, handleSubmit, values, isValid, setFieldValue, touched } = formik;
+
+  useEffect(() => {
+    console.log('user', user);
+    console.log('userSpecificData', userSpecificData);
+
+    console.log('address', user?.address);
+
+    formik.setFieldValue('cashierInfo.address', 'eee');
+  }, []);
+
+  useEffect(() => {
+    console.log('useEffect of invoice create');
+    console.log(dialogOpen);
+
+    async function fetchSettings() {
+      // TODO : Get settings from API
+      try {
+        console.log('Api call for get settings (At Invoice Creation)');
+        // await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        const cabProviderId = JSON.parse(localStorage.getItem('userInformation'))?.userId || '';
+        const url = `/invoice/settings/list`;
+        const config = {
+          params: {
+            cabProviderId
+          }
+        };
+
+        const response = await getApiResponse(url, config);
+        console.log(`🚀 ~ response:`, response);
+
+        if (response.success) {
+          if (!response.data) {
+            alert('Invoice Settings Not Found');
+            navigation('/settings/invoice', {
+              replace: true
+            });
+            return;
+          }
+          const { invoiceSetting } = response.data;
+
+          console.log(invoiceSetting);
+          setSettings(invoiceSetting);
+
+          setPrefix(invoiceSetting?.invoice?.prefix + '-' || 'INV-');
+          setNextNumber(String(invoiceSetting?.invoice?.invoiceNumber) || '000001');
+          setInvoiceId(invoiceSetting?.invoice?.prefix + '-' + String(invoiceSetting?.invoice?.invoiceNumber));
+
+          setLoading(false);
+          console.log('Api call done .......');
+        }
+
+        console.log('Api call done get settings ........');
+        // setSettings(SETTINGS);
+      } catch (error) {
+        console.log('Error fetching settings: (Invoice Creation)', error);
+      }
+    }
+
+    fetchSettings();
+
+    // if (!dialogOpen) {
+    //   fetchSettings();
+    // }
+  }, []);
 
   //   setCashierValues(formik.values?.cashierInfo || {});
 
@@ -415,15 +448,27 @@ const Create1 = () => {
   }, []);
 
   // Update Formik initialValues manually based on settings
+  // useEffect(() => {
+  //   if (!dialogOpen) {
+  //     setLoadingTable(true); // Set loading to true while waiting for initial values
+  //     console.log('user', user);
+  //     console.log('userSpecificData', userSpecificData);
+
+  //     setFormikInitialValues(getInitialValues(settings, user, userSpecificData));
+
+  //     setLoadingTable(false); // Set loading to false when initial values are ready
+  //   }
+  // }, [settings, user, userSpecificData, dialogOpen]);
+
   useEffect(() => {
-    if (!dialogOpen) {
-      setLoadingTable(true); // Set loading to true while waiting for initial values
+    setLoadingTable(true); // Set loading to true while waiting for initial values
+    console.log('user', user);
+    console.log('userSpecificData', userSpecificData);
 
-      setFormikInitialValues(getInitialValues(settings));
+    setFormikInitialValues(getInitialValues(settings, user, userSpecificData));
 
-      setLoadingTable(false); // Set loading to false when initial values are ready
-    }
-  }, [settings]);
+    setLoadingTable(false); // Set loading to false when initial values are ready
+  }, [settings, user, userSpecificData]);
 
   console.log('loadingTable = ', loadingTable);
 
@@ -549,13 +594,13 @@ const Create1 = () => {
 
   return (
     <>
-      {dialogOpen && (
+      {/* {dialogOpen && (
         <>
           <Dialog open={dialogOpen} maxWidth="sm" fullWidth keepMounted scroll="paper">
             <InvoiceSetting redirect="/apps/invoices/create" onClose={handleDialogSave} />
           </Dialog>
         </>
-      )}
+      )} */}
 
       {showCreatePage && (
         <MainCard>
@@ -563,131 +608,135 @@ const Create1 = () => {
             <Form onSubmit={formik.handleSubmit} noValidate>
               <Grid container spacing={2}>
                 {/* Invoice Id */}
-                <Grid item xs={12} sm={6} md={3}>
-                  <Stack spacing={1}>
-                    <InputLabel>Invoice Id</InputLabel>
-                    <FormControl sx={{ width: '100%' }}>
-                      <TextField
-                        required
-                        name="invoice_id"
-                        id="invoice_id"
-                        value={invoiceId} // Controlled value
-                        onChange={handleInvoiceIdChange}
-                        InputProps={{
-                          readOnly: selectedOption === 'auto', // Editable only if 'manual' is selected
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton onClick={handleSettingClick} size="small">
-                                <Setting color="rgb(91,107,121)" />
-                              </IconButton>
-                            </InputAdornment>
-                          )
-                        }}
-                        sx={{
-                          borderColor: isEditable ? 'primary.main' : 'default',
-                          '& .MuiOutlinedInput-root': {
-                            '& input': {
-                              padding: '8px'
-                            },
-                            '& fieldset': {
-                              borderColor: isEditable ? 'primary.main' : 'default'
-                            },
-                            '&:hover fieldset': {
-                              borderColor: isEditable ? 'primary.main' : 'default'
-                            },
-                            '&.Mui-focused fieldset': {
-                              borderColor: 'primary.main'
-                            }
+                <Grid item xs={12}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={3}>
+                      <Stack spacing={1}>
+                        <InputLabel>Invoice Id</InputLabel>
+                        <FormControl sx={{ width: '100%' }}>
+                          <TextField
+                            required
+                            name="invoice_id"
+                            id="invoice_id"
+                            value={invoiceId} // Controlled value
+                            onChange={handleInvoiceIdChange}
+                            InputProps={{
+                              readOnly: selectedOption === 'auto', // Editable only if 'manual' is selected
+                              endAdornment: (
+                                <InputAdornment position="end">
+                                  <IconButton onClick={handleSettingClick} size="small">
+                                    <Setting color="rgb(91,107,121)" />
+                                  </IconButton>
+                                </InputAdornment>
+                              )
+                            }}
+                            sx={{
+                              borderColor: isEditable ? 'primary.main' : 'default',
+                              '& .MuiOutlinedInput-root': {
+                                '& input': {
+                                  padding: '8px'
+                                },
+                                '& fieldset': {
+                                  borderColor: isEditable ? 'primary.main' : 'default'
+                                },
+                                '&:hover fieldset': {
+                                  borderColor: isEditable ? 'primary.main' : 'default'
+                                },
+                                '&.Mui-focused fieldset': {
+                                  borderColor: 'primary.main'
+                                }
+                              }
+                            }}
+                          />
+                        </FormControl>
+                      </Stack>
+
+                      {/* Dialog for pop-up (Invoice Id)*/}
+                      <Dialog
+                        open={openDialog}
+                        onClose={handleCloseDialog}
+                        maxWidth="sm"
+                        fullWidth
+                        PaperProps={{
+                          style: {
+                            maxHeight: '80vh',
+                            minHeight: '40vh',
+                            width: '600px',
+                            maxWidth: '90%'
                           }
                         }}
-                      />
-                    </FormControl>
-                  </Stack>
-
-                  {/* Dialog for pop-up (Invoice Id)*/}
-                  <Dialog
-                    open={openDialog}
-                    onClose={handleCloseDialog}
-                    maxWidth="sm"
-                    fullWidth
-                    PaperProps={{
-                      style: {
-                        maxHeight: '80vh',
-                        minHeight: '40vh',
-                        width: '600px',
-                        maxWidth: '90%'
-                      }
-                    }}
-                  >
-                    <DialogTitle sx={{ fontWeight: 'bold' }}>Configure Invoice Number Preferences</DialogTitle>
-                    <DialogContent>
-                      <Typography variant="subtitle2" gutterBottom>
-                        Are you sure about changing this setting?
-                      </Typography>
-                      <RadioGroup value={selectedOption} onChange={handleOptionChange}>
-                        <FormControlLabel
-                          value="auto"
-                          control={<Radio />}
-                          label="Continue auto-generating invoice numbers"
-                          sx={{
-                            backgroundColor: selectedOption === 'auto' ? '#e3f2fd' : 'transparent',
-                            borderRadius: '8px',
-                            padding: '8px',
-                            transition: 'background-color 0.3s'
-                          }}
-                        />
-                        {selectedOption === 'auto' && (
-                          <div
-                            style={{
-                              display: 'flex',
-                              gap: '16px',
-                              marginTop: '8px'
-                            }}
-                          >
-                            <TextField
-                              label="Prefix"
-                              value={prefix}
-                              variant="standard"
-                              onChange={(e) => setPrefix(e.target.value)}
-                              fullWidth
-                              margin="dense"
+                      >
+                        <DialogTitle sx={{ fontWeight: 'bold' }}>Configure Invoice Number Preferences</DialogTitle>
+                        <DialogContent>
+                          <Typography variant="subtitle2" gutterBottom>
+                            Are you sure about changing this setting?
+                          </Typography>
+                          <RadioGroup value={selectedOption} onChange={handleOptionChange}>
+                            <FormControlLabel
+                              value="auto"
+                              control={<Radio />}
+                              label="Continue auto-generating invoice numbers"
+                              sx={{
+                                backgroundColor: selectedOption === 'auto' ? '#e3f2fd' : 'transparent',
+                                borderRadius: '8px',
+                                padding: '8px',
+                                transition: 'background-color 0.3s'
+                              }}
                             />
-                            <TextField
-                              label="Next Number"
-                              value={nextNumber}
-                              variant="standard"
-                              onChange={(e) => setNextNumber(e.target.value)}
-                              fullWidth
-                              margin="dense"
+                            {selectedOption === 'auto' && (
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  gap: '16px',
+                                  marginTop: '8px'
+                                }}
+                              >
+                                <TextField
+                                  label="Prefix"
+                                  value={prefix}
+                                  variant="standard"
+                                  onChange={(e) => setPrefix(e.target.value)}
+                                  fullWidth
+                                  margin="dense"
+                                />
+                                <TextField
+                                  label="Next Number"
+                                  value={nextNumber}
+                                  variant="standard"
+                                  onChange={(e) => setNextNumber(e.target.value)}
+                                  fullWidth
+                                  margin="dense"
+                                />
+                              </div>
+                            )}
+                            <FormControlLabel
+                              value="manual"
+                              control={<Radio />}
+                              label="Enter invoice numbers manually"
+                              sx={{
+                                backgroundColor: selectedOption === 'manual' ? '#e3f2fd' : 'transparent',
+                                borderRadius: '8px',
+                                padding: '8px',
+                                transition: 'background-color 0.3s'
+                              }}
                             />
-                          </div>
-                        )}
-                        <FormControlLabel
-                          value="manual"
-                          control={<Radio />}
-                          label="Enter invoice numbers manually"
-                          sx={{
-                            backgroundColor: selectedOption === 'manual' ? '#e3f2fd' : 'transparent',
-                            borderRadius: '8px',
-                            padding: '8px',
-                            transition: 'background-color 0.3s'
-                          }}
-                        />
-                      </RadioGroup>
-                    </DialogContent>
-                    <DialogActions>
-                      <Button color="primary" variant="contained" onClick={handleSave}>
-                        Save
-                      </Button>
-                      <Button onClick={handleCloseDialog} color="primary">
-                        Close
-                      </Button>
-                    </DialogActions>
-                  </Dialog>
+                          </RadioGroup>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button color="primary" variant="contained" onClick={handleSave}>
+                            Save
+                          </Button>
+                          <Button onClick={handleCloseDialog} color="primary">
+                            Close
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                    </Grid>
+                  </Grid>
                 </Grid>
 
                 {/* Status */}
-                <Grid item xs={12} sm={6} md={3}>
+                {/* <Grid item xs={12} sm={6} md={3}>
                   <Stack spacing={1}>
                     <InputLabel>Status</InputLabel>
                     <FormControl sx={{ width: '100%' }}>
@@ -700,7 +749,6 @@ const Create1 = () => {
                             return <Box sx={{ color: 'secondary.400' }}>Select status</Box>;
                           }
                           return selected;
-                          // return selected.join(', ');
                         }}
                         onChange={handleChange}
                         error={Boolean(errors.status && touched.status)}
@@ -720,97 +768,101 @@ const Create1 = () => {
                     </FormControl>
                   </Stack>
                   {touched.status && errors.status && <FormHelperText error={true}>{errors.status}</FormHelperText>}
-                </Grid>
+                </Grid> */}
 
-                {/* Invoice Date */}
-                <Grid item xs={12} sm={6} md={3}>
-                  <Stack spacing={1}>
-                    <InputLabel>Invoice Date</InputLabel>
-                    <FormControl sx={{ width: '100%' }} error={Boolean(touched.date && errors.date)}>
-                      <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <DatePicker
-                          format="dd/MM/yyyy"
-                          value={values.date}
-                          onChange={(newValue) => setFieldValue('date', newValue)}
-                          sx={{
-                            '& .MuiInputBase-input': {
-                              padding: '8px'
-                            }
-                          }}
-                        />
-                      </LocalizationProvider>
-                    </FormControl>
-                  </Stack>
-                  {touched.date && errors.date && <FormHelperText error={true}>{errors.date}</FormHelperText>}
-                </Grid>
+                <Grid item xs={12}>
+                  <Grid container spacing={2}>
+                    {/* Invoice Date */}
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Stack spacing={1}>
+                        <InputLabel>Invoice Date</InputLabel>
+                        <FormControl sx={{ width: '100%' }} error={Boolean(touched.date && errors.date)}>
+                          <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <DatePicker
+                              format="dd/MM/yyyy"
+                              value={values.date}
+                              onChange={(newValue) => setFieldValue('date', newValue)}
+                              sx={{
+                                '& .MuiInputBase-input': {
+                                  padding: '8px'
+                                }
+                              }}
+                            />
+                          </LocalizationProvider>
+                        </FormControl>
+                      </Stack>
+                      {touched.date && errors.date && <FormHelperText error={true}>{errors.date}</FormHelperText>}
+                    </Grid>
 
-                {/* Invoice Due Date */}
-                <Grid item xs={12} sm={6} md={3}>
-                  <Stack spacing={1}>
-                    <InputLabel>Invoice Due Date</InputLabel>
-                    <FormControl sx={{ width: '100%' }} error={Boolean(touched.due_date && errors.due_date)}>
-                      <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <DatePicker
-                          format="dd/MM/yyyy"
-                          value={values.due_date}
-                          onChange={(newValue) => setFieldValue('due_date', newValue)}
-                          sx={{
-                            '& .MuiInputBase-input': {
-                              padding: '8px'
-                            }
-                          }}
-                        />
-                      </LocalizationProvider>
-                    </FormControl>
-                  </Stack>
-                  {touched.due_date && errors.due_date && <FormHelperText error={true}>{errors.due_date}</FormHelperText>}
-                </Grid>
+                    {/* Invoice Due Date */}
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Stack spacing={1}>
+                        <InputLabel>Invoice Due Date</InputLabel>
+                        <FormControl sx={{ width: '100%' }} error={Boolean(touched.due_date && errors.due_date)}>
+                          <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <DatePicker
+                              format="dd/MM/yyyy"
+                              value={values.due_date}
+                              onChange={(newValue) => setFieldValue('due_date', newValue)}
+                              sx={{
+                                '& .MuiInputBase-input': {
+                                  padding: '8px'
+                                }
+                              }}
+                            />
+                          </LocalizationProvider>
+                        </FormControl>
+                      </Stack>
+                      {touched.due_date && errors.due_date && <FormHelperText error={true}>{errors.due_date}</FormHelperText>}
+                    </Grid>
 
-                <Grid item xs={12} sm={6} md={3}></Grid>
-                <Grid item xs={12} sm={6} md={3}></Grid>
+                    {/* <Grid item xs={12} sm={6} md={3}></Grid>
+                <Grid item xs={12} sm={6} md={3}></Grid> */}
 
-                {/* Start Date */}
-                <Grid item xs={12} sm={6} md={3}>
-                  <Stack spacing={1}>
-                    <InputLabel>Start Date</InputLabel>
-                    <FormControl sx={{ width: '100%' }} error={Boolean(touched.start_date && errors.start_date)}>
-                      <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <DatePicker
-                          format="dd/MM/yyyy"
-                          value={values.start_date}
-                          onChange={(newValue) => setFieldValue('start_date', newValue)}
-                          sx={{
-                            '& .MuiInputBase-input': {
-                              padding: '8px'
-                            }
-                          }}
-                        />
-                      </LocalizationProvider>
-                    </FormControl>
-                  </Stack>
-                  {touched.start_date && errors.start_date && <FormHelperText error={true}>{errors.start_date}</FormHelperText>}
-                </Grid>
+                    {/* Service Start Date */}
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Stack spacing={1}>
+                        <InputLabel>Service Start Date</InputLabel>
+                        <FormControl sx={{ width: '100%' }} error={Boolean(touched.start_date && errors.start_date)}>
+                          <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <DatePicker
+                              format="dd/MM/yyyy"
+                              value={values.start_date}
+                              onChange={(newValue) => setFieldValue('start_date', newValue)}
+                              sx={{
+                                '& .MuiInputBase-input': {
+                                  padding: '8px'
+                                }
+                              }}
+                            />
+                          </LocalizationProvider>
+                        </FormControl>
+                      </Stack>
+                      {touched.start_date && errors.start_date && <FormHelperText error={true}>{errors.start_date}</FormHelperText>}
+                    </Grid>
 
-                {/* End Date */}
-                <Grid item xs={12} sm={6} md={3}>
-                  <Stack spacing={1}>
-                    <InputLabel>End Date</InputLabel>
-                    <FormControl sx={{ width: '100%' }} error={Boolean(touched.end_date && errors.end_date)}>
-                      <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <DatePicker
-                          format="dd/MM/yyyy"
-                          value={values.end_date}
-                          onChange={(newValue) => setFieldValue('end_date', newValue)}
-                          sx={{
-                            '& .MuiInputBase-input': {
-                              padding: '8px'
-                            }
-                          }}
-                        />
-                      </LocalizationProvider>
-                    </FormControl>
-                  </Stack>
-                  {touched.end_date && errors.end_date && <FormHelperText error={true}>{errors.end_date}</FormHelperText>}
+                    {/* Service End Date */}
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Stack spacing={1}>
+                        <InputLabel>Service End Date</InputLabel>
+                        <FormControl sx={{ width: '100%' }} error={Boolean(touched.end_date && errors.end_date)}>
+                          <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <DatePicker
+                              format="dd/MM/yyyy"
+                              value={values.end_date}
+                              onChange={(newValue) => setFieldValue('end_date', newValue)}
+                              sx={{
+                                '& .MuiInputBase-input': {
+                                  padding: '8px'
+                                }
+                              }}
+                            />
+                          </LocalizationProvider>
+                        </FormControl>
+                      </Stack>
+                      {touched.end_date && errors.end_date && <FormHelperText error={true}>{errors.end_date}</FormHelperText>}
+                    </Grid>
+                  </Grid>
                 </Grid>
 
                 {/* Bill by */}
@@ -827,7 +879,7 @@ const Create1 = () => {
                                   <Grid item xs={6}>
                                     <TextField
                                       label="Company Name"
-                                      value={formValues.company_name}
+                                      value={formValues.company_name || 'N/A'}
                                       name="company_name"
                                       onChange={handleChangeCashierDetails}
                                       fullWidth
@@ -841,7 +893,7 @@ const Create1 = () => {
                                   <Grid item xs={6}>
                                     <TextField
                                       label="Address"
-                                      value={formValues.address}
+                                      value={formValues.address || 'N/A'}
                                       name="address"
                                       onChange={handleChangeCashierDetails}
                                       fullWidth
@@ -856,7 +908,7 @@ const Create1 = () => {
                                   <Grid item xs={6}>
                                     <TextField
                                       label="City"
-                                      value={formValues.city}
+                                      value={formValues.city || 'N/A'}
                                       name="city"
                                       onChange={handleChangeCashierDetails}
                                       fullWidth
@@ -870,7 +922,7 @@ const Create1 = () => {
                                   <Grid item xs={6}>
                                     <TextField
                                       label="State"
-                                      value={formValues.state}
+                                      value={formValues.state || 'N/A'}
                                       name="state"
                                       onChange={handleChangeCashierDetails}
                                       fullWidth
@@ -885,7 +937,7 @@ const Create1 = () => {
                                   <Grid item xs={6}>
                                     <TextField
                                       label="Postal Code"
-                                      value={formValues.postal_code}
+                                      value={formValues.postal_code || 'N/A'}
                                       name="postal_code"
                                       onChange={handleChangeCashierDetails}
                                       fullWidth
@@ -899,7 +951,7 @@ const Create1 = () => {
                                   <Grid item xs={6}>
                                     <TextField
                                       label="GSTIN"
-                                      value={formValues.GSTIN}
+                                      value={formValues.GSTIN || 'N/A'}
                                       name="GSTIN"
                                       onChange={handleChangeCashierDetails}
                                       fullWidth
@@ -914,7 +966,7 @@ const Create1 = () => {
                                   <Grid item xs={6}>
                                     <TextField
                                       label="PAN"
-                                      value={formValues.PAN}
+                                      value={formValues.PAN || 'N/A'}
                                       name="PAN"
                                       onChange={handleChangeCashierDetails}
                                       fullWidth
@@ -929,15 +981,17 @@ const Create1 = () => {
                               </>
                             ) : (
                               <>
-                                <Typography variant="subtitle1">{formValues.company_name}</Typography>
+                                <Typography variant="subtitle1">{formValues.company_name || 'N/A'}</Typography>
                                 <Typography color="secondary">
-                                  {`${formValues.address}, ${formValues.city}, ${formValues.state}-${formValues.postal_code}`}
+                                  {`${formValues.address || 'N/A'}, ${formValues.city || 'N/A'}, ${formValues.state || 'N/A'}-${
+                                    formValues.postal_code || 'N/A'
+                                  }`}
                                 </Typography>
                                 <Typography color="secondary">
-                                  <strong>GSTIN:</strong> {formValues.GSTIN}
+                                  <strong>GSTIN:</strong> {formValues.GSTIN || 'N/A'}
                                 </Typography>
                                 <Typography color="secondary">
-                                  <strong>PAN:</strong> {formValues.PAN}
+                                  <strong>PAN:</strong> {formValues.PAN || 'N/A'}
                                 </Typography>
                               </>
                             )}
@@ -1596,7 +1650,7 @@ const Create1 = () => {
   );
 };
 
-export default Create1;
+export default Create2;
 
 const GenericPriceDisplay = ({ total, roundOff, prefix, variant }) => {
   return (
