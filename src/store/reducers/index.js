@@ -21,6 +21,7 @@ import { chatReducer } from './chat';
 import { invoiceReducer } from './invoice';
 import { rosterFileReducer } from 'store/slice/cabProvidor/rosterFileSlice';
 import { rosterDataReducer } from 'store/slice/cabProvidor/rosterDataSlice';
+import { dashboardReducer } from 'store/slice/cabProvidor/dashboardSlice';
 
 // ==============================|| COMBINE REDUCERS ||============================== //
 
@@ -43,7 +44,8 @@ const reducers = combineReducers({
   chat: chatReducer,
   invoice: invoiceReducer,
   rosterFile: rosterFileReducer,
-  rosterData: rosterDataReducer
+  rosterData: rosterDataReducer,
+  dashboard: dashboardReducer
 });
 
 export default reducers;

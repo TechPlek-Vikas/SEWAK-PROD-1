@@ -25,6 +25,7 @@ const MENU_ITEM = {
 };
 
 export const getMenuItems = (userType) => {
+  console.log(`🚀 ~ getMenuItems ~ userType:`, userType);
   return (
     MENU_ITEM[userType] || {
       items: []

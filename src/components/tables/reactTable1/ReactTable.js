@@ -14,7 +14,8 @@ function ReactTable({
   csvExport = false,
   search = false,
   buttonTitle,
-  extraComponent = null
+  extraComponent = null,
+  hideHeader = false
   // disableSortBy = false
 }) {
   const theme = useTheme();
@@ -62,20 +63,21 @@ function ReactTable({
   return (
     <>
       <Stack spacing={3}>
-        <Stack
-          direction={matchDownSM ? 'column' : 'row'}
-          spacing={1}
-          justifyContent="space-between"
-          alignItems="center"
-          sx={{ p: 3, pb: 0 }}
-        >
-          {search && (
-            <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
-          )}
-          <Stack direction={matchDownSM ? 'column' : 'row'} alignItems="center" spacing={2}>
-            {extraComponent}
+        {!hideHeader && (
+          <Stack
+            direction={matchDownSM ? 'column' : 'row'}
+            spacing={1}
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ p: 3, pb: 0 }}
+          >
+            {search && (
+              <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+            )}
+            <Stack direction={matchDownSM ? 'column' : 'row'} alignItems="center" spacing={2}>
+              {extraComponent}
 
-            {/* {!disableSortBy && (
+              {/* {!disableSortBy && (
               <SortingSelect
                 // sortBy={sortBy.id}
                 setSortBy={setSortBy}
@@ -83,20 +85,21 @@ function ReactTable({
               />
             )} */}
 
-            {location.pathname !== '/advance' && location.pathname !== '/advanceTypeList' && location.pathname !== '/roster-data' && (
-              <Button variant="contained" onClick={handleAdd} fullWidth size="small">
-                {buttonTitle}
-              </Button>
-            )}
+              {location.pathname !== '/advance' && location.pathname !== '/advanceTypeList' && location.pathname !== '/roster-data' && (
+                <Button variant="contained" onClick={handleAdd} fullWidth size="small">
+                  {buttonTitle}
+                </Button>
+              )}
 
-            {csvExport && (
-              <CSVExport
-                data={selectedFlatRows.length > 0 ? selectedFlatRows.map((d) => d.original) : data}
-                filename={'customer-list.csv'}
-              />
-            )}
+              {csvExport && (
+                <CSVExport
+                  data={selectedFlatRows.length > 0 ? selectedFlatRows.map((d) => d.original) : data}
+                  filename={'customer-list.csv'}
+                />
+              )}
+            </Stack>
           </Stack>
-        </Stack>
+        )}
 
         <Table {...getTableProps()}>
           <TableHead>
