@@ -28,22 +28,22 @@ const setting = {
       icon: icons.setting,
       children: [
         // Account
-        {
-          id: 'account-setting',
-          title: <FormattedMessage id="account setting" />,
-          type: 'item',
-          // icon: icons.account,
-          url: '/settings/account'
-        },
+        // {
+        //   id: 'account-setting',
+        //   title: <FormattedMessage id="account setting" />,
+        //   type: 'item',
+        //   // icon: icons.account,
+        //   url: '/settings/account'
+        // },
 
         // Roster
-        {
-          id: 'roster-setting',
-          title: <FormattedMessage id="roster setting" />,
-          type: 'item',
-          // icon: icons.samplePage,
-          url: '/settings/roster'
-        },
+        // {
+        //   id: 'roster-setting',
+        //   title: <FormattedMessage id="roster setting" />,
+        //   type: 'item',
+        //   // icon: icons.samplePage,
+        //   url: '/settings/roster'
+        // },
 
         // Invoice
         {

@@ -87,7 +87,10 @@ const CabTypeForm = ({ open, handleClose, sliceName, title, initialValuesFun, on
     fuelType: Yup.string()
       .required('Fuel Type is required')
       .nullable()
-      .oneOf(optionsFuelType.map((option) => option.id), 'Invalid Fuel Type selected'),
+      .oneOf(
+        optionsFuelType.map((option) => option.id),
+        'Invalid Fuel Type selected'
+      )
   });
 
   const formik = useFormik({
@@ -97,7 +100,7 @@ const CabTypeForm = ({ open, handleClose, sliceName, title, initialValuesFun, on
     onSubmit: formikHandleSubmit
   });
 
-  const { errors, touched, handleSubmit, handleBlur, getFieldProps, setFieldValue, values, dirty, initialValues } = formik;
+  const { errors, touched, handleSubmit, handleBlur, getFieldProps, setFieldValue, values, dirty, initialValues, handleChange } = formik;
 
   return (
     <>
@@ -145,7 +148,18 @@ const CabTypeForm = ({ open, handleClose, sliceName, title, initialValuesFun, on
                       <Stack spacing={1}>
                         <InputLabel>Capacity</InputLabel>
 
-                        <FormikTextField name="capacity" type="number" placeholder="Enter capacity" inputProps={{ min: 0 }} />
+                        <FormikTextField
+                          name="capacity"
+                          type="text"
+                          placeholder="Enter capacity"
+                          inputProps={{ min: 0 }}
+                          onChange={(event) => {
+                            const value = event.target.value;
+                            if (/^\d*$/.test(value)) {
+                              handleChange(event);
+                            }
+                          }}
+                        />
                       </Stack>
                     </Grid>
 

@@ -11,8 +11,41 @@ import SpecificInfo from 'sections/cabprovidor/userManagement/SpecificInfo';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { addSpecificUserDetails, addUserDetails, clearUserDetails, registerUser, reset } from 'store/slice/cabProvidor/userSlice';
 import axiosServices from 'utils/axios';
+import * as Yup from 'yup';
 
 const steps = ['Basic details', 'Specific details'];
+
+const basicInfoValidationSchema = Yup.object({
+  userName: Yup.string().required('User Name is required').min(3, 'User Name must be at least 3 characters'),
+  userEmail: Yup.string().email('Invalid email format').required('Email is required'),
+  userPassword: Yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
+  userConfirmPassword: Yup.string()
+    .required('Confirm Password is required')
+    .oneOf([Yup.ref('userPassword'), null], 'Passwords must match'),
+  contactNumber: Yup.string().matches(/^\d{10}$/, 'Contact Number must be a 10 digit number'),
+  alternateContactNumber: Yup.string()
+    .matches(/^\d{10}$/, 'Alternate Contact Number must be a 10 digit number')
+    .notRequired(),
+  address: Yup.string(),
+  // userType: Yup.string().required('User Type is required'),
+  pinCode: Yup.string(),
+  city: Yup.string(),
+  state: Yup.string()
+});
+
+const specificValidationSchema = Yup.object({
+  roleId: Yup.string().required('Role is required'), // Only roleId is required
+  bankName: Yup.string().nullable(),
+  branchName: Yup.string().nullable(),
+  accountNumber: Yup.string().nullable(),
+  accountHolderName: Yup.string().nullable(),
+  PAN: Yup.string().nullable(),
+  IFSC_code: Yup.string().nullable(),
+  bankAddress: Yup.string().nullable(),
+  officeChargeAmount: Yup.string().nullable(),
+  ESI_Number: Yup.string().nullable(),
+  PF_Number: Yup.string().nullable()
+});
 
 const SpecificInfoInitialValues = {
   [USERTYPE.iscabProvider]: {
@@ -58,7 +91,7 @@ const getInitialValuesForCreation = (step, userType) => {
         contactNumber: '',
         alternateContactNumber: '',
         address: '',
-        userType: '',
+        userType: 7,
         pinCode: '',
         city: '',
         state: '',
@@ -132,6 +165,17 @@ const AddUser = () => {
   const userType = useSelector((state) => state.auth.userType);
   const userID = useSelector((state) => state.users.userDetails?._id);
 
+  const setValidationSchema = () => {
+    switch (activeStep) {
+      case 0:
+        return basicInfoValidationSchema;
+      case 1:
+        return specificValidationSchema;
+      default:
+        return null;
+    }
+  };
+
   const handlePermission = useCallback((result) => {
     setPermission(result);
   }, []);
@@ -139,6 +183,7 @@ const AddUser = () => {
   const formik = useFormik({
     initialValues: getInitialValuesForCreation(activeStep, userType),
     enableReinitialize: true,
+    validationSchema: setValidationSchema(),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
         if (activeStep === 0) {
@@ -149,7 +194,7 @@ const AddUser = () => {
           formData.append('userPassword', values.userPassword);
           formData.append('contactNumber', values.contactNumber);
           formData.append('alternateContactNumber', values.alternateContactNumber);
-          formData.append('userType', Number(values.userType));
+          formData.append('userType', 7);
           formData.append('pinCode', values.pinCode);
           formData.append('city', values.city);
           formData.append('state', values.state);
@@ -230,8 +275,8 @@ const AddUser = () => {
         }
         // alert(JSON.stringify(values, null, 2));
       } catch (error) {
-        console.log("error",error);
-        
+        console.log('error', error);
+
         dispatch(
           openSnackbar({
             open: true,

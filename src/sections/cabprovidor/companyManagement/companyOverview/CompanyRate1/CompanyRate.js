@@ -244,7 +244,6 @@ const CompanyRate = ({ id, companyName }) => {
                                             sx={{ width: '150px' }}
                                             getOptionLabel={(option) => option['zoneTypeName']}
                                             saveValue="_id"
-                                            defaultValue={null}
                                             value={
                                               zoneTypeList?.find(
                                                 (item) => item['_id'] === getNestedComplexProperty(values, `rateData.${index}.zoneTypeID`)

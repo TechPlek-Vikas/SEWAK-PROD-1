@@ -41,8 +41,14 @@ const AuthResetPassword = ({ email }) => {
 
   const [level, setLevel] = useState();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleClickShowConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   const handleMouseDownPassword = (event) => {
@@ -178,11 +184,24 @@ const AuthResetPassword = ({ email }) => {
                     fullWidth
                     error={Boolean(touched.confirmPassword && errors.confirmPassword)}
                     id="confirm-password-reset"
-                    type="password"
+                    type={showConfirmPassword ? 'text' : 'password'}
                     value={values.confirmPassword}
                     name="confirmPassword"
                     onBlur={handleBlur}
                     onChange={handleChange}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowConfirmPassword} 
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                          color="secondary"
+                        >
+                          {showConfirmPassword ? <Eye /> : <EyeSlash />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
                     placeholder="Enter confirm password"
                   />
                   {touched.confirmPassword && errors.confirmPassword && (

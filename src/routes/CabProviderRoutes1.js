@@ -408,14 +408,14 @@ const CabProvidorRoutes = {
         {
           path: 'settings',
           children: [
-            {
-              path: 'account',
-              element: <UnderConstruction title="Account Settings" />
-            },
-            {
-              path: 'roster',
-              element: <UnderConstruction title="Roster Settings" />
-            },
+            // {
+            //   path: 'account',
+            //   element: <UnderConstruction title="Account Settings" />
+            // },
+            // {
+            //   path: 'roster',
+            //   element: <UnderConstruction title="Roster Settings" />
+            // },
             {
               path: 'invoice',
               element: <InvoiceSettings />

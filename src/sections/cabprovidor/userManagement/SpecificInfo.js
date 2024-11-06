@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Box, Grid, InputLabel, Stack, TextField } from '@mui/material';
+import { Box, FormHelperText, Grid, InputLabel, Stack, TextField } from '@mui/material';
 import FormikAutocomplete from 'components/autocomplete/AutoComplete';
 import MainCard from 'components/MainCard';
 import FormikTextField from 'components/textfield/TextField';
@@ -11,6 +11,7 @@ const SpecificInfo = ({ handlePermission }) => {
   const userType = useSelector((state) => state.auth.userType);
   // const userID = useSelector((state) => state.users.userDetails?._id);
   const roleOptions = useSelector((state) => state.roles.roles) || [];
+  const formik = useFormikContext();
 
   const { values, handleBlur, handleChange } = useFormikContext();
 
@@ -112,7 +113,10 @@ const SpecificInfo = ({ handlePermission }) => {
                         {option['role_name']}
                       </Box>
                     )}
+                    error={Boolean(formik.errors.roleId)}
+                    helperText={formik.errors.roleId}
                   />
+                  {Boolean(formik.errors.roleId) && <FormHelperText error>{formik.errors.roleId}</FormHelperText>}
                 </Stack>
               </MainCard>
             </Grid>

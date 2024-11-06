@@ -67,7 +67,7 @@ function AddBranch() {
   };
 
   const validationSchema = yup.object({
-    parentCompanyID: yup.string().required('Company Name is required'),//
+    parentCompanyID: yup.string().required('Company Name is required'), //
     companyBranchName: yup
       .string()
       .trim()
@@ -357,7 +357,12 @@ function AddBranch() {
                     id="mobile"
                     name="mobile"
                     value={branchData.mobile || formik.values.mobile}
-                    onChange={formik.handleChange}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      if (/^\d*$/.test(value)) {
+                        formik.handleChange(event);
+                      }
+                    }}
                     error={formik.touched.mobile && Boolean(formik.errors.mobile)}
                     helperText={formik.touched.mobile && formik.errors.mobile}
                   />
@@ -372,7 +377,12 @@ function AddBranch() {
                     id="landline"
                     name="landline"
                     value={branchData.landline || formik.values.landline}
-                    onChange={formik.handleChange}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      if (/^\d*$/.test(value)) {
+                        formik.handleChange(event);
+                      }
+                    }}
                     error={formik.touched.landline && Boolean(formik.errors.landline)}
                     helperText={formik.touched.landline && formik.errors.landline}
                   />
@@ -417,7 +427,12 @@ function AddBranch() {
                     id="postal_code"
                     name="postal_code"
                     value={branchData.postal_code || formik.values.postal_code}
-                    onChange={formik.handleChange}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      if (/^\d*$/.test(value)) {
+                        formik.handleChange(event);
+                      }
+                    }}
                     error={formik.touched.postal_code && Boolean(formik.errors.postal_code)}
                     helperText={formik.touched.postal_code && formik.errors.postal_code}
                   />
@@ -511,7 +526,12 @@ function AddBranch() {
                     type="number"
                     disabled={formik.values.MCDTax === 0 || formik.values.MCDTax === ''}
                     value={branchData.MCDAmount || formik.values.MCDAmount}
-                    onChange={formik.handleChange}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      if (/^\d*$/.test(value)) {
+                        formik.handleChange(event);
+                      }
+                    }}
                     error={formik.touched.MCDAmount && Boolean(formik.errors.MCDAmount)}
                     helperText={formik.touched.MCDAmount && formik.errors.MCDAmount}
                   />
@@ -555,7 +575,12 @@ function AddBranch() {
                     type="number"
                     disabled={formik.values.stateTax === 0 || formik.values.stateTax === ''}
                     value={branchData.stateTaxAmount || formik.values.stateTaxAmount}
-                    onChange={formik.handleChange}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      if (/^\d*$/.test(value)) {
+                        formik.handleChange(event);
+                      }
+                    }}
                     error={formik.touched.stateTaxAmount && Boolean(formik.errors.stateTaxAmount)}
                     helperText={formik.touched.stateTaxAmount && formik.errors.stateTaxAmount}
                   />
@@ -598,7 +623,7 @@ function AddBranch() {
                 variant="contained"
                 loading={loading}
                 loadingPosition="start"
-                startIcon={<Save2 />} 
+                startIcon={<Save2 />}
                 sx={{ my: 3, ml: 1 }}
                 type="submit"
                 disabled={loading} // Disable button while loading
