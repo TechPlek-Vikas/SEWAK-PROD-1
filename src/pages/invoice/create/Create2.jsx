@@ -243,6 +243,21 @@ const Create2 = () => {
       const cabProviderId = JSON.parse(localStorage.getItem('userInformation'))?.userId || '';
       const format = 'YYYY-MM-DD';
 
+      if (!values?.customerInfo?._id) {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Please select company',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            close: true
+          })
+        );
+        return;
+      }
+
       const payload = {
         data: {
           companyId: values?.customerInfo?._id || '',
