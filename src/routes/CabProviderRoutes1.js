@@ -19,6 +19,8 @@ import MapRosterFileTest from 'pages/apps/test/CreateRosterTemplateDrawer.js';
 import ViewRosterTest from 'pages/apps/test/List';
 import ViewRosterTest1 from 'pages/apps/test/ViewRoster';
 import AddRosterFileForm from 'pages/apps/test/components/AddRosterFileForm';
+import DriverRate from 'pages/management/driver/driverRate/DriverRate';
+import VendorRatelisting from 'pages/management/vendor/vendorRate/VendorRatelisting';
 
 const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/error/404')));
 const MaintenanceError500 = Loadable(lazy(() => import('pages/maintenance/error/500')));
@@ -315,6 +317,10 @@ const CabProvidorRoutes = {
                   //   element: <ProtectedRoute element={VendorOverview} moduleName={MODULE.VENDOR} permission={PERMISSIONS.READ} />
                 },
                 {
+                  path: 'view-vendor-rate',
+                  element: <VendorRatelisting />
+                },
+                {
                   path: 'add-vendor-rate',
                   element: <AddCabRateVendor />
                 }
@@ -337,6 +343,10 @@ const CabProvidorRoutes = {
                   path: 'overview/:id',
                   element: <DriverOverview />
                   //   element: <ProtectedRoute element={DriverOverview} moduleName={MODULE.DRIVER} permission={PERMISSIONS.READ} />
+                },
+                {
+                  path: 'view-driver-rate',
+                  element: <DriverRate />
                 },
                 {
                   path: 'add-driver-rate',
