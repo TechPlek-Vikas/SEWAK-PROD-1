@@ -35,9 +35,9 @@ import { registerUser } from 'store/slice/cabProvidor/userSlice';
 
 const validationSchema = yup.object({
   files: yup.mixed().required('File is required'),
-  userName: yup.string().required('Username is required').min(3, 'Username must be at least 3 characters'),//
-  userEmail: yup.string().email('Invalid email address').required('Email is required'),//
-  password: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'),//
+  userName: yup.string().required('Username is required').min(3, 'Username must be at least 3 characters'), //
+  userEmail: yup.string().email('Invalid email address').required('Email is required'), //
+  password: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'), //
   confirmpassword: yup
     .string()
     .required('Confirm Password is required')
@@ -57,7 +57,7 @@ const validationSchema = yup.object({
   // city: yup.string().required('City is required').min(2, 'City must be at least 2 characters'),
   // state: yup.string().required('State is required').min(2, 'State must be at least 2 characters'),
   // address: yup.string().required('Address is required').min(10, 'Address must be at least 10 characters'),
-  userType: yup.string().required('User Type is required')//
+  userType: yup.string().required('User Type is required') //
 });
 
 //Cab Provider adding vendor user
@@ -294,10 +294,15 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
               <TextField
                 id="contactNumber"
                 name="contactNumber"
-                type="number"
+                type="text"
                 placeholder="Enter Contact Number"
                 value={formik.values.contactNumber}
-                onChange={formik.handleChange}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  if (/^\d*$/.test(value)) {
+                    formik.handleChange(event);
+                  }
+                }}
                 error={formik.touched.contactNumber && Boolean(formik.errors.contactNumber)}
                 helperText={formik.touched.contactNumber && formik.errors.contactNumber}
                 fullWidth
@@ -310,10 +315,15 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
               <InputLabel>Alternate Contact Number</InputLabel>
               <TextField
                 name="alternateContactNumber"
-                type="number"
+                type="text"
                 placeholder="Enter Contact Number"
                 value={formik.values.alternateContactNumber}
-                onChange={formik.handleChange}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  if (/^\d*$/.test(value)) {
+                    formik.handleChange(event);
+                  }
+                }}
                 error={formik.touched.alternateContactNumber && Boolean(formik.errors.alternateContactNumber)}
                 helperText={formik.touched.alternateContactNumber && formik.errors.alternateContactNumber}
                 fullWidth
@@ -331,10 +341,16 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
               <InputLabel>Pin Code</InputLabel>
               <TextField
                 name="pinCode"
-                type="number"
+                type="text"
                 placeholder="Enter Pin Code"
                 value={formik.values.pinCode}
-                onChange={formik.handleChange}
+                onChange={(event) => {
+                  // Optional: Ensure only numbers are inputted
+                  const value = event.target.value;
+                  if (/^\d*$/.test(value)) { // Only allow digits
+                    formik.handleChange(event);
+                  }
+                }}
                 error={formik.touched.pinCode && Boolean(formik.errors.pinCode)}
                 helperText={formik.touched.pinCode && formik.errors.pinCode}
                 fullWidth
