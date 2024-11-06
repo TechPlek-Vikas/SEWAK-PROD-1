@@ -27,7 +27,7 @@ import MultipleAutoCompleteWithDeleteConfirmation1 from 'components/autocomplete
 import FormikSelectField1 from 'components/select/Select1';
 import FormikTextField from 'components/textfield/TextField';
 import AlertDelete from 'components/alertDialog/AlertDelete';
-import axios from 'axios';
+// import axios from 'axios';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { useNavigate } from 'react-router';
 import axiosServices from 'utils/axios';
@@ -59,22 +59,17 @@ const CompanyRate = ({ id, companyName }) => {
     rateData: [
       {
         zoneNameID: '',
-        zoneTypeID: '',
+        zoneTypeID: null,
         cabRate: 0,
         billingCycle: '',
         cabAmount: [
-          {
-            vehicleTypeID: '',
-            amount: 0
-          }
+          // {
+          //   vehicleTypeID: null,
+          //   amount: 0
+          // }
         ],
         dualTrip: 0,
-        dualTripAmount: [
-          {
-            vehicleTypeID: '',
-            amount: 0
-          }
-        ],
+        dualTripAmount: [],
         guard: 0,
         guardPrice: 0
       }
@@ -111,12 +106,20 @@ const CompanyRate = ({ id, companyName }) => {
     }));
 
     try {
-      const response = await axiosServices.post(`/company/add/rates`, {
-        data: {
-          companyID: id,
-          ratesForCompany: finalData
+      const response = await axiosServices.post(
+        `/company/add/rates`,
+        {
+          data: {
+            companyID: id,
+            ratesForCompany: finalData
+          }
+        },
+        {
+          headers: {
+            Authorization: `${token}`
+          }
         }
-      });
+      );
 
       if (response.status === 201) {
         dispatch(
@@ -131,22 +134,10 @@ const CompanyRate = ({ id, companyName }) => {
           })
         );
       }
-
       resetForm({ values: initialValues });
       setSelectedVehicleTypes([]);
     } catch (error) {
       console.error('Error submitting the form', error);
-      dispatch(
-        openSnackbar({
-          open: true,
-          message: 'An unexpected error occurred. Please try again later.',
-          variant: 'alert',
-          alert: {
-            color: 'error'
-          },
-          close: true
-        })
-      );
     }
   };
 
@@ -182,37 +173,40 @@ const CompanyRate = ({ id, companyName }) => {
             {values.rateData.length > 0 && (
               <Box sx={{ p: 1 }}>
                 <Grid container spacing={3}>
-                  {values.rateData.map((item, index) => (
-                    <Grid item xs={12} key={index}>
-                      <MainCard
-                        title={
-                          <Stack direction="row" spacing={1} alignItems="center" gap={1}>
-                            Add Company Rate for <Chip label={companyName ? companyName : 'Not Selected'} color="primary" />
-                          </Stack>
-                        }
-                      >
-                        <FieldArray
-                          name="rateData"
-                          render={(arrayHelpers) => (
-                            <Stack spacing={2}>
-                              <TableContainer>
-                                <Box sx={{ overflowX: 'auto' }}>
-                                  <Table>
-                                    <TableHead>
-                                      <TableRow>
-                                        <TableCell>#</TableCell>
-                                        <TableCell>Zone Name</TableCell>
-                                        <TableCell>Zone Type</TableCell>
-                                        <TableCell>Vehicle Type</TableCell>
-                                        <TableCell>Amount</TableCell>
-                                        <TableCell>Dual Trip</TableCell>
-                                        <TableCell>Dual Trip Amount</TableCell>
-                                        {/* <TableCell>Guard</TableCell> */}
-                                        <TableCell>Guard Price</TableCell>
-                                        <TableCell>Action</TableCell>
-                                      </TableRow>
-                                    </TableHead>
-                                    <TableBody>
+                  {/* {values.rateData.map((item, index) => ( */}
+                  <Grid item xs={12}>
+                    <MainCard
+                      title={
+                        <Stack direction="row" spacing={1} alignItems="center" gap={1}>
+                          Add Company Rate for <Chip label={companyName} color="primary" />
+                        </Stack>
+                      }
+                    >
+                      {/* {values.rateData.map((item, index) => ( */}
+                      <FieldArray
+                        name="rateData"
+                        render={(arrayHelpers) => (
+                          <Stack spacing={2}>
+                            {/* {values.rateData.map((item, index) => ( */}
+                            <TableContainer>
+                              <Box sx={{ overflowX: 'auto' }}>
+                                <Table>
+                                  <TableHead>
+                                    <TableRow>
+                                      <TableCell>#</TableCell>
+                                      <TableCell>Zone Name</TableCell>
+                                      <TableCell>Zone Type</TableCell>
+                                      <TableCell>Vehicle Type</TableCell>
+                                      <TableCell>Amount</TableCell>
+                                      <TableCell>Dual Trip</TableCell>
+                                      <TableCell>Dual Trip Amount</TableCell>
+                                      {/* <TableCell>Guard</TableCell> */}
+                                      <TableCell>Guard Price</TableCell>
+                                      <TableCell>Action</TableCell>
+                                    </TableRow>
+                                  </TableHead>
+                                  {values.rateData.map((item, index) => (
+                                    <TableBody key={index}>
                                       <TableRow key={index}>
                                         <TableCell>{index + 1}</TableCell>
 
@@ -250,6 +244,7 @@ const CompanyRate = ({ id, companyName }) => {
                                             sx={{ width: '150px' }}
                                             getOptionLabel={(option) => option['zoneTypeName']}
                                             saveValue="_id"
+                                            defaultValue={null}
                                             value={
                                               zoneTypeList?.find(
                                                 (item) => item['_id'] === getNestedComplexProperty(values, `rateData.${index}.zoneTypeID`)
@@ -313,7 +308,7 @@ const CompanyRate = ({ id, companyName }) => {
                                             {values.rateData[index].cabAmount.map((cab, cabIndex) => (
                                               <TextField
                                                 key={cab.vehicleTypeID}
-                                                label={`Amount for ${
+                                                label={`${
                                                   vehicleTypeList.find((v) => v._id === cab.vehicleTypeID)?.vehicleTypeName ||
                                                   'Unknown Vehicle'
                                                 }`}
@@ -363,7 +358,7 @@ const CompanyRate = ({ id, companyName }) => {
                                             {selectedVehicleTypes.map((vehicleType, cabIndex) => (
                                               <TextField
                                                 key={vehicleType._id}
-                                                label={`Dual Trip Amount for ${vehicleType.vehicleTypeName}`}
+                                                label={`${vehicleType.vehicleTypeName}`}
                                                 name={`rateData.${index}.dualTripAmount.${cabIndex}`}
                                                 value={values.rateData[index].dualTripAmount[cabIndex]?.amount || ''}
                                                 disabled={getFieldProps(`rateData.${index}.dualTrip`).value !== 1}
@@ -408,36 +403,39 @@ const CompanyRate = ({ id, companyName }) => {
                                         />
                                       </TableRow>
                                     </TableBody>
-                                  </Table>
-                                </Box>
-                              </TableContainer>
+                                  ))}
+                                </Table>
+                              </Box>
+                            </TableContainer>
+                            {/* ))} */}
 
-                              {/* Add Rate Button */}
-                              <Stack direction={'row'}>
-                                <Button
-                                  variant="outlined"
-                                  startIcon={<Add />}
-                                  onClick={() =>
-                                    arrayHelpers.push({
-                                      zoneNameID: '',
-                                      zoneTypeID: '',
-                                      cabAmount: [{ vehicleTypeID: '', amount: 0 }],
-                                      dualTrip: 0,
-                                      dualTripAmount: [{ vehicleTypeID: '', amount: 0 }],
-                                      guard: 0,
-                                      guardPrice: 0
-                                    })
-                                  }
-                                >
-                                  Add Rate
-                                </Button>
-                              </Stack>
+                            {/* Add Rate Button */}
+                            <Stack direction={'row'}>
+                              <Button
+                                variant="outlined"
+                                startIcon={<Add />}
+                                onClick={() =>
+                                  arrayHelpers.push({
+                                    zoneNameID: '',
+                                    zoneTypeID: null,
+                                    cabAmount: [],
+                                    dualTrip: 0,
+                                    dualTripAmount: [],
+                                    guard: 0,
+                                    guardPrice: 0
+                                  })
+                                }
+                              >
+                                Add Rate
+                              </Button>
                             </Stack>
-                          )}
-                        />
-                      </MainCard>
-                    </Grid>
-                  ))}
+                          </Stack>
+                        )}
+                      />
+                      {/* ))} */}
+                    </MainCard>
+                  </Grid>
+                  {/* ))} */}
                 </Grid>
               </Box>
             )}
@@ -448,10 +446,10 @@ const CompanyRate = ({ id, companyName }) => {
                 color="secondary"
                 variant="outlined"
                 onClick={() => {
-                  navigate(0);
+                  navigate(0); // Redirects to the previous page
                 }}
               >
-                Back
+                Cancel
               </Button>
               <Button type="submit" variant="contained">
                 {' '}
