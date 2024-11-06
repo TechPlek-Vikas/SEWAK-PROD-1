@@ -141,7 +141,7 @@ const AddCabRateDriver = () => {
               close: true
             })
           );
-          navigate('/master/cab-rate', { replace: true });
+          navigate('/management/cab/view', { replace: true });
         }
       } catch (error) {
         setSubmitting(false);
@@ -166,7 +166,7 @@ const AddCabRateDriver = () => {
         {
           zoneNameID: '',
           zoneTypeID: '',
-          cabRate: '',
+          cabRate:1,
           cabAmount: newCompanyCabAmountRef.current || cabAmountRef.current,
           dualTrip: '',
           dualTripAmount: [],
@@ -376,7 +376,7 @@ const AddCabRateDriver = () => {
                                           <TableCell>#</TableCell>
                                           <TableCell>Zone Name</TableCell>
                                           <TableCell>Zone Type</TableCell>
-                                          <TableCell>Cab Rate</TableCell>
+                                          {/* <TableCell>Cab Rate</TableCell> */}
 
                                           {cabAmountRef.current?.map((cab, cabIndex) => (
                                             <TableCell key={cabIndex}>{`Amount for ${
@@ -408,7 +408,7 @@ const AddCabRateDriver = () => {
                                             <TableCell>{rateIndex + 1}</TableCell>
 
                                             {/* Zone Name */}
-                                            <TableCell>
+                                            {/* <TableCell>
                                               <FormikAutocomplete
                                                 name={`rateData.${index}.rateMaster.${rateIndex}.zoneNameID`}
                                                 options={zoneList}
@@ -440,10 +440,10 @@ const AddCabRateDriver = () => {
                                                   </Box>
                                                 )}
                                               />
-                                            </TableCell>
+                                            </TableCell> */}
 
                                             {/* Zone Type */}
-                                            <TableCell>
+                                            {/* <TableCell>
                                               <FormikAutocomplete
                                                 name={`rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`}
                                                 options={zoneTypeList}
@@ -475,17 +475,80 @@ const AddCabRateDriver = () => {
                                                   </Box>
                                                 )}
                                               />
+                                            </TableCell> */}
+
+                                            {/* Zone Name */}
+                                            <TableCell>
+                                              <FormikAutocomplete
+                                                name={`rateData.${index}.rateMaster.${rateIndex}.zoneNameID`}
+                                                options={zoneList}
+                                                placeholder="Select Zone Name"
+                                                sx={{ width: '150px' }}
+                                                getOptionLabel={(option) => option['zoneName']}
+                                                saveValue="_id"
+                                                // Reset the value by ensuring it refers only to the current index
+                                                value={
+                                                  zoneList?.find(
+                                                    (item) =>
+                                                      item['_id'] ===
+                                                      getNestedComplexProperty(
+                                                        values,
+                                                        `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`
+                                                      )
+                                                  ) || null
+                                                }
+                                                renderOption={(props, option) => (
+                                                  <Box component="li" {...props}>
+                                                    {option['zoneName']}
+                                                  </Box>
+                                                )}
+                                              />
+                                            </TableCell>
+
+                                            {/* Zone Type */}
+                                            <TableCell>
+                                              <FormikAutocomplete
+                                                name={`rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`}
+                                                options={zoneTypeList.filter(
+                                                  (zoneType) =>
+                                                    zoneType.zoneId._id ===
+                                                    getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
+                                                )}
+                                                placeholder="Select Zone Type"
+                                                sx={{ width: '150px' }}
+                                                getOptionLabel={(option) => option['zoneTypeName']}
+                                                saveValue="_id"
+                                                defaultValue={null}
+                                                value={
+                                                  zoneTypeList?.find(
+                                                    (item) =>
+                                                      item['_id'] ===
+                                                      getNestedComplexProperty(
+                                                        values,
+                                                        `rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`
+                                                      )
+                                                  ) || null
+                                                }
+                                                renderOption={(props, option) => (
+                                                  <Box component="li" {...props}>
+                                                    {option['zoneTypeName']}
+                                                  </Box>
+                                                )}
+                                                disabled={
+                                                  !getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
+                                                }
+                                              />
                                             </TableCell>
 
                                             {/* Cab Rate */}
-                                            <TableCell>
+                                            {/* <TableCell>
                                               <FormikSelectField1
                                                 label="Dual Trip"
                                                 name={`rateData.${index}.rateMaster.${rateIndex}.cabRate`}
                                                 options={optionsForDualTrip}
                                                 fullWidth
                                               />
-                                            </TableCell>
+                                            </TableCell> */}
 
                                             {rate.cabAmount?.map((cab, cabIndex) => (
                                               <TableCell key={cabIndex}>
@@ -647,7 +710,7 @@ const AddCabRateDriver = () => {
                                         arrayHelpers.push({
                                           zoneNameID: '',
                                           zoneTypeID: '',
-                                          cabRate: '',
+                                          cabRate:1,
                                           cabAmount: newCompanyCabAmountRef.current || cabAmountRef.current || [],
                                           dualTrip: '',
                                           dualTripAmount: [],
@@ -680,7 +743,7 @@ const AddCabRateDriver = () => {
                     color="secondary"
                     variant="outlined"
                     onClick={() => {
-                      navigate('/master/cab-rate', { replace: true });
+                      navigate('/management/cab/view', { replace: true });
                     }}
                   >
                     Cancel
