@@ -53,8 +53,12 @@ const validationSchema = yup.object({
     .matches(/^\d{9,18}$/, 'Enter a valid account number'),
   accountHolderName: yup.string().required('Account Holder Name is required'),
   bankAddress: yup.string().required('Bank Address is required'),
-  ESI_Number: yup.string().required('ESI Number is required'),
-  PF_Number: yup.string().required('PF Number is required')
+  officeChargeAmount: yup.number()
+    .typeError('Office Charge Amount must be a number')
+    .required('Office Charge Amount is required')
+    .positive('Office Charge Amount must be a positive number')
+  // ESI_Number: yup.string().required('ESI Number is required'),
+  // PF_Number: yup.string().required('PF Number is required')
 });
 
 // ==============================|| VALIDATION WIZARD - PAYMENT ||============================== //

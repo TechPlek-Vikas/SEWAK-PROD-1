@@ -35,6 +35,8 @@ const AvailableUserTypeOptions = {
 
 const BasicInfo = () => {
   const theme = useTheme();
+  const formik = useFormikContext();
+  console.log(formik);
 
   const [selectedImage, setSelectedImage] = useState(undefined);
   const [avatar, setAvatar] = useState(null);
@@ -125,7 +127,14 @@ const BasicInfo = () => {
                 <Grid item xs={12} md={6}>
                   <Stack spacing={1}>
                     <FormLabel>Username</FormLabel>
-                    <FormikTextField name="userName" placeholder="Enter Username" fullWidth inputProps={{ autoComplete: 'off' }} />
+                    <FormikTextField
+                      name="userName"
+                      placeholder="Enter Username"
+                      fullWidth
+                      inputProps={{ autoComplete: 'off' }}
+                      error={Boolean(formik.errors.userName)}
+                      helperText={formik.errors.userName}
+                    />
                   </Stack>
                 </Grid>
 
@@ -133,7 +142,14 @@ const BasicInfo = () => {
                 <Grid item xs={12} md={6}>
                   <Stack spacing={1}>
                     <FormLabel>Email</FormLabel>
-                    <FormikTextField name="userEmail" placeholder="Enter Email" fullWidth inputProps={{ autoComplete: 'off' }} />
+                    <FormikTextField
+                      name="userEmail"
+                      placeholder="Enter Email"
+                      fullWidth
+                      inputProps={{ autoComplete: 'off' }}
+                      error={Boolean(formik.errors.userEmail)}
+                      helperText={formik.errors.userEmail}
+                    />
                   </Stack>
                 </Grid>
 
@@ -142,7 +158,13 @@ const BasicInfo = () => {
                   <Stack spacing={1}>
                     <FormLabel>Password</FormLabel>
 
-                    <PasswordField name="userPassword" placeholder="Enter Password" inputProps={{ autoComplete: 'new-password' }} />
+                    <PasswordField
+                      name="userPassword"
+                      placeholder="Enter Password"
+                      inputProps={{ autoComplete: 'new-password' }}
+                      error={Boolean(formik.errors.userPassword)}
+                      helperText={formik.errors.userPassword}
+                    />
                   </Stack>
                 </Grid>
 
@@ -150,7 +172,12 @@ const BasicInfo = () => {
                 <Grid item xs={12} md={6}>
                   <Stack spacing={1}>
                     <FormLabel>Confirm Password</FormLabel>
-                    <PasswordField name="userConfirmPassword" placeholder="Enter Confirm Password" />
+                    <PasswordField
+                      name="userConfirmPassword"
+                      placeholder="Enter Confirm Password"
+                      error={Boolean(formik.errors.userConfirmPassword)}
+                      helperText={formik.errors.userConfirmPassword}
+                    />
                   </Stack>
                 </Grid>
               </Grid>
@@ -173,7 +200,19 @@ const BasicInfo = () => {
                 <Grid item xs={12} md={6}>
                   <Stack spacing={1}>
                     <FormLabel>Contact Number</FormLabel>
-                    <FormikTextField name="contactNumber" placeholder="Enter Contact Number" fullWidth />
+                    <FormikTextField
+                      name="contactNumber"
+                      placeholder="Enter Contact Number"
+                      fullWidth
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        if (/^\d*$/.test(value)) {
+                          handleChange(event);
+                        }
+                      }}
+                      error={Boolean(formik.errors.contactNumber)}
+                      helperText={formik.errors.contactNumber}
+                    />
                   </Stack>
                 </Grid>
 
@@ -181,7 +220,19 @@ const BasicInfo = () => {
                 <Grid item xs={12} md={6}>
                   <Stack spacing={1}>
                     <FormLabel>Alternate Contact Number</FormLabel>
-                    <FormikTextField name="alternateContactNumber" placeholder="Enter Alternate Contact Number" fullWidth />
+                    <FormikTextField
+                      name="alternateContactNumber"
+                      placeholder="Enter Alternate Contact Number"
+                      fullWidth
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        if (/^\d*$/.test(value)) {
+                          handleChange(event);
+                        }
+                      }}
+                      error={Boolean(formik.errors.alternateContactNumber)}
+                      helperText={formik.errors.alternateContactNumber}
+                    />
                   </Stack>
                 </Grid>
               </Grid>
@@ -204,7 +255,19 @@ const BasicInfo = () => {
                 <Grid item xs={12} md={4}>
                   <Stack spacing={1}>
                     <FormLabel>Pin Code</FormLabel>
-                    <FormikTextField name="pinCode" placeholder="Enter Pin Code" fullWidth />
+                    <FormikTextField
+                      name="pinCode"
+                      placeholder="Enter Pin Code"
+                      fullWidth
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        if (/^\d*$/.test(value)) {
+                          handleChange(event);
+                        }
+                      }}
+                      error={Boolean(formik.errors.pinCode)}
+                      helperText={formik.errors.pinCode}
+                    />
                   </Stack>
                 </Grid>
 
@@ -212,7 +275,13 @@ const BasicInfo = () => {
                 <Grid item xs={12} md={4}>
                   <Stack spacing={1}>
                     <FormLabel>City</FormLabel>
-                    <FormikTextField name="city" placeholder="Enter City" fullWidth />
+                    <FormikTextField
+                      name="city"
+                      placeholder="Enter City"
+                      fullWidth
+                      error={Boolean(formik.errors.city)}
+                      helperText={formik.errors.city}
+                    />
                   </Stack>
                 </Grid>
 
@@ -220,7 +289,13 @@ const BasicInfo = () => {
                 <Grid item xs={12} md={4}>
                   <Stack spacing={1}>
                     <FormLabel>State</FormLabel>
-                    <FormikTextField name="state" placeholder="Enter State" fullWidth />
+                    <FormikTextField
+                      name="state"
+                      placeholder="Enter State"
+                      fullWidth
+                      error={Boolean(formik.errors.state)}
+                      helperText={formik.errors.state}
+                    />
                   </Stack>
                 </Grid>
 
@@ -238,6 +313,8 @@ const BasicInfo = () => {
                       onBlur={handleBlur}
                       onChange={handleChange}
                       placeholder="Address"
+                      error={Boolean(formik.errors.address)}
+                      helperText={formik.errors.address}
                     />
                   </Stack>
                 </Grid>
@@ -249,13 +326,13 @@ const BasicInfo = () => {
             </Grid>
 
             {/* Other Info */}
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Typography variant="h5" component="div">
                 D. Other Info:
               </Typography>
-            </Grid>
+            </Grid> */}
 
-            <Grid item xs={12} sx={{ paddingLeft: '2rem !important' }}>
+            {/* <Grid item xs={12} sx={{ paddingLeft: '2rem !important' }}>
               <Grid container spacing={3}>
                 <Grid item xs={12} md={4}>
                   <Stack spacing={1}>
@@ -276,7 +353,7 @@ const BasicInfo = () => {
                   </Stack>
                 </Grid>
               </Grid>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Grid>
       </Grid>
