@@ -19,7 +19,8 @@ const CompanyRateReactTable = ({ data, page, setPage, limit, setLimit, loading }
       },
       {
         Header: 'Zone Type',
-        accessor: 'zoneTypeID.zoneTypeName'
+        accessor: 'zoneTypeID.zoneTypeName',
+        Cell: ({ row }) => row.original.zoneTypeID?.zoneTypeName ?? 'None'
       },
       {
         Header: 'Vehicle Type',
@@ -32,7 +33,8 @@ const CompanyRateReactTable = ({ data, page, setPage, limit, setLimit, loading }
       {
         Header: 'Dual Trip Amount',
         accessor: 'dualTripAmount.amount',
-        dataType: 'text'
+        dataType: 'text',
+        Cell: ({ row }) => row.original.dualTripAmount?.amount ?? 'None'
       },
       {
         Header: 'Guard Price',

@@ -34,10 +34,10 @@ import { registerUser } from 'store/slice/cabProvidor/userSlice';
 //Validation Schema for formData
 
 const validationSchema = yup.object({
-  files: yup.mixed().required('File is required'),
-  userName: yup.string().required('Username is required').min(3, 'Username must be at least 3 characters'), //
-  userEmail: yup.string().email('Invalid email address').required('Email is required'), //
-  password: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'), //
+  // files: yup.mixed().required('File is required'),
+  userName: yup.string().required('Username is required').min(3, 'Username must be at least 3 characters'),//
+  userEmail: yup.string().email('Invalid email address').required('Email is required'),//
+  password: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'),//
   confirmpassword: yup
     .string()
     .required('Confirm Password is required')
@@ -57,7 +57,7 @@ const validationSchema = yup.object({
   // city: yup.string().required('City is required').min(2, 'City must be at least 2 characters'),
   // state: yup.string().required('State is required').min(2, 'State must be at least 2 characters'),
   // address: yup.string().required('Address is required').min(10, 'Address must be at least 10 characters'),
-  userType: yup.string().required('User Type is required') //
+  // userType: yup.string().required('User Type is required')
 });
 
 //Cab Provider adding vendor user
@@ -88,32 +88,33 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
     initialValues: {
       userName: basicInfo.userName || '',
       userEmail: basicInfo.userEmail || '',
-      password: basicInfo.userPassword || '',
+      password: basicInfo.password || '',
       confirmpassword: basicInfo.confirmpassword || '',
       contactNumber: basicInfo.contactNumber || '',
       alternateContactNumber: basicInfo.alternateContactNumber || '',
-      pinCode: basicInfo.pinCode || '',
-      city: basicInfo.city || '',
-      state: basicInfo.state || '',
-      address: basicInfo.address || '',
-      files: null,
-      userType: ''
+      // pinCode: basicInfo.pinCode || '',
+      // city: basicInfo.city || '',
+      // state: basicInfo.state || '',
+      // address: basicInfo.address || '',
+      // files: null,
+      userType: 6
     },
     validationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
+      
       try {
         const formData = new FormData();
-        formData.append('userImage', values.files[0]);
+        // formData.append('userImage', values.files[0]);
         formData.append('userName', values.userName);
         formData.append('userEmail', values.userEmail);
-        formData.append('userPassword', values.userPassword);
+        formData.append('userPassword', values.password);
         formData.append('contactNumber', values.contactNumber);
         formData.append('alternateContactNumber', values.alternateContactNumber);
-        formData.append('userType', Number(values.userType));
-        formData.append('pinCode', values.pinCode);
-        formData.append('city', values.city);
-        formData.append('state', values.state);
-        formData.append('address', values.address);
+        formData.append('userType', 6);
+        // formData.append('pinCode', values.pinCode);
+        // formData.append('city', values.city);
+        // formData.append('state', values.state);
+        // formData.append('address', values.address);
 
         //Post request for adding basic details Vendor
 
@@ -170,7 +171,7 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
       </Typography>
       <form onSubmit={formik.handleSubmit} id="validation-forms" autoComplete="off">
         <Grid container spacing={3}>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1.5} alignItems="center">
@@ -190,12 +191,12 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
                 </Stack>
               </Grid>
             </Grid>
-          </Grid>
-          <Grid item xs={12}>
+          </Grid> */}
+          {/* <Grid item xs={12}>
             <Typography variant="h5" component="div">
-              A. Personal Info:
+               Personal Info:
             </Typography>
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} sm={3}>
             <Stack spacing={1}>
               <InputLabel>Username</InputLabel>
@@ -285,7 +286,7 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="h5" component="div">
-              B. Contact Info:
+              Contact Info:
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -331,7 +332,7 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
               />
             </Stack>
           </Grid>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <Typography variant="h5" component="div">
               C. Address Info:
             </Typography>
@@ -404,8 +405,8 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
                 rows={3}
               />
             </Stack>
-          </Grid>
-          <Grid item xs={12} sm={12}>
+          </Grid> */}
+          {/* <Grid item xs={12} sm={12}>
             <Stack spacing={1}>
               <FormControl>
                 <InputLabel>User Type</InputLabel>
@@ -428,7 +429,7 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
                 </Select>
               </FormControl>
             </Stack>
-          </Grid>
+          </Grid> */}
           <Grid item xs={12}>
             <Stack direction="row" justifyContent="flex-end">
               <AnimateButton>

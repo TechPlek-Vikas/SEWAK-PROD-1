@@ -307,7 +307,7 @@ const CompanyRate = ({ id, companyName }) => {
                                             {values.rateData[index].cabAmount.map((cab, cabIndex) => (
                                               <TextField
                                                 key={cab.vehicleTypeID}
-                                                label={`Amount for ${
+                                                label={`${
                                                   vehicleTypeList.find((v) => v._id === cab.vehicleTypeID)?.vehicleTypeName ||
                                                   'Unknown Vehicle'
                                                 }`}
@@ -357,7 +357,7 @@ const CompanyRate = ({ id, companyName }) => {
                                             {selectedVehicleTypes.map((vehicleType, cabIndex) => (
                                               <TextField
                                                 key={vehicleType._id}
-                                                label={`Dual Trip Amount for ${vehicleType.vehicleTypeName}`}
+                                                label={`${vehicleType.vehicleTypeName}`}
                                                 name={`rateData.${index}.dualTripAmount.${cabIndex}`}
                                                 value={values.rateData[index].dualTripAmount[cabIndex]?.amount || ''}
                                                 disabled={getFieldProps(`rateData.${index}.dualTrip`).value !== 1}
