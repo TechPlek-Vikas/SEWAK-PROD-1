@@ -133,6 +133,21 @@ const InvoiceSetting = ({ redirect, onClose }) => {
     try {
       console.log('Formik submit', values);
 
+      if (!values.invoicePrefix) {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Please enter invoice prefix',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            close: true
+          })
+        );
+        return;
+      }
+
       let response;
 
       // TODO : Update settings API
@@ -159,32 +174,28 @@ const InvoiceSetting = ({ redirect, onClose }) => {
       //   status: 200
       // };
 
-      if (response.status === 200) {
-        resetForm();
-
-        setSubmitting(false);
-
-        dispatch(
-          openSnackbar({
-            open: true,
-            message: `Settings ${redirect ? 'updated' : 'saved'} successfully`,
-            variant: 'alert',
-            alert: {
-              color: 'success'
-            },
-            close: true
-          })
-        );
-
-        if (redirect) {
-          onClose();
-          navigate(redirect, { replace: true });
-        } else {
-          navigate('/dashboard', { replace: true });
-        }
-      }
-
       resetForm();
+
+      setSubmitting(false);
+
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: `Settings ${redirect ? 'updated' : 'saved'} successfully`,
+          variant: 'alert',
+          alert: {
+            color: 'success'
+          },
+          close: true
+        })
+      );
+
+      if (redirect) {
+        onClose();
+        navigate(redirect, { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
     } catch (error) {
       console.log('Error at handleFormikSubmit: ', error);
       dispatch(
