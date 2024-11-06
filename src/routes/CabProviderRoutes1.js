@@ -96,6 +96,8 @@ const RosterDashboard1 = Loadable(lazy(() => import('pages/apps/test/dashboard')
 
 // Settings
 const InvoiceSettings = Loadable(lazy(() => import('pages/setting/invoice')));
+
+const Temp1 = Loadable(lazy(() => import('temp1')));
 // ==============================|| MAIN ROUTES ||============================== //
 
 const CabProvidorRoutes = {
@@ -421,6 +423,11 @@ const CabProvidorRoutes = {
               element: <InvoiceSettings />
             }
           ]
+        },
+
+        {
+          path :'temp1',
+          element: <Temp1 />
         }
       ]
     },

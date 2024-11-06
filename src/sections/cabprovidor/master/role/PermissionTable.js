@@ -142,11 +142,13 @@ export default function PermissionTable({ existedPermissions = {}, parentFunctio
     console.log('newPermissions = ', newPermissions);
 
     if (selectedIndex === -1) {
-      console.log("No")
+      console.log('No');
       newSelected = newSelected.concat(selected, moduleName);
+
+      console.log(rows.find((row) => row.moduleName === moduleName).permissions);
       newPermissions[moduleName] = rows.find((row) => row.moduleName === moduleName).permissions;
     } else {
-      console.log("Yes")
+      console.log('Yes');
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
       // delete newPermissions[moduleName];
       newPermissions[moduleName] = [];
@@ -172,7 +174,8 @@ export default function PermissionTable({ existedPermissions = {}, parentFunctio
     } else {
       newPermissions[moduleName] = newPermissions[moduleName].filter((p) => p !== permission);
       if (newPermissions[moduleName].length === 0) {
-        delete newPermissions[moduleName];
+        // delete newPermissions[moduleName];
+        newPermissions[moduleName] = [];
       }
     }
 
