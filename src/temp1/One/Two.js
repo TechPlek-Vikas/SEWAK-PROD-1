@@ -1,42 +1,42 @@
 import { Autocomplete, Box, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSelector, dispatch } from 'store';
-import { fetchAllVendors } from 'store/slice/cabProvidor/vendorSlice';
+import { fetchAllDrivers } from 'store/slice/cabProvidor/driverSlice';
 
-const One = () => {
+const Two = () => {
   const [driverID, setDriverID] = useState('');
 
-  const allVendors = useSelector((state) => state.vendors.allVendors);
-  console.log(allVendors);
+  const allDrivers = useSelector((state) => state.drivers.allDrivers);
+  console.log(allDrivers);
 
   useEffect(() => {
-    dispatch(fetchAllVendors());
+    dispatch(fetchAllDrivers());
   }, []);
 
   return (
     <>
       <Autocomplete
-        id="zoneId"
-        value={allVendors.find((item) => item.vendorId === driverID) || null}
+        id="driverID"
+        value={allDrivers.find((item) => item.driverId._id === driverID) || null}
         onChange={(event, value) => {
-          setDriverID(value.vendorId);
+          setDriverID(value.driverId._id);
         }}
-        options={allVendors}
+        options={allDrivers}
         fullWidth
         autoHighlight
-        getOptionLabel={(option) => option.vendorCompanyName}
+        getOptionLabel={(option) => option.driverId.userName}
         // isOptionEqualToValue={(option) => {
         //   return option._id === formik.values.zoneId;
         // }}
         renderOption={(props, option) => (
           <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
-            {option['vendorCompanyName']}
+            {option.driverId.userName}
           </Box>
         )}
         renderInput={(params) => (
           <TextField
             {...params}
-            placeholder="Choose a zone"
+            placeholder="Choose a Driver"
             inputProps={{
               ...params.inputProps,
               autoComplete: 'new-password'
@@ -52,4 +52,4 @@ const One = () => {
   );
 };
 
-export default One;
+export default Two;
