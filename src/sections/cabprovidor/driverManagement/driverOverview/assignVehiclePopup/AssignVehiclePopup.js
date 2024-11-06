@@ -26,7 +26,7 @@ const yupSchema = yup.object().shape({
   vendorId: yup.string().required('Vendor is required')
 });
 
-const AssignVehiclePopup = ({ handleClose, driverId, setUpdateKey, updateKey }) => {
+const AssignVehiclePopup = ({ handleClose, driverId, setUpdateKey, updateKey, assignedVehicle = [] }) => {
   const [vehicleList, setVehicleList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -37,10 +37,16 @@ const AssignVehiclePopup = ({ handleClose, driverId, setUpdateKey, updateKey }) 
   const [selectedVehicles, setSelectedVehicles] = useState([]);
 
   console.log('selectedVehicles', selectedVehicles);
+  console.log('assignedVehicle', assignedVehicle);
 
   const handleOpenDialog = () => {
     navigate('/management/cab/add-cab');
   };
+
+  // useEffect(() => {
+  // setSelectedVehicles(assignedVehicle);
+  // consolee.log(assignedVehicle);
+  // }, [assignedVehicle]);
 
   const handleAssign = async () => {
     try {
@@ -159,7 +165,7 @@ const AssignVehiclePopup = ({ handleClose, driverId, setUpdateKey, updateKey }) 
   };
 
   return (
-    <MainCard title="Assign Vehicle">
+    <MainCard title={assignedVehicle ? 'Reassign Vehicle' : 'Assign Vehicle'}>
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={1}>
           <Grid item xs={12}>

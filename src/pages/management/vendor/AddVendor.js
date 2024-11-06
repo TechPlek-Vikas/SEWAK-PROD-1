@@ -106,7 +106,7 @@ const AddVendor = () => {
               <AnimateButton>
                 <Button
                   variant="contained"
-                  color="error"
+                  // color="error"
                   onClick={() => {
                     setBasicInfo({});
                     setPaymentData({});
@@ -114,7 +114,7 @@ const AddVendor = () => {
                   }}
                   sx={{ my: 3, ml: 1 }}
                 >
-                  Reset
+                  Add Vendor
                 </Button>
               </AnimateButton>
             </Stack>

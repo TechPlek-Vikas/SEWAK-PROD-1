@@ -13,19 +13,22 @@ import TableSkeleton from 'components/tables/TableSkeleton';
 import EmptyTableDemo from 'components/tables/EmptyTable';
 import AssignVehiclePopup from './driverOverview/assignVehiclePopup/AssignVehiclePopup';
 
-const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading, setUpdateKey,updateKey }) => {
+const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading, setUpdateKey, updateKey }) => {
   const theme = useTheme();
   // eslint-disable-next-line no-unused-vars
   const mode = theme.palette.mode;
   const [driverId, setDriverId] = useState(null);
+  const [assignedVehicle, setAssignedVehicle] = useState([]);
   const [pendingDialogOpen, setPendingDialogOpen] = useState(false);
-
+  //assignedVehicle
   const handleClosePendingDialog = () => {
     setPendingDialogOpen(false);
     setDriverId(null);
   };
 
   const handleOpenPendingDialog = (id) => {
+    setAssignedVehicle(id.assignedVehicle);
+    console.log(id);
     setDriverId(id);
     setPendingDialogOpen(true);
   };
@@ -96,7 +99,21 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
               />
             );
           } else {
-            return <Chip color="success" label={cabNo} size="small" variant="light" />;
+            return (
+              <Chip
+                color="success"
+                label={cabNo}
+                size="small"
+                variant="light"
+                sx={{
+                  ':hover': {
+                    backgroundColor: 'rgba(36, 140, 106 ,.5)',
+                    cursor: 'pointer'
+                  }
+                }}
+                onClick={() => handleOpenPendingDialog(row.original)}
+              />
+            );
           }
         }
       },
@@ -224,7 +241,13 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
       </Stack>
       {/* Pending Dialog */}
       <Dialog open={pendingDialogOpen} onClose={handleClosePendingDialog}>
-        <AssignVehiclePopup handleClose={handleClosePendingDialog} driverId={driverId} setUpdateKey={setUpdateKey} updateKey={updateKey}/>
+        <AssignVehiclePopup
+          handleClose={handleClosePendingDialog}
+          driverId={driverId}
+          setUpdateKey={setUpdateKey}
+          updateKey={updateKey}
+          assignedVehicle={assignedVehicle}
+        />
       </Dialog>
     </>
   );

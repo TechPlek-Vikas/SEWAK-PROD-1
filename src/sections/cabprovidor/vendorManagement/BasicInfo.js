@@ -295,10 +295,15 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
               <TextField
                 id="contactNumber"
                 name="contactNumber"
-                type="number"
+                type="text"
                 placeholder="Enter Contact Number"
                 value={formik.values.contactNumber}
-                onChange={formik.handleChange}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  if (/^\d*$/.test(value)) {
+                    formik.handleChange(event);
+                  }
+                }}
                 error={formik.touched.contactNumber && Boolean(formik.errors.contactNumber)}
                 helperText={formik.touched.contactNumber && formik.errors.contactNumber}
                 fullWidth
@@ -311,10 +316,15 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
               <InputLabel>Alternate Contact Number</InputLabel>
               <TextField
                 name="alternateContactNumber"
-                type="number"
+                type="text"
                 placeholder="Enter Contact Number"
                 value={formik.values.alternateContactNumber}
-                onChange={formik.handleChange}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  if (/^\d*$/.test(value)) {
+                    formik.handleChange(event);
+                  }
+                }}
                 error={formik.touched.alternateContactNumber && Boolean(formik.errors.alternateContactNumber)}
                 helperText={formik.touched.alternateContactNumber && formik.errors.alternateContactNumber}
                 fullWidth
@@ -332,10 +342,16 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
               <InputLabel>Pin Code</InputLabel>
               <TextField
                 name="pinCode"
-                type="number"
+                type="text"
                 placeholder="Enter Pin Code"
                 value={formik.values.pinCode}
-                onChange={formik.handleChange}
+                onChange={(event) => {
+                  // Optional: Ensure only numbers are inputted
+                  const value = event.target.value;
+                  if (/^\d*$/.test(value)) { // Only allow digits
+                    formik.handleChange(event);
+                  }
+                }}
                 error={formik.touched.pinCode && Boolean(formik.errors.pinCode)}
                 helperText={formik.touched.pinCode && formik.errors.pinCode}
                 fullWidth

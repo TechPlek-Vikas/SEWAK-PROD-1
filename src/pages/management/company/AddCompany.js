@@ -285,7 +285,12 @@ function AddCompany() {
                     id="mobile"
                     name="mobile"
                     value={formik.values.mobile}
-                    onChange={formik.handleChange}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      if (/^\d*$/.test(value)) {
+                        formik.handleChange(event);
+                      }
+                    }}
                     error={formik.touched.mobile && Boolean(formik.errors.mobile)}
                     helperText={formik.touched.mobile && formik.errors.mobile}
                   />
@@ -300,7 +305,12 @@ function AddCompany() {
                     id="landline"
                     name="landline"
                     value={formik.values.landline}
-                    onChange={formik.handleChange}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      if (/^\d*$/.test(value)) {
+                        formik.handleChange(event);
+                      }
+                    }}
                     error={formik.touched.landline && Boolean(formik.errors.landline)}
                     helperText={formik.touched.landline && formik.errors.landline}
                   />
@@ -345,7 +355,12 @@ function AddCompany() {
                     id="postal_code"
                     name="postal_code"
                     value={formik.values.postal_code}
-                    onChange={formik.handleChange}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      if (/^\d*$/.test(value)) {
+                        formik.handleChange(event);
+                      }
+                    }}
                     error={formik.touched.postal_code && Boolean(formik.errors.postal_code)}
                     helperText={formik.touched.postal_code && formik.errors.postal_code}
                   />
@@ -438,7 +453,12 @@ function AddCompany() {
                     type="number"
                     disabled={formik.values.MCDTax === 0 || formik.values.MCDTax === ''}
                     value={formik.values.MCDAmount}
-                    onChange={formik.handleChange}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      if (/^\d*$/.test(value)) {
+                        formik.handleChange(event);
+                      }
+                    }}
                     error={formik.touched.MCDAmount && Boolean(formik.errors.MCDAmount)}
                     helperText={formik.touched.MCDAmount && formik.errors.MCDAmount}
                   />
@@ -481,7 +501,12 @@ function AddCompany() {
                     type="number"
                     disabled={formik.values.stateTax === 0 || formik.values.stateTax === ''}
                     value={formik.values.stateTaxAmount}
-                    onChange={formik.handleChange}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      if (/^\d*$/.test(value)) {
+                        formik.handleChange(event);
+                      }
+                    }}
                     error={formik.touched.stateTaxAmount && Boolean(formik.errors.stateTaxAmount)}
                     helperText={formik.touched.stateTaxAmount && formik.errors.stateTaxAmount}
                   />
