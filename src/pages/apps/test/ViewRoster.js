@@ -101,10 +101,11 @@ function ReactTable({ columns, data, selectedData, handleSetSelectedData, handle
   const componentRef = useRef(null);
 
   // ================ Tab ================
-  const groups = ['All', 'Unverified', 'Trips', 'Discarded'];
+  const groups = ['All', 'verified','unverified', 'Trips', 'Discarded'];
   const countGroup = data.map((item) => item.status);
   const counts = {
-    Unverified: countGroup.filter((status) => status === 0).length,
+    verified: countGroup.filter((status) => status === 1).length,
+    unverified: countGroup.filter((status) => status === 0).length,
     Trips: countGroup.filter((status) => status === 3).length,
     Discarded: countGroup.filter((status) => status === 2).length
   };
@@ -112,7 +113,7 @@ function ReactTable({ columns, data, selectedData, handleSetSelectedData, handle
   const [activeTab, setActiveTab] = useState(groups[0]);
 
   useEffect(() => {
-    setFilter('status', activeTab === 'All' ? '' : activeTab === 'Unverified' ? 0 : activeTab === 'Trips' ? 3 : 2);
+    setFilter('status', activeTab === 'All' ? '' : activeTab === 'verified' ? 1 : activeTab === 'Trips' ? 3 :  activeTab === 'unverified' ? 0 : 2);
   }, [activeTab]);
 
   useEffect(() => {
@@ -134,7 +135,7 @@ function ReactTable({ columns, data, selectedData, handleSetSelectedData, handle
                 icon={
                   <Chip
                     label={status === 'All' ? data.length : counts[status]}
-                    color={status === 'All' ? 'primary' : status === 'Trips' ? 'success' : status === 'Discarded' ? 'error' : 'warning'}
+                    color={status === 'All' ? 'primary' : status === 'Trips' ? 'success' : status === 'Discarded' ? 'error' :status === 'verified' ? 'info' :  'warning'}
                     variant="light"
                     size="small"
                   />
@@ -448,9 +449,9 @@ const ViewRosterTest1 = () => {
         Cell: ({ value }) => {
           switch (value) {
             case 0:
-              return <Chip color="info" label="Unverified" size="small" variant="light" />; // Change as needed
+              return <Chip color="warning" label="Unverified" size="small" variant="light" />; // Change as needed
             case 1:
-              return <Chip color="success" label="Verified" size="small" variant="light" />; // Change as needed
+              return <Chip color="info" label="Verified" size="small" variant="light" />; // Change as needed
             case 3:
               return <Chip color="success" label="Trip generated" size="small" variant="light" />; // Change as needed
             default:
