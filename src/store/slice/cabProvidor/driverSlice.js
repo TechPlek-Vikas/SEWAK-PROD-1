@@ -65,9 +65,20 @@ export const registerDriver = createAsyncThunk('drivers/register', async (payloa
   }
 });
 
+// fetch all Drivers without pagination
+export const fetchAllDrivers = createAsyncThunk('drivers/fetchAllDrivers', async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.get('/driver/all/system');
+    return response.data.data;
+  } catch (error) {
+    return rejectWithValue(error.response ? error.response.data : error.message);
+  }
+});
+
 const initialState = {
   ...commonInitialState,
   drivers: [], // Empty array initially
+  allDrivers: [],
   metaData: {
     totalCount: 0,
     page: 1,
@@ -144,6 +155,18 @@ const driverSlice = createSlice({
         state.loading = false;
       })
       .addCase(deleteDriver.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error.message;
+      })
+      .addCase(fetchAllDrivers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllDrivers.fulfilled, (state, action) => {
+        state.allDrivers = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchAllDrivers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || action.error.message;
       });
