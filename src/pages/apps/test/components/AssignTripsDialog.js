@@ -213,7 +213,7 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
     fetchCompanyRate();
     fetchDriverRate();
   }, [fileData]);
-
+  console.log({ tripData });
   useEffect(() => {
     if (tripData?.length > 0) {
       const mappedData = tripData.map((item) => ({
