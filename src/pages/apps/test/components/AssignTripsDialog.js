@@ -156,11 +156,13 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
         if (response1.data.success) {
           alert(`${payload1.length} Trips Created`);
           handleClose();
-          setPayload1([])
+          setPayload1([]);
           setInitateRender((prev) => prev + 1);
         }
       }
-    } catch (err) { console.error(err)}
+    } catch (err) {
+      console.error(err);
+    }
 
     // setPayload1([]);
   };
@@ -210,16 +212,16 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
         _driverRate_or_vendorRate: 0,
         // _vendorrateRate: 0,
         _zoneName:
-          tripData.zoneNameArray?.length === 1
-            ? { _id: zoneNameArray[0]._id, zoneName: zoneNameArray[0].zoneName }
+          item.zoneNameArray?.length === 1
+            ? { _id: item.zoneNameArray[0]._id, zoneName: item.zoneNameArray[0].zoneName }
             : { _id: null, zoneName: item.zoneName },
         _zoneType:
-          tripData.zoneTypeArray?.length === 1
-            ? { _id: zoneTypeArray[0]._id, zoneTypeName: zoneTypeArray[0].zoneTypeName }
+          item.zoneTypeArray?.length === 1
+            ? { _id: item.zoneTypeArray[0]._id, zoneTypeName: item.zoneTypeArray[0].zoneTypeName }
             : { _id: null, zoneTypeName: item.zoneType },
         _vehicleType:
-          tripData.vehicleTypeArray?.length === 1
-            ? { _id: vehicleTypeArray[0]._id, vehicleTypeName: vehicleTypeArray[0].vehicleTypeName }
+          item.vehicleTypeArray?.length === 1
+            ? { _id: item.vehicleTypeArray[0]._id, vehicleTypeName: item.vehicleTypeArray[0].vehicleTypeName }
             : { _id: null, vehicleTypeName: item.vehicleType },
         _driver: { _id: null, userName: null },
         _cab: { _id: null, vehicleNumber: null },
@@ -232,7 +234,8 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
     }
   }, [tripData, drivers, vehicleTypeInfo, zoneInfo]);
 
-
+  console.log({ data });
+  console.log({ tripData });
   const columns = useMemo(
     () => [
       {
@@ -363,7 +366,7 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6">
               Assign New Trips
             </Typography>
-            <Button color="primary" variant="contained" onClick={generateTrips}>
+            <Button  sx={{ ml: 2, flex: 0.2 }} color="success" variant="contained" onClick={generateTrips}>
               Save
             </Button>
           </Toolbar>
@@ -411,7 +414,6 @@ function EditAction({ row, table, setPayload1, payload1 }) {
       ...old,
       [row.id]: !old[row.id]
     }));
-
   };
 
   return (
