@@ -32,7 +32,7 @@ import { openSnackbar } from 'store/reducers/snackbar';
 import { useNavigate } from 'react-router';
 import axiosServices from 'utils/axios';
 
-const CompanyRate = ({ id, companyName }) => {
+const CompanyRate = ({ id, companyName, onBackToList }) => {
   const [selectedVehicleTypes, setSelectedVehicleTypes] = useState([]);
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
   const [rateIndex, setRateIndex] = useState(null);
@@ -136,6 +136,7 @@ const CompanyRate = ({ id, companyName }) => {
       }
       resetForm({ values: initialValues });
       setSelectedVehicleTypes([]);
+      onBackToList(); // Navigate back to list after successful submission
     } catch (error) {
       console.error('Error submitting the form', error);
     }

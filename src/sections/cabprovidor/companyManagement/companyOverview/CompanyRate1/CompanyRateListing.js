@@ -22,7 +22,7 @@ const CompanyRateListing = ({ companyName, id }) => {
   const [limit, setLimit] = useState(10);
   const [updateKey, setUpdateKey] = useState(0);
   const [loading, setLoading] = useState('true');
-  const [showCompanyList, setShowCompanyList] = useState(false); // State to manage which component to show
+  const [showCompanyList, setShowCompanyList] = useState(false); 
 
   useEffect(() => {
     const fetchdata = async () => {
@@ -43,6 +43,10 @@ const CompanyRateListing = ({ companyName, id }) => {
     setSkipPageReset(false);
   }, [data]);
   useEffect(() => {}, [companyRate]);
+
+  const handleBackToList = () => {
+    setShowCompanyList(false); 
+  };
 
   return (
     <>
@@ -95,7 +99,7 @@ const CompanyRateListing = ({ companyName, id }) => {
           )} */}
         </Stack>
       ) : (
-        <CompanyRate id={id} companyName={companyName} /> // Render CompanyList1 when the state is true
+        <CompanyRate id={id} companyName={companyName} onBackToList={handleBackToList}/> // Render CompanyList1 when the state is true
       )}
     </>
   );

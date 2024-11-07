@@ -105,13 +105,13 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
                 label={cabNo}
                 size="small"
                 variant="light"
-                sx={{
-                  ':hover': {
-                    backgroundColor: 'rgba(36, 140, 106 ,.5)',
-                    cursor: 'pointer'
-                  }
-                }}
-                onClick={() => handleOpenPendingDialog(row.original)}
+                // sx={{
+                //   ':hover': {
+                //     backgroundColor: 'rgba(36, 140, 106 ,.5)',
+                //     cursor: 'pointer'
+                //   }
+                // }}
+                // onClick={() => handleOpenPendingDialog(row.original)}
               />
             );
           }
