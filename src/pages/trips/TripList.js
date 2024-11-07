@@ -655,7 +655,7 @@ const TripList = () => {
   const widgetsData = [
     {
       title: 'Completed',
-      count: '$7,825',
+      count: '₹7,825',
       percentage: 70.5,
       isLoss: false,
       invoice: '9',
@@ -664,7 +664,7 @@ const TripList = () => {
     },
     {
       title: 'Pending',
-      count: '$1,880',
+      count: '₹1,880',
       percentage: 27.4,
       isLoss: true,
       invoice: '6',
@@ -673,7 +673,7 @@ const TripList = () => {
     },
     {
       title: 'Overdue',
-      count: '$3,507',
+      count: '₹3,507',
       percentage: 27.4,
       isLoss: true,
       invoice: '4',
@@ -749,7 +749,7 @@ const TripList = () => {
               </Stack>
             </Stack>
             <Typography variant="h4" color="white" sx={{ pt: 2, pb: 1, zIndex: 1 }}>
-              $43,078
+            ₹43,078
             </Typography>
             <Box sx={{ maxWidth: '100%' }}>
               <LinearWithLabel value={90} />

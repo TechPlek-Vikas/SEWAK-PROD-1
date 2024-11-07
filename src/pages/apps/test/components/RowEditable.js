@@ -34,7 +34,7 @@ export default function RowEditable({ getValue: initialValue, row, column, table
     } else {
       setValue(e.target?.value);
     }
-    console.log({ id }, e.target?.value, { original });
+    console.log({ original });
   };
 
   const onBlur = () => {
@@ -119,6 +119,8 @@ export default function RowEditable({ getValue: initialValue, row, column, table
     case 'zoneName':
       element = (
         <>
+          {console.log({ value })}
+
           {isEditable ? (
             <>
               {/* <FormHelperText>Without label</FormHelperText> */}
@@ -130,12 +132,11 @@ export default function RowEditable({ getValue: initialValue, row, column, table
                 value={value}
                 onChange={onChange}
                 onBlur={onBlur}
+                renderValue={(selected) => selected?.zoneName || 'Select a zone'}
               >
                 {_zoneName_options.map((zone) => {
-                  console.log({ value });
-                  console.log({ _zoneName_options });
                   return (
-                    <MenuItem key={zone._id} value={zone}>
+                    <MenuItem key={zone?._id} value={zone}>
                       <Typography>{zone.zoneName}</Typography>
                     </MenuItem>
                   );
@@ -144,7 +145,7 @@ export default function RowEditable({ getValue: initialValue, row, column, table
             </>
           ) : (
             <Typography>
-              {console.log({value})}
+              {console.log({ value })}
               {value?.zoneName}{' '}
               {!value._id && (
                 <Tooltip title={'select Zone Name'}>
@@ -161,6 +162,8 @@ export default function RowEditable({ getValue: initialValue, row, column, table
     case 'zoneType':
       element = (
         <>
+          {console.log({ value })}
+
           {isEditable ? (
             <Select
               labelId="editable-select-label"
@@ -170,11 +173,12 @@ export default function RowEditable({ getValue: initialValue, row, column, table
               onChange={onChange}
               onBlur={onBlur}
               disabled={!original._zoneName?.zoneType}
+              renderValue={(selected) => selected?.zoneTypeName || 'Select a zonetype'}
             >
               {original._zoneName.zoneType &&
                 original._zoneName.zoneType.map((type) => {
                   return (
-                    <MenuItem key={type._id} value={type}>
+                    <MenuItem key={type?._id} value={type}>
                       <Typography>{type.zoneTypeName}</Typography>
                     </MenuItem>
                   );
@@ -183,7 +187,7 @@ export default function RowEditable({ getValue: initialValue, row, column, table
           ) : (
             <Typography>
               {value?.zoneTypeName}{' '}
-              {!value._id && (
+              {!value?._id && (
                 <Tooltip title={'select Zone type'}>
                   <IconButton size="small" color="info">
                     <InfoCircle />
@@ -195,9 +199,12 @@ export default function RowEditable({ getValue: initialValue, row, column, table
         </>
       );
       break;
-    case 'vehicleType':
+   
+      case 'vehicleType':
       element = (
         <>
+          {console.log({ value })}
+
           {isEditable ? (
             <Select
               labelId="editable-select-label"
@@ -207,6 +214,7 @@ export default function RowEditable({ getValue: initialValue, row, column, table
               value={value}
               onChange={onChange}
               onBlur={onBlur}
+              renderValue={(selected) => selected?.vehicleTypeName || 'Select a vehicleype'}
             >
               {_vehicleType_options.map((type) => {
                 return (
@@ -234,6 +242,8 @@ export default function RowEditable({ getValue: initialValue, row, column, table
     case 'driver':
       element = (
         <>
+          {console.log({ value })}
+
           {isEditable ? (
             <Select
               labelId="editable-select-label"
