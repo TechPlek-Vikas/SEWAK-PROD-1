@@ -578,7 +578,7 @@ const TripList = () => {
           };
 
           const handleCompleted = () => {
-            alert('Completed');
+            // alert('Completed');
             console.log('row', row.original);
             row.original.status = 'Completed'; // Update the row's status
             setSelectedRow(row.original);
@@ -590,7 +590,7 @@ const TripList = () => {
           };
 
           const handlePending = () => {
-            alert('Pending');
+            // alert('Pending');
             console.log('row', row.original);
             row.original.status = 'Pending'; // Update the row's status
             setSelectedRow(row.original);
@@ -599,7 +599,7 @@ const TripList = () => {
           };
 
           const handleCancelled = () => {
-            alert('Cancelled');
+            // alert('Cancelled');
             console.log('row', row.original);
             row.original.status = 'Cancelled'; // Update the row's status
             setSelectedRow(row.original);
