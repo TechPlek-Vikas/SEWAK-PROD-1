@@ -85,8 +85,6 @@ export default function CreateRosterTemplate() {
       mappedData: mappedHeaders // Include mapped headers
     };
 
-    console.log('templateData', templateData);
-
     const response = await axiosServices.post('tripData/add/roster/setting', {
       data: {
         CabproviderId: '66a3373468199b3e5b2ffeab',

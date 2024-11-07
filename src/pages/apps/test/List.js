@@ -312,10 +312,10 @@ const ViewRosterTest = () => {
                 // Ensure the date is formatted as 'yyyy-mm-dd'
                 value = tripDateValue.format('YYYY-MM-DD');
               }
-
               if (key === 'tripTime' && value) {
-                const timeIn24HourFormat = XLSX.SSF.format('h:mm', value); // Excel time serial to string
-                value = moment(timeIn24HourFormat, 'HH:mm').format(timeFormat);
+                const timeIn24HourFormat = XLSX.SSF.format('hh:mm', value); // Convert Excel serial time to HH:mm format
+                value = moment(timeIn24HourFormat, 'HH:mm').format('hh:mm A'); // Format to 12-hour time with AM/PM
+
                 if (value === 'Invalid date') {
                   value = 'N/A';
                 }
@@ -596,7 +596,7 @@ const ViewRosterTest = () => {
         });
         setLoading(false);
         if (updateResponse.data.success) {
-          navigate('/apps/roster/test-view-1', { state: { rosterData: response.data.data } });
+          navigate('/apps/roster/all-roster');
         }
       }
     } catch (error) {
