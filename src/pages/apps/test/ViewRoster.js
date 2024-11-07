@@ -264,7 +264,7 @@ const ViewRosterTest1 = () => {
   const { rosterData: stateData, fileData } = location.state || {};
   const [selectedData, setSelectedData] = useState([]);
   const [initateRender, setInitateRender] = useState(0);
-
+console.log({stateData})
   const handleAssignTrips = () => {
     console.log(selectedData);
   };

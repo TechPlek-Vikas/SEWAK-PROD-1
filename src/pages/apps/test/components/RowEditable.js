@@ -133,6 +133,7 @@ export default function RowEditable({ getValue: initialValue, row, column, table
               >
                 {_zoneName_options.map((zone) => {
                   console.log({ value });
+                  console.log({ _zoneName_options });
                   return (
                     <MenuItem key={zone._id} value={zone}>
                       <Typography>{zone.zoneName}</Typography>
@@ -143,6 +144,7 @@ export default function RowEditable({ getValue: initialValue, row, column, table
             </>
           ) : (
             <Typography>
+              {console.log({value})}
               {value?.zoneName}{' '}
               {!value._id && (
                 <Tooltip title={'select Zone Name'}>
