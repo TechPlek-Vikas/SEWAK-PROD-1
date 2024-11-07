@@ -32,15 +32,15 @@ const User = () => {
     setPage(1);
   }, []);
 
-  if (loading) return <TableSkeleton rows={10} columns={5} />;
+  // if (loading) return <TableSkeleton rows={10} columns={5} />;
   if (error) return <Error500 />;
-  if (users.length === 0) return <EmptyTableDemo />;
+  // if (users.length === 0) return <EmptyTableDemo />;
 
   return (
     <>
       <Stack gap={1} spacing={1}>
-        <Header OtherComp={() => <ButtonComponent />} />
-        <UserTable data={users} page={page} setPage={setPage} limit={limit} setLimit={handleLimitChange} lastPageNo={lastPageIndex} />
+        {/* <Header OtherComp={() => <ButtonComponent />} /> */}
+        <UserTable data={users} page={page} setPage={setPage} limit={limit} setLimit={handleLimitChange} lastPageNo={lastPageIndex} loading={loading}/>
       </Stack>
     </>
   );
@@ -48,22 +48,22 @@ const User = () => {
 
 export default User;
 
-const ButtonComponent = () => {
-  const navigate = useNavigate();
-  return (
-    <>
-      <Stack direction="row" spacing={1} alignItems="center">
-        <WrapperButton moduleName={MODULE.USER} permission={PERMISSIONS.CREATE}>
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            size="small"
-            onClick={() => navigate('/management/user/add-user', { state: { from: '/' } })}
-          >
-            Add User
-          </Button>
-        </WrapperButton>
-      </Stack>
-    </>
-  );
-};
+// const ButtonComponent = () => {
+//   const navigate = useNavigate();
+//   return (
+//     <>
+//       <Stack direction="row" spacing={1} alignItems="center">
+//         <WrapperButton moduleName={MODULE.USER} permission={PERMISSIONS.CREATE}>
+//           <Button
+//             variant="contained"
+//             startIcon={<Add />}
+//             size="small"
+//             onClick={() => navigate('/management/user/add-user', { state: { from: '/' } })}
+//           >
+//             Add User
+//           </Button>
+//         </WrapperButton>
+//       </Stack>
+//     </>
+//   );
+// };
