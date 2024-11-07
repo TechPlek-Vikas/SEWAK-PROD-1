@@ -29,6 +29,8 @@ const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/comi
 
 const UnderConstruction = Loadable(lazy(() => import('components/maintenance/UnderConstruction')));
 
+const PageNotFound = Loadable(lazy(() => import('pages/maintenance/error/404')));
+
 // Dashboard
 const Dashboard = Loadable(lazy(() => import('pages')));
 const ProfileOverview = Loadable(lazy(() => import('pages/overview/ProfileOverview')));
@@ -143,7 +145,7 @@ const CabProvidorRoutes = {
                 },
                 {
                   path: 'create',
-                  element: <AddRosterFileForm/>
+                  element: <AddRosterFileForm />
                 },
                 {
                   path: 'file-management',
@@ -179,9 +181,8 @@ const CabProvidorRoutes = {
                 },
                 {
                   path: 'all-roster',
-                  element: <AllRosters /> 
+                  element: <AllRosters />
                 }
-              
               ]
             },
 
@@ -224,14 +225,14 @@ const CabProvidorRoutes = {
               ]
             },
 
-             // Trips
-             {
+            // Trips
+            {
               path: 'trips',
               children: [
                 {
                   path: 'list',
                   element: <TripList />
-                },
+                }
               ]
             }
           ]
@@ -291,7 +292,7 @@ const CabProvidorRoutes = {
                 },
                 {
                   path: 'add-company-rate',
-                  element: <CompanyRateListing/>
+                  element: <CompanyRateListing />
                 }
               ]
             },
@@ -436,7 +437,7 @@ const CabProvidorRoutes = {
         },
 
         {
-          path :'temp1',
+          path: 'temp1',
           element: <Temp1 />
         }
       ]
@@ -463,6 +464,11 @@ const CabProvidorRoutes = {
           element: <MaintenanceComingSoon />
         }
       ]
+    },
+
+    {
+      path: '*',
+      element: <PageNotFound />
     }
   ]
 };
