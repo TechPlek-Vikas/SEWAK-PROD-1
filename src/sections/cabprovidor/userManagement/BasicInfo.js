@@ -132,8 +132,8 @@ const BasicInfo = () => {
                       placeholder="Enter Username"
                       fullWidth
                       inputProps={{ autoComplete: 'off' }}
-                      error={Boolean(formik.errors.userName)}
-                      helperText={formik.errors.userName}
+                      // error={Boolean(formik.errors.userName)}
+                      // helperText={formik.errors.userName}
                     />
                   </Stack>
                 </Grid>
@@ -147,8 +147,8 @@ const BasicInfo = () => {
                       placeholder="Enter Email"
                       fullWidth
                       inputProps={{ autoComplete: 'off' }}
-                      error={Boolean(formik.errors.userEmail)}
-                      helperText={formik.errors.userEmail}
+                      // error={Boolean(formik.errors.userEmail)}
+                      // helperText={formik.errors.userEmail}
                     />
                   </Stack>
                 </Grid>
@@ -162,8 +162,8 @@ const BasicInfo = () => {
                       name="userPassword"
                       placeholder="Enter Password"
                       inputProps={{ autoComplete: 'new-password' }}
-                      error={Boolean(formik.errors.userPassword)}
-                      helperText={formik.errors.userPassword}
+                      // error={Boolean(formik.errors.userPassword)}
+                      // helperText={formik.errors.userPassword}
                     />
                   </Stack>
                 </Grid>
@@ -175,8 +175,9 @@ const BasicInfo = () => {
                     <PasswordField
                       name="userConfirmPassword"
                       placeholder="Enter Confirm Password"
-                      error={Boolean(formik.errors.userConfirmPassword)}
-                      helperText={formik.errors.userConfirmPassword}
+                      inputProps={{ autoComplete: 'new-password' }}
+                      // error={Boolean(formik.errors.userConfirmPassword)}
+                      // helperText={formik.errors.userConfirmPassword}
                     />
                   </Stack>
                 </Grid>

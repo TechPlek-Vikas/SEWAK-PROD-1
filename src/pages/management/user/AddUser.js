@@ -187,6 +187,7 @@ const AddUser = () => {
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
         if (activeStep === 0) {
+          console.log('Tina = ', formik.isValid);
           const formData = new FormData();
           formData.append('userImage', values.userImage);
           formData.append('userName', values.userName);
@@ -295,6 +296,14 @@ const AddUser = () => {
   const { handleSubmit, isSubmitting, dirty, isValid } = formik;
 
   const handleNext = () => {
+    // Set all fields to touched
+    formik.setTouched({
+      userName: true,
+      userEmail: true,
+      userPassword: true,
+      userConfirmPassword: true,
+      roleId : true,
+    });
     if (isValid) {
       handleSubmit();
     }
