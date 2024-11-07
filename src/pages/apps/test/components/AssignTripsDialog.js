@@ -42,22 +42,17 @@ const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {.
 
 export default function AssignTripsDialog({ data: tripData, open, handleClose, setInitateRender }) {
   // const [data, setData] = useState(() => makeData(10));
-  // console.log({ tripData });
   const [data, setData] = useState([]);
   const [payload1, setPayload1] = useState([]);
   const [zoneInfo, setZoneInfo] = useState([]);
   const [vehicleTypeInfo, setVehicleTypeInfo] = useState([]);
   const [drivers, setDrivers] = useState([]);
-  console.log({ tripData });
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toISOString().split('T')[0]; // This will return the date in yyyy-mm-dd format
   };
 
   const generateTrips = async () => {
-    console.log({ payload1 });
-    console.log({ tripData });
-
     const assignedTripsArray = payload1.map((item) => {
       return {
         _roster_id: item._roster_id,
@@ -85,7 +80,6 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
     });
 
     const rosterUploadArray = payload1.map((item) => {
-      console.log({ item });
       return {
         vehicleTypeArray: item._vehicleType ? [{ _id: item._vehicleType._id, vehicleTypeName: item._vehicleType.vehicleTypeName }] : [],
 
@@ -141,14 +135,6 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
     // });
 
     const fileId = tripData[0].rosterFileId;
-    // console.log({ fileId });
-
-    // console.log({ updatedTargetArray });
-
-    // console.log({ rosterUploadArray });
-    // console.log({ assignedTripsArray });
-
- 
 
     const _generateTripPayLoad = {
       data: {
@@ -167,7 +153,6 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
       const response = await axiosServices.post('/assignTrip/to/driver', _generateTripPayLoad);
       if (response.status === 201) {
         const response1 = await axiosServices.put('/tripData/map/roster/update', _mappedRosterDataPayload);
-        console.log(response1.data);
         if (response1.data.success) {
           alert(`${payload1.length} Trips Created`);
           handleClose();
@@ -175,7 +160,6 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
           setInitateRender((prev) => prev + 1);
         }
       }
-      console.log(response.data);
     } catch (err) { console.error(err)}
 
     // setPayload1([]);
@@ -204,7 +188,6 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
   }, []);
 
   useEffect(() => {
-    // console.log({tripData})
     if (tripData?.length > 0) {
       const mappedData = tripData.map((item) => ({
         ...item, // Spread existing properties
@@ -245,13 +228,10 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
         _drivers_options: drivers
       }));
 
-      console.log({ mappedData });
-
       setData(mappedData);
     }
   }, [tripData, drivers, vehicleTypeInfo, zoneInfo]);
 
-  console.log({ data });
 
   const columns = useMemo(
     () => [
@@ -432,7 +412,6 @@ function EditAction({ row, table, setPayload1, payload1 }) {
       [row.id]: !old[row.id]
     }));
 
-    console.log('Updated payload1:', payload1); // Will still log the old payload1 due to async state update
   };
 
   return (

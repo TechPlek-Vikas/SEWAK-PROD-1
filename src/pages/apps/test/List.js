@@ -44,7 +44,6 @@ import * as XLSX from 'xlsx';
 import moment from 'moment';
 import axiosServices from 'utils/axios';
 import { getMergeResult } from './utils/MappingAlgorithem';
-const avatarImage = require.context('assets/images/users', true);
 
 // ==============================|| REACT TABLE ||============================== //
 
@@ -317,10 +316,13 @@ const ViewRosterTest = () => {
               if (key === 'tripTime' && value) {
                 const timeIn24HourFormat = XLSX.SSF.format('h:mm', value); // Excel time serial to string
                 value = moment(timeIn24HourFormat, 'HH:mm').format(timeFormat);
+                if (value === 'Invalid date') {
+                  value = 'N/A';
+                }
               }
 
               if (key === 'tripType' && value) {
-                value = value?.toLowerCase() === pickupType ? 1 : value?.toLowerCase() === dropType ? 2 : value;
+                value = value?.toLowerCase() === pickupType ? 1 : value?.toLowerCase() === dropType ? 2 : 'N/A';
               }
 
               rowObject[key] = value;
@@ -347,7 +349,6 @@ const ViewRosterTest = () => {
             rowObject['guard'] = 1;
           }
 
-          console.log(rowObject);
           return rowObject;
         })
         .filter((row) => row !== null); // Filter out null rows
@@ -422,14 +423,18 @@ const ViewRosterTest = () => {
       {
         Header: 'Trip Time',
         accessor: 'tripTime',
-        disableFilters: true
+        disableFilters: true,
+        Cell: ({ value }) => {
+          console.log({ value });
+          return value; // Adjust as per your type definitions
+        }
       },
       {
         Header: 'Trip Type',
         accessor: 'tripType',
         disableFilters: true,
         Cell: ({ value }) => {
-          return value === 1 ? 'Pickup' : 'Drop'; // Adjust as per your type definitions
+          return value === 1 ? 'Pickup' : value === 2 ? 'Drop' : 'N/A'; // Adjust as per your type definitions
         }
       },
       {
@@ -553,7 +558,11 @@ const ViewRosterTest = () => {
     [] // dependencies array can be adjusted based on other states if needed
   );
 
-  let breadcrumbLinks = [{ title: 'Home', to: APP_DEFAULT_PATH }, { title: 'Roster', to: '/apps/roster/test' }, { title: 'Create Roster' }];
+  let breadcrumbLinks = [
+    { title: 'Home', to: APP_DEFAULT_PATH },
+    { title: 'Roster', to: '/apps/roster/dashboard' },
+    { title: 'Create Roster' }
+  ];
 
   const handleSaveRoster = async () => {
     const rosterFileId = fileData._id;
@@ -576,7 +585,6 @@ const ViewRosterTest = () => {
     try {
       // First request
       const response = await axiosServices.post('/tripData/map/roster', payload);
-      console.log('First request response:', response.data); // Log the response
 
       if (response.status === 201) {
         // If the first request was successful, proceed with the second request
@@ -587,7 +595,6 @@ const ViewRosterTest = () => {
           }
         });
         setLoading(false);
-        console.log('Status update response:', updateResponse.data); // Log the second response
         if (updateResponse.data.success) {
           navigate('/apps/roster/test-view-1', { state: { rosterData: response.data.data } });
         }
@@ -599,7 +606,6 @@ const ViewRosterTest = () => {
       setLoading(false);
     }
   };
-
   if (loading) return <Loader />;
 
   return (

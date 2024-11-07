@@ -60,7 +60,6 @@ export function getMergeResult(data, zone_zoneType, vehicleType) {
       obj.zoneTypeArray = zoneTypeArray; // Maintain original if no zone types found
     }
 
-    console.log(zoneNameArray.length,vehicleTypeArray.length)
     // Determine the status based on the lengths of arrays
     if (zoneNameArray.length === 0 || vehicleTypeArray.length === 0) {
       obj.status = 2; // No zone or vehicle type, mark as discarded (2)
