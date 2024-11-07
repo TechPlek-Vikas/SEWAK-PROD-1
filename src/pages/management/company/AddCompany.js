@@ -1,5 +1,5 @@
 // material-ui
-import { Button, DialogActions, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material';
+import { Autocomplete, Button, DialogActions, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material';
 
 // project-imports
 import MainCard from 'components/MainCard';
@@ -55,6 +55,46 @@ function AddCompany() {
 
   const DIGITS_ONLY_PATTERN = /^\d+$/;
 
+  // List of Indian states
+  const indianStates = [
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
+    'Andaman and Nicobar Islands',
+    'Chandigarh',
+    'Dadra and Nagar Haveli and Daman and Diu',
+    'Lakshadweep',
+    'Delhi',
+    'Puducherry',
+    'Ladakh',
+    'Jammu and Kashmir'
+  ];
+
   const validationSchema = yup.object({
     company_name: yup
       .string()
@@ -74,30 +114,30 @@ function AddCompany() {
     //     return /^[^0-9]/.test(value);
     //   })
     //   .required('Person Name is required'),
-    // company_email: yup.string().trim().email('Invalid email').required('Email is required'),
-    // mobile: yup
-    //   .string()
-    //   .trim()
-    //   .matches(/^[0-9]{10}$/, { message: 'Please enter valid mobile number', excludeEmptyString: false })
-    //   .required('Mobile Number is required'),
-    // landline: yup
-    //   .string()
-    //   .trim()
-    //   .matches(/^[0-9]{10}$/, { message: 'Please enter valid landline number', excludeEmptyString: false })
-    //   .test('not-same-as-phone', 'Landline phone number should be different from mobile number', function (value) {
-    //     const { mobile: phone } = this.parent;
-    //     return typeof phone === 'undefined' ? true : value !== phone;
-    //   })
-    //   .required('Landline Number is required'),
-    // PAN: yup
-    //   .string()
-    //   .required('PAN is required')
-    //   .matches(/^([A-Z]){5}([0-9]){4}([A-Z]){1}$/, 'Enter a valid PAN'),
+    company_email: yup.string().trim().email('Invalid email').required('Email is required'),
+    mobile: yup
+      .string()
+      .trim()
+      .matches(/^[0-9]{10}$/, { message: 'Please enter valid mobile number', excludeEmptyString: false })
+      .required('Mobile Number is required'),
+    landline: yup
+      .string()
+      .trim()
+      .matches(/^[0-9]{10}$/, { message: 'Please enter valid landline number', excludeEmptyString: false })
+      .test('not-same-as-phone', 'Landline phone number should be different from mobile number', function (value) {
+        const { mobile: phone } = this.parent;
+        return typeof phone === 'undefined' ? true : value !== phone;
+      })
+      .required('Landline Number is required'),
+    PAN: yup
+      .string()
+      .required('PAN is required')
+      .matches(/^([A-Z]){5}([0-9]){4}([A-Z]){1}$/, 'Enter a valid PAN'),
 
-    // GSTIN: yup
-    //   .string()
-    //   .required('GSTIN is required')
-    //   .matches(/^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z1-9]{1}Z[A-Z0-9]{1})$/, 'Enter a valid GSTIN'),
+    GSTIN: yup
+      .string()
+      .required('GSTIN is required')
+      .matches(/^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z1-9]{1}Z[A-Z0-9]{1})$/, 'Enter a valid GSTIN'),
     // postal_code: yup
     //   .string()
     //   .matches(/^[0-9]{6}$/, { message: 'Please enter valid pin code', excludeEmptyString: false })
@@ -111,7 +151,7 @@ function AddCompany() {
     //   .max(MAX_TEXTFIELD_LENGTH.address, 'Address is too long')
     //   .required('Address is required'),
     // city: yup.string().trim().required('City is required'),
-    // state: yup.string().trim().required('State is required'),
+    state: yup.string().trim().required('State is required'),
     // MCDTax: yup.string().required('MCD Tax is required'),
     // MCDAmount: yup
     //   .string()
@@ -396,7 +436,7 @@ function AddCompany() {
                   />
                 </Stack>
               </Grid>
-              <Grid item xs={12} lg={4}>
+              {/* <Grid item xs={12} lg={4}>
                 <Stack spacing={1}>
                   <InputLabel>State</InputLabel>
                   <TextField
@@ -408,6 +448,27 @@ function AddCompany() {
                     onChange={formik.handleChange}
                     error={formik.touched.state && Boolean(formik.errors.state)}
                     helperText={formik.touched.state && formik.errors.state}
+                  />
+                </Stack>
+              </Grid> */}
+              <Grid item xs={12} lg={4}>
+                <Stack spacing={1}>
+                  <InputLabel>State</InputLabel>
+                  <Autocomplete
+                    fullWidth
+                    id="state"
+                    name="state"
+                    options={indianStates}
+                    value={formik.values.state}
+                    onChange={(event, newValue) => formik.setFieldValue('state', newValue)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        placeholder="Select State"
+                        error={formik.touched.state && Boolean(formik.errors.state)}
+                        helperText={formik.touched.state && formik.errors.state}
+                      />
+                    )}
                   />
                 </Stack>
               </Grid>
