@@ -19,6 +19,13 @@ import { useSelector } from 'store';
 import { fetchAllVehicleTypes, fetchAllVehicleTypesForAll } from 'store/slice/cabProvidor/vehicleTypeSlice';
 import { fetchZoneNames } from 'store/slice/cabProvidor/ZoneNameSlice';
 import { fetchAllZoneTypes } from 'store/slice/cabProvidor/zoneTypeSlice';
+import { GiReceiveMoney } from 'react-icons/gi';
+import { RiMoneyRupeeCircleFill } from 'react-icons/ri';
+import { GiPayMoney } from 'react-icons/gi';
+
+import { GiTakeMyMoney } from 'react-icons/gi';
+
+
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
@@ -74,6 +81,10 @@ const Dashboard = () => {
       {
         Header: 'Total Vendor Revenue',
         accessor: 'totalVendRevenue'
+      },
+      {
+        Header: 'Total Driver Revenue',
+        accessor: 'totalDriverRevenue'
       },
       {
         Header: 'Net Profit',
@@ -196,25 +207,45 @@ const Dashboard = () => {
         </Grid>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={3}>
-            <HoverSocialCard primary="Total Routes" secondary={`${dashboardData?.totalRoute}`} color={theme.palette.primary.main} />
+          <Grid item xs={12} sm={6} md={4}>
+            <HoverSocialCard
+              primary="Total Routes"
+              secondary={`${dashboardData?.totalRoute}`}
+              color={theme.palette.primary.main}
+              iconPrimary={Gps}
+            />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={4}>
             <HoverSocialCard
               primary="Total Revenue Of Company"
               secondary={`₹ ${dashboardData?.totalRevenueOfCompany}`}
               color={theme.palette.info.main}
+              iconPrimary={GiReceiveMoney}
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={4}>
             <HoverSocialCard
               primary="Total Revenue Of Vendor"
               secondary={`₹ ${dashboardData?.totalRevenueOfVendor}`}
               color={theme.palette.warning.main}
+              iconPrimary={GiPayMoney}
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <HoverSocialCard primary="Profit" secondary={`₹ ${dashboardData?.profit}`} color={theme.palette.secondary.dark} />
+          <Grid item xs={12} sm={6} md={4}>
+            <HoverSocialCard
+              primary="Total Revenue Of Driver"
+              secondary={`₹ ${dashboardData?.totalRevenueOfDriver}`}
+              color={'#D8125B'}
+              iconPrimary={RiMoneyRupeeCircleFill}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <HoverSocialCard
+              primary="Profit"
+              secondary={`₹ ${dashboardData?.profit}`}
+              color={theme.palette.secondary.dark}
+              iconPrimary={GiTakeMyMoney}
+            />
           </Grid>
         </Grid>
 

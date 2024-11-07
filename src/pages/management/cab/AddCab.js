@@ -1177,120 +1177,238 @@ const AddCab = () => {
                       {/* Fuel Type */}
                       <Grid item xs={3}>
                         <Stack spacing={1}>
-                          <Stack direction="row" spacing={1} justifyContent="space-between">
-                            <InputLabel>Fuel Type</InputLabel>
+                          {/* <Stack direction="row" spacing={1} justifyContent="space-between">
+                            <InputLabel>Fuel Type : </InputLabel>
                             <Switch
                               checked={values.fuelType}
                               inputProps={{ 'aria-label': 'switch' }}
                               name="fuelType"
                               onChange={handleSwitchChange}
                             />
-                          </Stack>
+                          </Stack> */}
+
+                          <Grid container spacing={1} alignItems={'center'}>
+                            <Grid item xs={6}>
+                              <InputLabel>Fuel Type : </InputLabel>
+                            </Grid>
+                            <Grid item xs={6}>
+                              {' '}
+                              <Switch
+                                checked={values.fuelType}
+                                inputProps={{ 'aria-label': 'switch' }}
+                                name="fuelType"
+                                onChange={handleSwitchChange}
+                              />
+                            </Grid>
+                          </Grid>
                         </Stack>
                       </Grid>
 
                       {/* Fire Cylinder */}
                       <Grid item xs={3}>
                         <Stack spacing={1}>
-                          <Stack direction="row" spacing={1} justifyContent="space-between">
-                            <InputLabel>Fire Cylinder</InputLabel>
+                          {/* <Stack direction="row" spacing={1} justifyContent="space-between">
+                            <InputLabel>Fire Cylinder : </InputLabel>
                             <Switch
                               checked={values.fireCylinder}
                               inputProps={{ 'aria-label': 'switch' }}
                               name="fireCylinder"
                               onChange={handleSwitchChange}
                             />
-                          </Stack>
+                          </Stack> */}
+
+                          <Grid container spacing={1} alignItems={'center'}>
+                            <Grid item xs={6}>
+                              <InputLabel>Fire Cylinder : </InputLabel>
+                            </Grid>
+                            <Grid item xs={6}>
+                              {' '}
+                              <Switch
+                                checked={values.fireCylinder}
+                                inputProps={{ 'aria-label': 'switch' }}
+                                name="fireCylinder"
+                                onChange={handleSwitchChange}
+                              />
+                            </Grid>
+                          </Grid>
                         </Stack>
                       </Grid>
 
                       {/* First Aid Box */}
                       <Grid item xs={3}>
                         <Stack spacing={1}>
-                          <Stack direction="row" spacing={1} justifyContent="space-between">
-                            <InputLabel>First Aid Box</InputLabel>
+                          {/* <Stack direction="row" spacing={1} justifyContent="space-between">
+                            <InputLabel>First Aid Box : </InputLabel>
                             <Switch
                               checked={values.firstAidBox}
                               inputProps={{ 'aria-label': 'switch' }}
                               name="firstAidBox"
                               onChange={handleSwitchChange}
                             />
-                          </Stack>
+                          </Stack> */}
+
+                          <Grid container spacing={1} alignItems={'center'}>
+                            <Grid item xs={6}>
+                              {' '}
+                              <InputLabel>First Aid Box : </InputLabel>
+                            </Grid>
+                            <Grid item xs={6}>
+                              {' '}
+                              <Switch
+                                checked={values.firstAidBox}
+                                inputProps={{ 'aria-label': 'switch' }}
+                                name="firstAidBox"
+                                onChange={handleSwitchChange}
+                              />
+                            </Grid>
+                          </Grid>
                         </Stack>
                       </Grid>
 
                       {/* Phone Stand */}
                       <Grid item xs={3}>
                         <Stack spacing={1}>
-                          <Stack direction="row" spacing={1} justifyContent="space-between">
-                            <InputLabel>Phone Stand</InputLabel>
+                          {/* <Stack direction="row" spacing={1} justifyContent="space-between">
+                            <InputLabel>Phone Stand : </InputLabel>
                             <Switch
                               checked={values.phoneStand}
                               inputProps={{ 'aria-label': 'switch' }}
                               name="phoneStand"
                               onChange={handleSwitchChange}
                             />
-                          </Stack>
+                          </Stack> */}
+
+                          <Grid container spacing={1} alignItems={'center'}>
+                            <Grid item xs={6}>
+                              <InputLabel>Phone Stand : </InputLabel>
+                            </Grid>
+                            <Grid item xs={6}>
+                              <Switch
+                                checked={values.phoneStand}
+                                inputProps={{ 'aria-label': 'switch' }}
+                                name="phoneStand"
+                                onChange={handleSwitchChange}
+                              />
+                            </Grid>
+                          </Grid>
                         </Stack>
                       </Grid>
 
                       {/* Bluetooth */}
                       <Grid item xs={3}>
                         <Stack spacing={1}>
-                          <Stack direction="row" spacing={1} justifyContent="space-between">
-                            <InputLabel>Bluetooth</InputLabel>
+                          {/* <Stack direction="row" spacing={1} justifyContent="space-between">
+                            <InputLabel>Bluetooth : </InputLabel>
                             <Switch
                               checked={values.bluetooth}
                               inputProps={{ 'aria-label': 'switch' }}
                               name="bluetooth"
                               onChange={handleSwitchChange}
                             />
-                          </Stack>
+                          </Stack> */}
+
+                          <Grid container spacing={1} alignItems={'center'}>
+                            <Grid item xs={6}>
+                              <InputLabel>Bluetooth : </InputLabel>
+                            </Grid>
+                            <Grid item xs={6}>
+                              <Switch
+                                checked={values.bluetooth}
+                                inputProps={{ 'aria-label': 'switch' }}
+                                name="bluetooth"
+                                onChange={handleSwitchChange}
+                              />
+                            </Grid>
+                          </Grid>
                         </Stack>
                       </Grid>
 
                       {/* Perfume */}
                       <Grid item xs={3}>
                         <Stack spacing={1}>
-                          <Stack direction="row" spacing={1} justifyContent="space-between">
-                            <InputLabel>Perfume</InputLabel>
+                          {/* <Stack direction="row" spacing={1} justifyContent="space-between">
+                            <InputLabel>Perfume : </InputLabel>
                             <Switch
                               checked={values.perfume}
                               inputProps={{ 'aria-label': 'switch' }}
                               name="perfume"
                               onChange={handleSwitchChange}
                             />
-                          </Stack>
+                          </Stack> */}
+
+                          <Grid container spacing={1} alignItems={'center'}>
+                            <Grid item xs={6}>
+                              {' '}
+                              <InputLabel>Perfume : </InputLabel>
+                            </Grid>
+                            <Grid item xs={6}>
+                              {' '}
+                              <Switch
+                                checked={values.perfume}
+                                inputProps={{ 'aria-label': 'switch' }}
+                                name="perfume"
+                                onChange={handleSwitchChange}
+                              />
+                            </Grid>
+                          </Grid>
                         </Stack>
                       </Grid>
 
                       {/* Umbrella */}
                       <Grid item xs={3}>
                         <Stack spacing={1}>
-                          <Stack direction="row" spacing={1} justifyContent="space-between">
-                            <InputLabel>Umbrella</InputLabel>
+                          {/* <Stack direction="row" spacing={1} justifyContent="space-between">
+                            <InputLabel>Umbrella : </InputLabel>
                             <Switch
                               checked={values.umbrella}
                               inputProps={{ 'aria-label': 'switch' }}
                               name="umbrella"
                               onChange={handleSwitchChange}
                             />
-                          </Stack>
+                          </Stack> */}
+
+                          <Grid container spacing={1} alignItems={'center'}>
+                            <Grid item xs={6}>
+                              <InputLabel>Umbrella : </InputLabel>
+                            </Grid>
+                            <Grid item xs={6}>
+                              <Switch
+                                checked={values.umbrella}
+                                inputProps={{ 'aria-label': 'switch' }}
+                                name="umbrella"
+                                onChange={handleSwitchChange}
+                              />
+                            </Grid>
+                          </Grid>
                         </Stack>
                       </Grid>
 
                       {/* Torch */}
                       <Grid item xs={3}>
                         <Stack spacing={1}>
-                          <Stack direction="row" spacing={1} justifyContent="space-between">
-                            <InputLabel>Torch</InputLabel>
+                          {/* <Stack direction="row" spacing={1} justifyContent="space-between">
+                            <InputLabel>Torch : </InputLabel>
                             <Switch
                               checked={values.torch}
                               inputProps={{ 'aria-label': 'switch' }}
                               name="torch"
                               onChange={handleSwitchChange}
                             />
-                          </Stack>
+                          </Stack> */}
+
+                          <Grid container spacing={1} alignItems={'center'}>
+                            <Grid item xs={6}>
+                              <InputLabel>Torch : </InputLabel>
+                            </Grid>
+                            <Grid item xs={6}>
+                              <Switch
+                                checked={values.torch}
+                                inputProps={{ 'aria-label': 'switch' }}
+                                name="torch"
+                                onChange={handleSwitchChange}
+                              />
+                            </Grid>
+                          </Grid>
                         </Stack>
                       </Grid>
                     </Grid>
