@@ -1,5 +1,19 @@
 import PropTypes from 'prop-types';
-import { alpha, Button, CircularProgress, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, useTheme } from '@mui/material';
+import {
+  alpha,
+  Button,
+  CircularProgress,
+  Dialog,
+  IconButton,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Tooltip,
+  useTheme
+} from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { Fragment, useMemo, useState } from 'react';
@@ -21,7 +35,7 @@ import TableSkeleton from 'components/tables/TableSkeleton';
 import { renderFilterTypes } from 'utils/react-table';
 import { HeaderSort, TablePagination } from 'components/third-party/ReactTable';
 
-const ZoneTable = ({ data, updateKey, setUpdateKey,loading }) => {
+const ZoneTable = ({ data, updateKey, setUpdateKey, loading }) => {
   const theme = useTheme();
   const mode = theme.palette.mode;
   const [advanceData, setAdvanceData] = useState(null);
@@ -51,7 +65,7 @@ const ZoneTable = ({ data, updateKey, setUpdateKey,loading }) => {
     try {
       const resultAction = await dispatch(
         deleteZoneName({
-          data:{
+          data: {
             _id: deleteId
           }
         })
@@ -194,8 +208,8 @@ const ZoneTable = ({ data, updateKey, setUpdateKey,loading }) => {
                     color="error"
                     onClick={(e) => {
                       e.stopPropagation();
-                      console.log("row.values",row.values);
-                      
+                      console.log('row.values', row.values);
+
                       setDeleteId(row.values._id);
                       setAlertOpen(true);
                     }}
@@ -217,16 +231,16 @@ const ZoneTable = ({ data, updateKey, setUpdateKey,loading }) => {
     <>
       <Stack direction={'row'} spacing={1} justifyContent="flex-end" alignItems="center" sx={{ p: 0, pb: 3 }}>
         <WrapperButton moduleName={MODULE.ZONE} permission={PERMISSIONS.CREATE}>
-            <Button
-              variant="contained"
-              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
-              onClick={() => handleZone('add')}
-              size="small"
-              disabled={loading} // Disable button while loading
-            >
-              {loading ? 'Loading...' : '  Add Zone'}
-            </Button>
-          </WrapperButton>
+          <Button
+            variant="contained"
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
+            onClick={() => handleZone('add')}
+            size="small"
+            disabled={loading} // Disable button while loading
+          >
+            {loading ? 'Loading...' : '  Add Zone'}
+          </Button>
+        </WrapperButton>
         <Stack direction={'row'} alignItems="center" spacing={2}>
           <WrapperButton moduleName={MODULE.ZONE_TYPE} permission={PERMISSIONS.READ}>
             <Button
@@ -253,18 +267,22 @@ const ZoneTable = ({ data, updateKey, setUpdateKey,loading }) => {
           )}
         </ScrollX>
       </MainCard>
-      <Dialog
-        maxWidth="sm"
-        TransitionComponent={PopupTransition}
-        keepMounted
-        fullWidth
-        onClose={handleAdd}
-        open={add}
-        sx={{ '& .MuiDialog-paper': { p: 0 }, transition: 'transform 225ms' }}
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <ZoneAddForm zone={zone} onCancel={handleAdd} updateKey={updateKey} setUpdateKey={setUpdateKey} />
-      </Dialog>
+
+      {add && (
+        <Dialog
+          maxWidth="sm"
+          TransitionComponent={PopupTransition}
+          keepMounted
+          fullWidth
+          onClose={handleAdd}
+          open={add}
+          sx={{ '& .MuiDialog-paper': { p: 0 }, transition: 'transform 225ms' }}
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <ZoneAddForm zone={zone} onCancel={handleAdd} updateKey={updateKey} setUpdateKey={setUpdateKey} />
+        </Dialog>
+      )}
+
       <CustomAlertDelete
         title={'This action is irreversible. Please check before deleting.'}
         open={alertopen}
@@ -293,11 +311,7 @@ export default ZoneTable;
 
 // ==============================|| REACT TABLE ||============================== //
 
-function ReactTable({
-  columns,
-  data,
-  renderRowSubComponent,
-}) {
+function ReactTable({ columns, data, renderRowSubComponent }) {
   const theme = useTheme();
 
   const filterTypes = useMemo(() => renderFilterTypes, []);
@@ -313,7 +327,7 @@ function ReactTable({
     page,
     gotoPage,
     setPageSize,
-    state: { pageIndex, pageSize, expanded },
+    state: { pageIndex, pageSize, expanded }
   } = useTable(
     {
       columns,

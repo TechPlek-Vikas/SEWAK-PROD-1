@@ -167,7 +167,7 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
               color="error"
               title="Manage Permission"
               onClick={() => {
-                alert(`Manage Permission = ${row.original._id}`);
+                // alert(`Manage Permission = ${row.original._id}`);
                 const val = KEYS?.[userType].PERMISSION;
                 const key = row.original[val];
                 const uid = key?.['_id'];

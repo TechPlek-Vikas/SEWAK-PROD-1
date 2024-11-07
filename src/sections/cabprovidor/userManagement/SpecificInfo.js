@@ -107,6 +107,7 @@ const SpecificInfo = ({ handlePermission }) => {
                     saveValue="_id"
                     otherValue="permissions"
                     extraWork={handlePermission}
+                    onBlur={() => formik.setFieldTouched('roleId', true)}
                     value={roleOptions?.find((item) => item['_id'] === values['roleId']) || null}
                     renderOption={(props, option) => (
                       <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
@@ -116,7 +117,7 @@ const SpecificInfo = ({ handlePermission }) => {
                     error={Boolean(formik.errors.roleId)}
                     helperText={formik.errors.roleId}
                   />
-                  {Boolean(formik.errors.roleId) && <FormHelperText error>{formik.errors.roleId}</FormHelperText>}
+                  {/* {Boolean(formik.errors.roleId) && <FormHelperText error>{formik.errors.roleId}</FormHelperText>} */}
                 </Stack>
               </MainCard>
             </Grid>

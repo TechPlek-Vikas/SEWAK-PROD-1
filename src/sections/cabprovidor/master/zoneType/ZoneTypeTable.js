@@ -1,5 +1,19 @@
 import PropTypes from 'prop-types';
-import { alpha, Button, CircularProgress, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, useTheme } from '@mui/material';
+import {
+  alpha,
+  Button,
+  CircularProgress,
+  Dialog,
+  IconButton,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Tooltip,
+  useTheme
+} from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { Fragment, useMemo, useState } from 'react';
@@ -20,7 +34,7 @@ import EmptyTableDemo from 'components/tables/EmptyTable';
 import { renderFilterTypes } from 'utils/react-table';
 import { HeaderSort, TablePagination } from 'components/third-party/ReactTable';
 
-const ZoneTypeTable = ({ data, updateKey, setUpdateKey,loading }) => {
+const ZoneTypeTable = ({ data, updateKey, setUpdateKey, loading }) => {
   const theme = useTheme();
   const mode = theme.palette.mode;
   const [, setAdvanceData] = useState(null);
@@ -111,8 +125,8 @@ const ZoneTypeTable = ({ data, updateKey, setUpdateKey,loading }) => {
       //   );
       // }
     } catch (error) {
-      console.log("error",error);
-      
+      console.log('error', error);
+
       // console.error('Error deleting advance type:', error.response?.data || error.message);
       dispatch(
         openSnackbar({
@@ -252,16 +266,16 @@ const ZoneTypeTable = ({ data, updateKey, setUpdateKey,loading }) => {
     <>
       <Stack direction={'row'} spacing={1} justifyContent="flex-end" alignItems="center" sx={{ p: 0, pb: 3 }}>
         <WrapperButton moduleName={MODULE.ZONE_TYPE} permission={PERMISSIONS.CREATE}>
-            <Button
-              variant="contained"
-              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
-              onClick={() => handleZone('add')}
-              size="small"
-              disabled={loading} // Disable button while loading
-            >
-              {loading ? 'Loading...' : '  Add Zone Type'}
-            </Button>
-          </WrapperButton>
+          <Button
+            variant="contained"
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
+            onClick={() => handleZone('add')}
+            size="small"
+            disabled={loading} // Disable button while loading
+          >
+            {loading ? 'Loading...' : '  Add Zone Type'}
+          </Button>
+        </WrapperButton>
       </Stack>
       <MainCard content={false}>
         <ScrollX>
@@ -274,18 +288,22 @@ const ZoneTypeTable = ({ data, updateKey, setUpdateKey,loading }) => {
           )}
         </ScrollX>
       </MainCard>
-      <Dialog
-        maxWidth="sm"
-        TransitionComponent={PopupTransition}
-        keepMounted
-        fullWidth
-        onClose={handleAdd}
-        open={add}
-        sx={{ '& .MuiDialog-paper': { p: 0 }, transition: 'transform 225ms' }}
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <ZonetypeAddForm zoneType={zoneType} onCancel={handleAdd} updateKey={updateKey} setUpdateKey={setUpdateKey} />
-      </Dialog>
+
+      {add && (
+        <Dialog
+          maxWidth="sm"
+          TransitionComponent={PopupTransition}
+          keepMounted
+          fullWidth
+          onClose={handleAdd}
+          open={add}
+          sx={{ '& .MuiDialog-paper': { p: 0 }, transition: 'transform 225ms' }}
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <ZonetypeAddForm zoneType={zoneType} onCancel={handleAdd} updateKey={updateKey} setUpdateKey={setUpdateKey} />
+        </Dialog>
+      )}
+
       <CustomAlertDelete
         title={'This action is irreversible. Please check before deleting.'}
         open={alertopen}
@@ -314,11 +332,7 @@ export default ZoneTypeTable;
 
 // ==============================|| REACT TABLE ||============================== //
 
-function ReactTable({
-  columns,
-  data,
-  renderRowSubComponent,
-}) {
+function ReactTable({ columns, data, renderRowSubComponent }) {
   const theme = useTheme();
 
   const filterTypes = useMemo(() => renderFilterTypes, []);
@@ -334,7 +348,7 @@ function ReactTable({
     page,
     gotoPage,
     setPageSize,
-    state: { pageIndex, pageSize, expanded },
+    state: { pageIndex, pageSize, expanded }
   } = useTable(
     {
       columns,
