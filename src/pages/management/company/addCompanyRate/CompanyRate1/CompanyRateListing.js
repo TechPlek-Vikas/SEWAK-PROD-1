@@ -106,6 +106,10 @@ const CompanyRateListing = () => {
   }, [data]);
   useEffect(() => {}, [companyRate]);
 
+  const handleBackToList = () => {
+    setShowCompanyList(false); 
+  };
+
   return (
     <>
       {/* Company selection dialog */}
@@ -130,7 +134,7 @@ const CompanyRateListing = () => {
           {/* )} */}
         </Stack>
       ) : (
-        <CompanyRate id={selectedCompany?._id} companyName={selectedCompany?.company_name} />
+        <CompanyRate id={selectedCompany?._id} companyName={selectedCompany?.company_name} onBackToList={handleBackToList}/>
       )}
     </>
   );

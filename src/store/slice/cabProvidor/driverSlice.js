@@ -66,9 +66,9 @@ export const registerDriver = createAsyncThunk('drivers/register', async (payloa
 });
 
 // fetch all Drivers without pagination
-export const fetchAllDrivers = createAsyncThunk('drivers/fetchAllDrivers', async (_, { rejectWithValue }) => {
+export const fetchAllDrivers = createAsyncThunk('drivers/fetchAllDrivers', async (id, { rejectWithValue }) => {
   try {
-    const response = await axios.get('/driver/all/system');
+    const response = await axios.get(`/driver/all/system?cabProviderId=${id}`);
     return response.data.data;
   } catch (error) {
     return rejectWithValue(error.response ? error.response.data : error.message);

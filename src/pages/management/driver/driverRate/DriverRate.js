@@ -35,11 +35,14 @@ const AddDriverRateDialog = ({ open, onClose, setSelectedCompany, setDriverID1 }
 
   const dispatch = useDispatch();
   const allDrivers = useSelector((state) => state.drivers.allDrivers);
+  const userInfo = JSON.parse(localStorage.getItem('userInformation'));
+
+  const CabProviderId = userInfo.userId;
 
 //   console.log('allDrivers', allDrivers);
 
   useEffect(() => {
-    dispatch(fetchAllDrivers());
+    dispatch(fetchAllDrivers(CabProviderId));
   }, [dispatch]);
 
   const handleSave = () => {
