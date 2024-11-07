@@ -2,7 +2,7 @@
 import PropTypes from 'prop-types';
 
 // material-ui
-import { Button, Grid, InputLabel, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Button, Grid, InputLabel, Stack, TextField, Typography } from '@mui/material';
 
 // third-party
 import { useFormik } from 'formik';
@@ -53,13 +53,54 @@ const validationSchema = yup.object({
     .matches(/^\d{9,18}$/, 'Enter a valid account number'),
   accountHolderName: yup.string().required('Account Holder Name is required'),
   bankAddress: yup.string().required('Bank Address is required'),
-  officeChargeAmount: yup.number()
+  officeChargeAmount: yup
+    .number()
     .typeError('Office Charge Amount must be a number')
     .required('Office Charge Amount is required')
     .positive('Office Charge Amount must be a positive number')
   // ESI_Number: yup.string().required('ESI Number is required'),
   // PF_Number: yup.string().required('PF Number is required')
 });
+
+// List of Indian states
+const indianStates = [
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chhattisgarh',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal',
+  'Andaman and Nicobar Islands',
+  'Chandigarh',
+  'Dadra and Nagar Haveli and Daman and Diu',
+  'Lakshadweep',
+  'Delhi',
+  'Puducherry',
+  'Ladakh',
+  'Jammu and Kashmir'
+];
 
 // ==============================|| VALIDATION WIZARD - PAYMENT ||============================== //
 
@@ -312,7 +353,7 @@ export default function SpecificDetail({ specificDetail, handleNext, setErrorInd
               />
             </Stack>
           </Grid>{' '}
-          <Grid item xs={12} md={4}>
+          {/* <Grid item xs={12} md={4}>
             <Stack spacing={1}>
               <InputLabel>State</InputLabel>
               <TextField
@@ -325,6 +366,27 @@ export default function SpecificDetail({ specificDetail, handleNext, setErrorInd
                 helperText={formik.touched.officeState && formik.errors.officeState}
                 fullWidth
                 autoComplete="state"
+              />
+            </Stack>
+          </Grid> */}
+          <Grid item xs={12} lg={4}>
+            <Stack spacing={1}>
+              <InputLabel>State</InputLabel>
+              <Autocomplete
+                fullWidth
+                id="officeState"
+                name="officeState"
+                options={indianStates}
+                value={formik.values.officeState}
+                onChange={(event, newValue) => formik.setFieldValue('officeState', newValue)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Select State"
+                    error={formik.touched.officeState && Boolean(formik.errors.officeState)}
+                    helperText={formik.touched.officeState && formik.errors.officeState}
+                  />
+                )}
               />
             </Stack>
           </Grid>
