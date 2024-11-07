@@ -1,21 +1,25 @@
 // eslint-disable-next-line no-unused-vars
-import { Box, Button, Chip, Dialog, IconButton, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, Button, Chip, CircularProgress, Dialog, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 import ScrollX from 'components/ScrollX';
 import PaginationBox from 'components/tables/Pagination';
 import ReactTable from 'components/tables/reactTable/ReactTable';
 // eslint-disable-next-line no-unused-vars
-import { Edit, Eye, Setting3, Setting5, Trash } from 'iconsax-react';
+import { Add, Edit, Eye, Setting3, Setting5, Trash } from 'iconsax-react';
 import PropTypes from 'prop-types';
 import { useCallback, useMemo, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { formattedDate } from 'utils/helper';
 import MainCard from 'components/MainCard';
-import { Link } from 'react-router-dom';
-import { USERTYPE } from 'constant';
+import { Link, useNavigate } from 'react-router-dom';
+import { MODULE, PERMISSIONS, USERTYPE } from 'constant';
 import { useSelector } from 'react-redux';
 import ManagePermissionModal from './ManagePermissionModal';
 import { dispatch } from 'store';
 import { clearUserDetails } from 'store/slice/cabProvidor/userSlice';
+import TableSkeleton from 'components/tables/TableSkeleton';
+import EmptyTableDemo from 'components/tables/EmptyTable';
+import Header from 'components/tables/genericTable/Header';
+import WrapperButton from 'components/common/guards/WrapperButton';
 
 const KEYS = {
   [USERTYPE.iscabProvider]: {
@@ -34,7 +38,7 @@ const KEYS = {
   }
 };
 
-const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
+const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading }) => {
   const theme = useTheme();
 
   const [open, setOpen] = useState(false);
@@ -88,7 +92,7 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
             <Typography>
               <Link
                 // to={`/user/overview/${row.original._id}`}
-                // onClick={(e) => e.stopPropagation()} 
+                // onClick={(e) => e.stopPropagation()}
                 style={{ textDecoration: 'none' }}
               >
                 {userName}
@@ -189,12 +193,24 @@ const UserTable = ({ data, page, setPage, limit, setLimit, lastPageNo }) => {
   return (
     <>
       <Stack gap={1} spacing={1}>
-        <ScrollX>
+        {/* <ScrollX>
           <MainCard content={false}>
-            {/* <ReactTable columns={columns} data={data} hiddenColumns={['userName']} /> */}
+            <ReactTable columns={columns} data={data} hiddenColumns={['userName']} />
             <ReactTable columns={columns} data={data} />
           </MainCard>
-        </ScrollX>
+        </ScrollX> */}
+        <Header OtherComp={({ loading }) => <ButtonComponent loading={loading} />} />
+        <MainCard content={false}>
+          <ScrollX>
+            {loading ? (
+              <TableSkeleton rows={10} columns={6} />
+            ) : data?.length === 0 ? (
+              <EmptyTableDemo />
+            ) : (
+              <ReactTable columns={columns} data={data} />
+            )}
+          </ScrollX>
+        </MainCard>
         <Box>
           {data.length > 0 && (
             <PaginationBox pageIndex={page} gotoPage={setPage} pageSize={limit} setPageSize={setLimit} lastPageIndex={lastPageNo} />
@@ -236,3 +252,24 @@ UserTable.propTypes = {
 export default UserTable;
 
 // ==============================|| REACT TABLE ||============================== //
+
+const ButtonComponent = ({ loading }) => {
+  const navigate = useNavigate();
+  return (
+    <>
+      <Stack direction="row" spacing={1} alignItems="center">
+        <WrapperButton moduleName={MODULE.USER} permission={PERMISSIONS.CREATE}>
+          <Button
+            variant="contained"
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />} // Show loading spinner if loading
+            onClick={() => navigate('/management/user/add-user')}
+            size="small"
+            disabled={loading} // Disable button while loading
+          >
+            {loading ? 'Loading...' : ' Add User'}
+          </Button>
+        </WrapperButton>
+      </Stack>
+    </>
+  );
+};
