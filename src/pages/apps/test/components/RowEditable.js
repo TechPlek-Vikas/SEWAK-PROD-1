@@ -24,7 +24,7 @@ import { InfoCircle } from 'iconsax-react';
 function getCompanyRate(data, zoneNameId, vehicleTypeId, zoneTypeId = null, guard, dualTrip) {
   // Check for missing required arguments
   if (!data || !zoneNameId || !vehicleTypeId || guard === undefined || dualTrip === undefined) {
-    console.warn("Missing required arguments for getCompanyRate");
+    console.warn('Missing required arguments for getCompanyRate');
     return { guardPrice: 0, companyRate: 0 }; // or return null;
   }
 
@@ -41,7 +41,7 @@ function getCompanyRate(data, zoneNameId, vehicleTypeId, zoneTypeId = null, guar
 
   if (obj.length === 0) {
     // No matching object found
-    console.warn("No matching data found for the specified criteria");
+    console.warn('No matching data found for the specified criteria');
     return { guardPrice: 0, companyRate: 0 };
   }
 
@@ -53,7 +53,6 @@ function getCompanyRate(data, zoneNameId, vehicleTypeId, zoneTypeId = null, guar
 
   return { guardPrice, companyRate };
 }
-
 
 export default function RowEditable({ getValue: initialValue, row, column, table }) {
   const [value, setValue] = useState(initialValue);
@@ -366,11 +365,11 @@ export default function RowEditable({ getValue: initialValue, row, column, table
               id="editable-company-rate"
               type="number" // Set the type to number to accept numeric input
               value={companyRate ?? 0} // Display current rate if available, or empty string
-              onChange={onChange}
+              onChange={(e) => setValue(e.target.value)}
               onBlur={onBlur}
             />
           ) : (
-            value
+            companyRate
           )}
         </>
       );
@@ -447,7 +446,7 @@ export default function RowEditable({ getValue: initialValue, row, column, table
               disabled={!original._guard_1}
             />
           ) : (
-            value
+            guardPrice
           )}
         </>
       );
