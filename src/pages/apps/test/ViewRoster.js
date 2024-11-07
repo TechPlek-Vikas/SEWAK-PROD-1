@@ -50,12 +50,11 @@ import axiosServices from 'utils/axios';
 import AssignTripsDialog from './components/AssignTripsDialog';
 // import AssignTripsDialog from './components/AssignTripsDialog';
 
-const avatarImage = require.context('assets/images/users', true);
-
 // ==============================|| REACT TABLE ||============================== //
 
 function ReactTable({ columns, data, selectedData, handleSetSelectedData, handleAssignDialogOpen }) {
   const theme = useTheme();
+  console.log({ data });
   const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
   const defaultColumn = useMemo(() => ({ Filter: DateColumnFilter }), []);
   const filterTypes = useMemo(() => renderFilterTypes, []);
@@ -101,7 +100,7 @@ function ReactTable({ columns, data, selectedData, handleSetSelectedData, handle
   const componentRef = useRef(null);
 
   // ================ Tab ================
-  const groups = ['All', 'verified','unverified', 'Trips', 'Discarded'];
+  const groups = ['All', 'verified', 'unverified', 'Trips', 'Discarded'];
   const countGroup = data.map((item) => item.status);
   const counts = {
     verified: countGroup.filter((status) => status === 1).length,
@@ -113,7 +112,10 @@ function ReactTable({ columns, data, selectedData, handleSetSelectedData, handle
   const [activeTab, setActiveTab] = useState(groups[0]);
 
   useEffect(() => {
-    setFilter('status', activeTab === 'All' ? '' : activeTab === 'verified' ? 1 : activeTab === 'Trips' ? 3 :  activeTab === 'unverified' ? 0 : 2);
+    setFilter(
+      'status',
+      activeTab === 'All' ? '' : activeTab === 'verified' ? 1 : activeTab === 'Trips' ? 3 : activeTab === 'unverified' ? 0 : 2
+    );
   }, [activeTab]);
 
   useEffect(() => {
@@ -135,7 +137,17 @@ function ReactTable({ columns, data, selectedData, handleSetSelectedData, handle
                 icon={
                   <Chip
                     label={status === 'All' ? data.length : counts[status]}
-                    color={status === 'All' ? 'primary' : status === 'Trips' ? 'success' : status === 'Discarded' ? 'error' :status === 'verified' ? 'info' :  'warning'}
+                    color={
+                      status === 'All'
+                        ? 'primary'
+                        : status === 'Trips'
+                        ? 'success'
+                        : status === 'Discarded'
+                        ? 'error'
+                        : status === 'verified'
+                        ? 'info'
+                        : 'warning'
+                    }
                     variant="light"
                     size="small"
                   />
@@ -260,8 +272,6 @@ const ViewRosterTest1 = () => {
     setSelectedData(selectedRows);
   }, []);
 
-  // console.log('selectedData', selectedData);
-
   useEffect(() => {
     if (stateData) {
       setRosterData(stateData);
@@ -337,7 +347,7 @@ const ViewRosterTest1 = () => {
         accessor: 'tripType',
         disableFilters: true,
         Cell: ({ value }) => {
-          return value === 1 ? 'Pickup' : 'Drop'; // Adjust as per your type definitions
+          return value == 1 ? 'Pickup' : value == 2 ? 'Drop' : 'N/A'; // Adjust as per your type definitions
         }
       },
       {
@@ -345,14 +355,14 @@ const ViewRosterTest1 = () => {
         accessor: 'zoneName',
         disableFilters: true,
         Cell: ({ row }) => {
-          const { zoneName, zoneNameArray,status } = row.original;
+          const { zoneName, zoneNameArray, status } = row.original;
           const hasError = !zoneNameArray || zoneNameArray.length !== 1;
           const errorMessage =
             zoneNameArray.length > 1 ? `multiple zone with name : ${zoneName} found` : `zone name : ${zoneName} not found`;
           return (
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               {zoneName}
-              {hasError && status!==3&& (
+              {hasError && status !== 3 && (
                 <Tooltip title={errorMessage}>
                   <IconButton size="small" color="error">
                     <InfoCircle />
@@ -463,10 +473,10 @@ const ViewRosterTest1 = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [initateRender]
   );
-
   let breadcrumbLinks = [
     { title: 'Home', to: APP_DEFAULT_PATH },
-    { title: 'Roster', to: '/apps/roster/test' },
+    { title: 'Roster', to: 'apps/roster/dashboard' },
+    { title: `${fileData?.companyId?.company_name}`, to: `/management/company/overview/${fileData?.companyId?._id}` },
     { title: 'Generate Trips' }
   ];
 
@@ -479,7 +489,6 @@ const ViewRosterTest1 = () => {
   const handleAssignDialogClose = () => {
     setOpenAssignTripDialog(false);
   };
-
 
   if (loading) return <Loader />;
 
