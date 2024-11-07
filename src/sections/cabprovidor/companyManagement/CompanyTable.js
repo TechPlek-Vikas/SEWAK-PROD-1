@@ -90,7 +90,15 @@ const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loadin
       },
       {
         Header: 'State',
-        accessor: 'state'
+        accessor: 'state',
+        Cell: ({ value }) => {
+          if (!value) return '';
+          return value
+            .toLowerCase()
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+        }
       },
       {
         Header: 'Amount Receivable',

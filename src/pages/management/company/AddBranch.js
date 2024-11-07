@@ -1,5 +1,5 @@
 // material-ui
-import { Button, DialogActions, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material';
+import { Autocomplete, Button, DialogActions, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material';
 
 // project-imports
 import MainCard from 'components/MainCard';
@@ -59,6 +59,46 @@ function AddBranch() {
   };
 
   const DIGITS_ONLY_PATTERN = /^\d+$/;
+
+  // List of Indian states
+  const indianStates = [
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
+    'Andaman and Nicobar Islands',
+    'Chandigarh',
+    'Dadra and Nagar Haveli and Daman and Diu',
+    'Lakshadweep',
+    'Delhi',
+    'Puducherry',
+    'Ladakh',
+    'Jammu and Kashmir'
+  ];
 
   const TAX = {
     No: 0,
@@ -468,7 +508,7 @@ function AddBranch() {
                   />
                 </Stack>
               </Grid>
-              <Grid item xs={12} lg={4}>
+              {/* <Grid item xs={12} lg={4}>
                 <Stack spacing={1}>
                   <InputLabel>State</InputLabel>
                   <TextField
@@ -480,6 +520,27 @@ function AddBranch() {
                     onChange={formik.handleChange}
                     error={formik.touched.state && Boolean(formik.errors.state)}
                     helperText={formik.touched.state && formik.errors.state}
+                  />
+                </Stack>
+              </Grid> */}
+              <Grid item xs={12} lg={4}>
+                <Stack spacing={1}>
+                  <InputLabel>State</InputLabel>
+                  <Autocomplete
+                    fullWidth
+                    id="state"
+                    name="state"
+                    options={indianStates}
+                    value={formik.values.state}
+                    onChange={(event, newValue) => formik.setFieldValue('state', newValue)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        placeholder="Select State"
+                        error={formik.touched.state && Boolean(formik.errors.state)}
+                        helperText={formik.touched.state && formik.errors.state}
+                      />
+                    )}
                   />
                 </Stack>
               </Grid>
