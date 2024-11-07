@@ -120,14 +120,14 @@ const VendorRatelisting = () => {
   const [dialogOpen, setDialogOpen] = useState(true); // Dialog state
 
 //   console.log('selectedCompany', selectedCompany);
-//   console.log('selectedVendorID', selectedVendorID);
+  console.log('selectedVendorID', selectedVendorID);
 
   useEffect(() => {
     const fetchdata = async () => {
       setLoading(true); // Start loading
       try {
         const response = await axiosServices.get(
-          `/cabRateMaster/unwind/rate/vendorId?vendorId=${selectedVendorID._id}&companyID=${selectedCompany._id}`
+          `/cabRateMaster/unwind/rate/vendorId?vendorId=${selectedVendorID}&companyID=${selectedCompany._id}`
         );
         setVendorList(response.data.data);
       } catch (error) {
