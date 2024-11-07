@@ -159,10 +159,11 @@ const CompanyRate = ({ id, companyName, onBackToList }) => {
     setRemoveDialogOpen(true);
   };
 
-  const handleCloseDialog = (event, confirm, removeFn, rateIndex) => {
+  const handleCloseDialog = (event, confirm, removeFn, rateID) => {
     if (confirm) {
-      removeFn(rateIndex);
+      removeFn(rateID);
     }
+    setRateIndex(null);
     setRemoveDialogOpen(false);
   };
 
@@ -387,7 +388,7 @@ const CompanyRate = ({ id, companyName, onBackToList }) => {
                                         <TableCell>
                                           <IconButton
                                             onClick={(event) => {
-                                              handleOpenDialog(rateIndex);
+                                              handleOpenDialog(index);
                                             }}
                                           >
                                             <Trash color="red" />
@@ -397,9 +398,9 @@ const CompanyRate = ({ id, companyName, onBackToList }) => {
                                           title={`Rate ${rateIndex + 1}`}
                                           subtitle={'all its value will be deleted.'}
                                           open={removeDialogOpen}
-                                          handleClose={(event, confirm) =>
-                                            handleCloseDialog(event, confirm, arrayHelpers.remove, rateIndex)
-                                          }
+                                          handleClose={(event, confirm) => {
+                                            handleCloseDialog(event, confirm, arrayHelpers.remove, rateIndex);
+                                          }}
                                         />
                                       </TableRow>
                                     </TableBody>

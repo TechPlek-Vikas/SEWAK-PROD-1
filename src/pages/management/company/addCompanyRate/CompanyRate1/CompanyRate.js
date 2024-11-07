@@ -159,10 +159,11 @@ const CompanyRate = ({ id, companyName, onBackToList }) => {
     setRemoveDialogOpen(true);
   };
 
-  const handleCloseDialog = (event, confirm, removeFn, rateIndex) => {
+  const handleCloseDialog = (event, confirm, removeFn, rateID) => {
     if (confirm) {
-      removeFn(rateIndex);
+      removeFn(rateID);
     }
+    setRateIndex(null);
     setRemoveDialogOpen(false);
   };
 
@@ -388,7 +389,7 @@ const CompanyRate = ({ id, companyName, onBackToList }) => {
                                         <TableCell>
                                           <IconButton
                                             onClick={(event) => {
-                                              handleOpenDialog(rateIndex);
+                                              handleOpenDialog(index);
                                             }}
                                           >
                                             <Trash color="red" />
