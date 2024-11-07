@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import {
   Button,
   FormControl,
+  FormHelperText,
   Grid,
   IconButton,
   InputAdornment,
@@ -35,13 +36,13 @@ import { registerUser } from 'store/slice/cabProvidor/userSlice';
 
 const validationSchema = yup.object({
   // files: yup.mixed().required('File is required'),
-  userName: yup.string().required('Username is required').min(3, 'Username must be at least 3 characters'),//
-  userEmail: yup.string().email('Invalid email address').required('Email is required'),//
-  password: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'),//
+  userName: yup.string().required('Username is required').min(3, 'Username must be at least 3 characters'), //
+  userEmail: yup.string().email('Invalid email address').required('Email is required'), //
+  password: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'), //
   confirmpassword: yup
     .string()
     .required('Confirm Password is required')
-    .oneOf([yup.ref('password'), null], 'Passwords must match'),
+    .oneOf([yup.ref('password'), null], 'Passwords must match')
   // contactNumber: yup
   //   .string()
   //   .required('Contact Number is required')
@@ -101,7 +102,6 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
     },
     validationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
-      
       try {
         const formData = new FormData();
         // formData.append('userImage', values.files[0]);
@@ -255,6 +255,7 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
                   </InputAdornment>
                 }
               />
+              {formik.touched.password && formik.errors.password && <FormHelperText error>{formik.errors.password}</FormHelperText>}
             </Stack>
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -282,6 +283,9 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
                   </InputAdornment>
                 }
               />
+              {formik.touched.confirmpassword && formik.errors.confirmpassword && (
+                <FormHelperText error>{formik.errors.confirmpassword}</FormHelperText>
+              )}
             </Stack>
           </Grid>
           <Grid item xs={12}>
