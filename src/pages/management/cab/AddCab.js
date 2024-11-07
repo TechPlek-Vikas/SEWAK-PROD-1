@@ -854,7 +854,7 @@ const AddCab = () => {
                               sx={{ width: '100%' }}
                               value={values.fitnessDate}
                               format="dd/MM/yyyy"
-                              minDate={new Date()}
+                              // minDate={new Date()}
                               onChange={(newValue) => {
                                 setFieldValue('fitnessDate', newValue);
                               }}
@@ -903,7 +903,7 @@ const AddCab = () => {
                               sx={{ width: '100%' }}
                               value={values.insuranceExpiryDate}
                               format="dd/MM/yyyy"
-                              minDate={new Date()}
+                              // minDate={new Date()}
                               onChange={(newValue) => {
                                 setFieldValue('insuranceExpiryDate', newValue);
                               }}
@@ -955,7 +955,7 @@ const AddCab = () => {
                               }}
                               value={values.pollutionExpiryDate}
                               format="dd/MM/yyyy"
-                              minDate={new Date()}
+                              // minDate={new Date()}
                               onChange={(newValue) => setFieldValue('pollutionExpiryDate', newValue)}
                             />
                             {!!formik.errors.pollutionExpiryDate && formik.touched.pollutionExpiryDate && (
@@ -1002,7 +1002,7 @@ const AddCab = () => {
                               sx={{ width: '100%' }}
                               value={values.permitOneYrExpiryDate}
                               format="dd/MM/yyyy"
-                              minDate={new Date()}
+                              // minDate={new Date()}
                               onChange={(newValue) => setFieldValue('permitOneYrExpiryDate', newValue)}
                             />
                             {!!formik.errors.permitOneYrExpiryDate && formik.touched.permitOneYrExpiryDate && (
@@ -1049,7 +1049,7 @@ const AddCab = () => {
                               sx={{ width: '100%' }}
                               value={values.permitFiveYrExpiryDate}
                               format="dd/MM/yyyy"
-                              minDate={new Date()}
+                              // minDate={new Date()}
                               onChange={(newValue) => {
                                 // Ensure newValue is a Date object
                                 if (newValue instanceof Date && !isNaN(newValue)) {
