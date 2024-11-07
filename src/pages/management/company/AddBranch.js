@@ -135,18 +135,18 @@ function AddBranch() {
         excludeEmptyString: false
       })
       .required('Mobile Number is required'),
-    // landline: yup
-    //   .string()
-    //   .trim()
-    //   .matches(/^[0-9]{10}$/, {
-    //     message: 'Please enter valid landline number',
-    //     excludeEmptyString: false
-    //   })
-    //   .test('not-same-as-phone', 'Landline phone number should be different from mobile number', function (value) {
-    //     const { mobile: phone } = this.parent;
-    //     return typeof phone === 'undefined' ? true : value !== phone;
-    //   })
-    //   .required('Landline Number is required'),
+    landline: yup
+      .string()
+      .trim()
+      .matches(/^[0-9]{10}$/, {
+        message: 'Please enter valid landline number',
+        excludeEmptyString: false
+      })
+      .test('not-same-as-phone', 'Landline phone number should be different from mobile number', function (value) {
+        const { mobile: phone } = this.parent;
+        return typeof phone === 'undefined' ? true : value !== phone;
+      })
+      .required('Landline Number is required'),
     // PAN: yup
     //   .string()
     //   .required('PAN is required')
@@ -276,6 +276,9 @@ function AddBranch() {
           })
         );
       }
+      finally{
+        setLoading(false);
+      }
     }
   });
 
@@ -341,6 +344,7 @@ function AddBranch() {
                     </div>
                   )} */}
                 </Stack>
+                {formik.touched.parentCompanyID && formik.errors.parentCompanyID && <FormHelperText error>{formik.errors.parentCompanyID}</FormHelperText>}
               </Grid>
               <Grid item xs={12} lg={4}>
                 <Stack spacing={1}>
