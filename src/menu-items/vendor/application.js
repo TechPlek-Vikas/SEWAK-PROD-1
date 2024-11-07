@@ -50,13 +50,13 @@ const application = {
           url: '/apps/invoices/list',
           // icon: icons.samplePage,
         },
-        {
-          id: 'create',
-          title: <FormattedMessage id="create" />,
-          type: 'item',
-          url: '/apps/invoices/create',
-          // icon: icons.samplePage,
-        }
+        // {
+        //   id: 'create',
+        //   title: <FormattedMessage id="create" />,
+        //   type: 'item',
+        //   url: '/apps/invoices/create',
+        //   // icon: icons.samplePage,
+        // }
       ]
     }
   ]
