@@ -129,7 +129,7 @@ const DriverRate = () => {
     const fetchdata = async () => {
       setLoading(true); // Start loading
       try {
-        const response = await axiosServices.get(`/driver/unwind/driver/rate?companyId=${selectedCompany._id}&driverId=${driverID1._id}`);
+        const response = await axiosServices.get(`/driver/unwind/driver/rate?companyId=${selectedCompany._id}&driverId=${driverID1}`);
         setDriverList(response.data.data);
       } catch (error) {
         console.error('Error fetching data', error);
