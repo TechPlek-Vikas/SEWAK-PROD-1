@@ -16,6 +16,9 @@ import HoverSocialCard from 'components/cards/statistics/HoverSocialCard';
 import ReactTable, { TableNoDataMessage } from 'components/tables/reactTable1/ReactTable';
 import { Gps } from 'iconsax-react';
 import { useSelector } from 'store';
+import { fetchAllVehicleTypes, fetchAllVehicleTypesForAll } from 'store/slice/cabProvidor/vehicleTypeSlice';
+import { fetchZoneNames } from 'store/slice/cabProvidor/ZoneNameSlice';
+import { fetchAllZoneTypes } from 'store/slice/cabProvidor/zoneTypeSlice';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
@@ -29,11 +32,11 @@ const Dashboard = () => {
   console.log('companyWiseEarningsData', companyWiseEarningsData);
 
   useEffect(() => {
-    // dispatch(fetchAllVehicleTypesForAll());
+    dispatch(fetchAllVehicleTypesForAll());
     dispatch(fetchAllRoles());
-    // dispatch(fetchAllVehicleTypes());
-    // dispatch(fetchZoneNames());
-    // dispatch(fetchAllZoneTypes());
+    dispatch(fetchAllVehicleTypes());
+    dispatch(fetchZoneNames());
+    dispatch(fetchAllZoneTypes());
   }, [dispatch]);
 
   useEffect(() => {

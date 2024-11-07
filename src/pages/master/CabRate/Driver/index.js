@@ -165,7 +165,7 @@ const AddCabRateDriver = () => {
       rateMaster: existingRates[company._id] || [
         {
           zoneNameID: '',
-          zoneTypeID: '',
+          zoneTypeID: null,
           cabRate:1,
           cabAmount: newCompanyCabAmountRef.current || cabAmountRef.current,
           dualTrip: '',
@@ -709,7 +709,7 @@ const AddCabRateDriver = () => {
                                       onClick={() =>
                                         arrayHelpers.push({
                                           zoneNameID: '',
-                                          zoneTypeID: '',
+                                          zoneTypeID: null,
                                           cabRate:1,
                                           cabAmount: newCompanyCabAmountRef.current || cabAmountRef.current || [],
                                           dualTrip: '',
