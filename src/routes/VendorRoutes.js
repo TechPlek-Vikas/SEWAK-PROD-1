@@ -9,7 +9,7 @@ import AuthGuard from 'utils/route-guard/AuthGuard';
 import ProtectedRoute from 'components/common/guards/ProtectedRoute';
 import { MODULE, PERMISSIONS } from 'constant';
 import List from 'pages/invoice/list/List';
-import Create from 'pages/invoice/create/Create';
+import Create from 'pages/invoice/create/Create2';
 import { element } from 'prop-types';
 import AllRosters from 'pages/Roster/AllRosters';
 
@@ -19,6 +19,9 @@ const MaintenanceUnderConstruction = Loadable(lazy(() => import('pages/maintenan
 const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/coming-soon/coming-soon')));
 
 const UnderConstruction = Loadable(lazy(() => import('components/maintenance/UnderConstruction')));
+
+const PageNotFound = Loadable(lazy(() => import('pages/maintenance/error/404')));
+
 
 // Dashboard
 const Dashboard = Loadable(lazy(() => import('pages')));
@@ -142,10 +145,10 @@ const VendorRoutes = {
                   path: 'list',
                   element: <List />
                 },
-                {
-                  path: 'create',
-                  element: <Create />
-                },
+                // {
+                //   path: 'create',
+                //   element: <Create />
+                // },
                 {
                   path: 'invoice',
                   element: <List />
@@ -273,7 +276,7 @@ const VendorRoutes = {
             {
               path: 'role',
               element: <Role />
-            },
+            }
           ]
         }
       ]
@@ -300,6 +303,11 @@ const VendorRoutes = {
           element: <MaintenanceComingSoon />
         }
       ]
+    },
+
+    {
+      path: '*',
+      element: <PageNotFound />
     }
   ]
 };
