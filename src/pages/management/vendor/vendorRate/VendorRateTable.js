@@ -25,10 +25,10 @@ const VendorRateTable = ({ data, page, setPage, limit, setLimit, loading }) => {
         accessor: 'zoneTypeID.zoneTypeName',
         Cell: ({ value }) => value ?? 'None'
       },
-    //   {
-    //     Header: 'Vehicle Type',
-    //     accessor: (row) => row.VehicleTypeName?.vehicleTypeName || 'No vehicle type'
-    //   },
+      {
+        Header: 'Vehicle Type',
+        accessor: (row) => row.VehicleTypeName?.vehicleTypeName || 'No vehicle type'
+      },
       {
         Header: 'Amount',
         accessor: 'cabAmount.amount'
