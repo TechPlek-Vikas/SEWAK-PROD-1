@@ -343,7 +343,7 @@ const AllRosters = () => {
   const widgetsData = [
     {
       title: 'Paid',
-      count: '$7,825',
+      count: '7,825',
       percentage: 70.5,
       isLoss: false,
       invoice: '9',
@@ -352,7 +352,7 @@ const AllRosters = () => {
     },
     {
       title: 'Unpaid',
-      count: '$1,880',
+      count: '1,880',
       percentage: 27.4,
       isLoss: true,
       invoice: '6',
@@ -361,7 +361,7 @@ const AllRosters = () => {
     },
     {
       title: 'Overdue',
-      count: '$3,507',
+      count: '3,507',
       percentage: 27.4,
       isLoss: true,
       invoice: '4',

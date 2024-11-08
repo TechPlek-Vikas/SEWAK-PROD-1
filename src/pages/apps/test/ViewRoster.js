@@ -264,7 +264,7 @@ const ViewRosterTest1 = () => {
   const { rosterData: stateData, fileData } = location.state || {};
   const [selectedData, setSelectedData] = useState([]);
   const [initateRender, setInitateRender] = useState(0);
-  console.log({ stateData });
+  console.log({ rosterData });
   const handleAssignTrips = () => {
     console.log(selectedData);
   };
@@ -347,7 +347,8 @@ const ViewRosterTest1 = () => {
         accessor: 'tripType',
         disableFilters: true,
         Cell: ({ value }) => {
-          return value == 1 ? 'Pickup' : value == 2 ? 'Drop' : 'N/A'; // Adjust as per your type definitions
+          console.log({value})
+          return value == "1" ? 'Pickup' : value == "2" ? 'Drop' : 'N/A'; // Adjust as per your type definitions
         }
       },
       {
@@ -515,6 +516,7 @@ const ViewRosterTest1 = () => {
         open={openAssignTripDialog}
         handleClose={handleAssignDialogClose}
         setInitateRender={setInitateRender}
+        fileData={fileData}
       />
       <AlertColumnDelete title={`${getInvoiceId}`} open={alertPopup} handleClose={handleClose} />
     </>
