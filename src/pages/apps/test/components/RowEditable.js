@@ -364,12 +364,12 @@ export default function RowEditable({ getValue: initialValue, row, column, table
               sx={{ '& .MuiOutlinedInput-input': { py: 0.75, px: 1 } }}
               id="editable-company-rate"
               type="number" // Set the type to number to accept numeric input
-              value={companyRate ?? 0} // Display current rate if available, or empty string
+              value={value} // Display current rate if available, or empty string
               onChange={(e) => setValue(e.target.value)}
               onBlur={onBlur}
             />
           ) : (
-            companyRate
+            value
           )}
         </>
       );
@@ -440,13 +440,13 @@ export default function RowEditable({ getValue: initialValue, row, column, table
               sx={{ '& .MuiOutlinedInput-input': { py: 0.75, px: 1 } }}
               id="editable-company-rate"
               type="number" // Set the type to number to accept numeric input
-              value={guardPrice ?? 0} // Display current rate if available, or empty string
+              value={value} // Display current rate if available, or empty string
               onChange={onChange}
               onBlur={onBlur}
               disabled={!original._guard_1}
             />
           ) : (
-            guardPrice
+            value
           )}
         </>
       );
