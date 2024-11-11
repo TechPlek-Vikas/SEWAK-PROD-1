@@ -27,11 +27,11 @@ const ZonetypeAddForm = ({ zoneType, onCancel, updateKey, setUpdateKey }) => {
       .required('Zone Type Name is required')
       .min(3, 'Zone Type Name must be at least 3 characters long')
       .max(100, 'Zone Type Name cannot exceed 100 characters'),
-    zoneTypeDescription: yup
-      .string()
-      .required('Zone Type Description is required')
-      .min(5, 'Zone Type Description must be at least 5 characters long')
-      .max(255, 'Zone Type Description cannot exceed 255 characters'),
+    // zoneTypeDescription: yup
+    //   .string()
+    //   .required('Zone Type Description is required')
+    //   .min(5, 'Zone Type Description must be at least 5 characters long')
+    //   .max(255, 'Zone Type Description cannot exceed 255 characters'),
     zoneId: yup.string().required('Zone is required')
   });
 
@@ -202,32 +202,6 @@ const ZonetypeAddForm = ({ zoneType, onCancel, updateKey, setUpdateKey }) => {
           <DialogContent sx={{ p: 2.5 }} direction="row">
             <Stack spacing={3}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="zoneTypeName">Zone Type Name</InputLabel>
-                <TextField
-                  fullWidth
-                  id="zoneTypeName"
-                  name="zoneTypeName"
-                  value={formik.values.zoneTypeName}
-                  onChange={formik.handleChange}
-                  placeholder="Enter Zone Type Name"
-                  error={Boolean(formik.touched.zoneTypeName && formik.errors.zoneTypeName)}
-                  helperText={formik.touched.zoneTypeName && formik.errors.zoneTypeName}
-                />
-              </Stack>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="zoneTypeDescription">Zone Type Description</InputLabel>
-                <TextField
-                  fullWidth
-                  id="zoneTypeDescription"
-                  name="zoneTypeDescription"
-                  value={formik.values.zoneTypeDescription}
-                  onChange={formik.handleChange}
-                  placeholder="Enter Zone Type Description"
-                  error={Boolean(formik.touched.zoneTypeDescription && formik.errors.zoneTypeDescription)}
-                  helperText={formik.touched.zoneTypeDescription && formik.errors.zoneTypeDescription}
-                />
-              </Stack>
-              <Stack spacing={1}>
                 <InputLabel htmlFor="zoneId">Select Zone</InputLabel>
                 <Autocomplete
                   id="zoneId"
@@ -253,12 +227,38 @@ const ZonetypeAddForm = ({ zoneType, onCancel, updateKey, setUpdateKey }) => {
                       placeholder="Choose a zone"
                       inputProps={{
                         ...params.inputProps,
-                        autoComplete: 'new-password' 
+                        autoComplete: 'new-password'
                       }}
                       error={Boolean(formik.touched.zoneId && formik.errors.zoneId)}
                       helperText={formik.touched.zoneId && formik.errors.zoneId}
                     />
                   )}
+                />
+              </Stack>
+              <Stack spacing={1}>
+                <InputLabel htmlFor="zoneTypeName">Zone Type Name</InputLabel>
+                <TextField
+                  fullWidth
+                  id="zoneTypeName"
+                  name="zoneTypeName"
+                  value={formik.values.zoneTypeName}
+                  onChange={formik.handleChange}
+                  placeholder="Enter Zone Type Name"
+                  error={Boolean(formik.touched.zoneTypeName && formik.errors.zoneTypeName)}
+                  helperText={formik.touched.zoneTypeName && formik.errors.zoneTypeName}
+                />
+              </Stack>
+              <Stack spacing={1}>
+                <InputLabel htmlFor="zoneTypeDescription">Zone Type Description</InputLabel>
+                <TextField
+                  fullWidth
+                  id="zoneTypeDescription"
+                  name="zoneTypeDescription"
+                  value={formik.values.zoneTypeDescription}
+                  onChange={formik.handleChange}
+                  placeholder="Enter Zone Type Description"
+                  error={Boolean(formik.touched.zoneTypeDescription && formik.errors.zoneTypeDescription)}
+                  helperText={formik.touched.zoneTypeDescription && formik.errors.zoneTypeDescription}
                 />
               </Stack>
             </Stack>

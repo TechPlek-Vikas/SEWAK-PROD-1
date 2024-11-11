@@ -19,11 +19,11 @@ const ZoneAddForm = ({ zone, onCancel, updateKey, setUpdateKey }) => {
       .required('Zone Name is required') // Required field validation
       .min(3, 'Zone Name must be at least 3 characters') // Minimum length validation
       .max(50, 'Zone Name cannot exceed 50 characters'), // Maximum length validation
-    zoneDescription: yup
-      .string()
-      .required('Zone Description is required') // Required field validation
-      .min(5, 'Zone Description must be at least 5 characters') // Minimum length validation
-      .max(200, 'Zone Description cannot exceed 200 characters'), // Maximum length validation
+    // zoneDescription: yup
+    //   .string()
+    //   .required('Zone Description is required') // Required field validation
+    //   .min(5, 'Zone Description must be at least 5 characters') // Minimum length validation
+    //   .max(200, 'Zone Description cannot exceed 200 characters'), // Maximum length validation
   });
   
   const formik = useFormik({
