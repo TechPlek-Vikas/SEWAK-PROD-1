@@ -34,7 +34,7 @@ import { openSnackbar } from 'store/reducers/snackbar';
 import { createRateMasterForDriver } from 'store/slice/cabProvidor/cabRateSlice';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { fetchDrivers } from 'store/slice/cabProvidor/driverSlice';
+import { fetchAllDrivers, fetchDrivers } from 'store/slice/cabProvidor/driverSlice';
 import axios from 'utils/axios';
 import { formatDateUsingMoment, getNestedComplexProperty } from 'utils/helper';
 
@@ -74,9 +74,13 @@ const AddCabRateDriver = () => {
   const [columnCount, setColumnCount] = useState(FIXED_COLUMN_COUNT);
   const [driverIDs, setDriverIDs] = useState(null);
   const [companyIDs, setCompanyIDs] = useState(null);
+  const [driverList, setDriverList] = useState([]);
 
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
   const [rateIndex, setRateIndex] = useState(null);
+  const userInfo = JSON.parse(localStorage.getItem('userInformation'));
+
+  const CabProviderId = userInfo.userId;
 
   useEffect(() => {
     if (driverIDs?.length > 0 && companyIDs?.length > 0) {
@@ -96,7 +100,9 @@ const AddCabRateDriver = () => {
     setRemoveDialogOpen(false); // Close the dialog
   };
 
-  const driverList = useSelector((state) => state.drivers.drivers) || [];
+  // const driverList = useSelector((state) => state.drivers.drivers) || [];
+  // const driverList = useSelector((state) => state.drivers.allDrivers) || [];
+  console.log(`🚀 ~ AddCabRateDriver ~ driverList:`, driverList);
   const vehicleTypeList = useSelector((state) => state.vehicleTypes.vehicleTypes) || [];
   const zoneList = useSelector((state) => state.zoneName.zoneNames) || [];
   const zoneTypeList = useSelector((state) => state.zoneType.zoneTypes) || [];
@@ -114,13 +120,62 @@ const AddCabRateDriver = () => {
     // dispatch(fetchAllVehicleTypes());
     // dispatch(fetchZoneNames());
     // dispatch(fetchAllZoneTypes());
-    dispatch(fetchDrivers({ page: 1, limit: 1000, driverType: 1 }));
-  }, [dispatch]);
+    // dispatch(fetchDrivers({ page: 1, limit: 1000, driverType: 1 }));
+
+    // console.log('CabProviderId', CabProviderId);
+    // dispatch(fetchAllDrivers(CabProviderId));
+
+    (async () => {
+      try {
+        const res = await dispatch(fetchAllDrivers(CabProviderId)).unwrap();
+        console.log(`🚀 ~ AddCabRateDriver ~ res:`, res);
+        const res1 = res.map((i) => {
+          return {
+            _id: i.driverId._id,
+            userName: i.driverId.userName
+          };
+        });
+        // setDriverList(res);
+        setDriverList(res1);
+      } catch (error) {
+        console.log(`🚀 ~ AddCabRateDriver ~ error:`, error);
+      }
+    })();
+  }, [dispatch, CabProviderId]);
 
   const formik = useFormik({
     initialValues: getInitialValue(),
     onSubmit: async (values, { setSubmitting }) => {
       try {
+        if (!values.driverId.length) {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Please select driver',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              close: true
+            })
+          );
+          return;
+        }
+
+        if (!companyIDs) {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Please select company',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              close: true
+            })
+          );
+          return;
+        }
         const response = await dispatch(
           createRateMasterForDriver({
             data: {
@@ -141,7 +196,7 @@ const AddCabRateDriver = () => {
               close: true
             })
           );
-          navigate('/management/cab/view', { replace: true });
+          navigate('/management/driver/view', { replace: true });
         }
       } catch (error) {
         setSubmitting(false);
@@ -166,11 +221,11 @@ const AddCabRateDriver = () => {
         {
           zoneNameID: '',
           zoneTypeID: null,
-          cabRate:1,
+          cabRate: 1,
           cabAmount: newCompanyCabAmountRef.current || cabAmountRef.current,
-          dualTrip: '',
+          dualTrip: 0,
           dualTripAmount: [],
-          guard: '',
+          guard: 0,
           guardPrice: '0',
           billingCycleCompany: '',
           billingCycleVendor: '',
@@ -286,16 +341,41 @@ const AddCabRateDriver = () => {
                         id="driverId"
                         options={driverList}
                         getOptionLabel={(option) => option.userName}
+                        // getOptionLabel={(option) => option.driverId.userName}
                         placeholder="Select Driver"
                         saveToFun={(e, value, _, action) => {
+                          console.log(value);
                           setFieldValue(
                             'driverId',
                             value.map((driverItem) => driverItem._id)
                           );
                           setDriverIDs(value.map((driverItem) => driverItem._id));
+
+                          // setFieldValue(
+                          //   'driverId',
+                          //   value.map((driverItem) => driverItem.driverId._id)
+                          // );
+                          // setDriverIDs(value.map((driverItem) => driverItem.driverId._id));
+                        }}
+                        onChange={(e, value, _, action) => {
+                          console.log(value);
+                          setFieldValue(
+                            'driverId',
+                            value.map((driverItem) => driverItem._id)
+                          );
+                          setDriverIDs(value.map((driverItem) => driverItem._id));
+
+                          // setFieldValue(
+                          //   'driverId',
+                          //   value.map((driverItem) => driverItem.driverId._id)
+                          // );
+                          // setDriverIDs(value.map((driverItem) => driverItem.driverId._id));
                         }}
                         matchID="_id"
-                        displayDeletedKeyName="userName"
+                        // matchID="driverId._id"
+                        // displayDeletedKeyName="userName"
+                        disableConfirmation
+                        disableCloseOnSelect
                       />
                     </Stack>
                   </Grid>
@@ -315,8 +395,14 @@ const AddCabRateDriver = () => {
                           handleCompanyChange(e, val);
                           setCompanyIDs(val.map((company) => company._id));
                         }}
+                        onChange={(e, val) => {
+                          handleCompanyChange(e, val);
+                          setCompanyIDs(val.map((company) => company._id));
+                        }}
                         matchID="_id"
-                        displayDeletedKeyName="company_name"
+                        // displayDeletedKeyName="company_name"
+                        disableConfirmation
+                        disableCloseOnSelect
                       />
                     </Stack>
                   </Grid>
@@ -325,7 +411,6 @@ const AddCabRateDriver = () => {
                   <Grid item xs={12} sm={4}>
                     <Stack spacing={1}>
                       <InputLabel htmlFor="vehicleType">Vehicle Type</InputLabel>
-                      {/* DESC  : MultipleAutoCompleteWithDeleteConfirmation1 : DELETE CONFIRMATION FOR SINGLE OPTION DELETE & ALL OPTIONS */}
                       <MultipleAutoCompleteWithDeleteConfirmation1
                         label="Vehicle Type"
                         id="vehicleType"
@@ -335,10 +420,15 @@ const AddCabRateDriver = () => {
                         saveToFun={(e, val, _, action) => {
                           handleVehicleTypeChange(e, val, action);
                         }}
+                        onChange={(e, val, _, action) => {
+                          handleVehicleTypeChange(e, val, action);
+                        }}
                         matchID="_id"
-                        displayDeletedKeyName="vehicleTypeName"
-                        deleteAllMessage="Vehicle Types"
-                        disableClearable // To hide all clear button
+                        // displayDeletedKeyName="vehicleTypeName"
+                        // deleteAllMessage="Vehicle Types"
+                        // disableClearable // To hide all clear button
+                        disableConfirmation
+                        disableCloseOnSelect
                       />
                     </Stack>
                   </Grid>
@@ -710,11 +800,11 @@ const AddCabRateDriver = () => {
                                         arrayHelpers.push({
                                           zoneNameID: '',
                                           zoneTypeID: null,
-                                          cabRate:1,
+                                          cabRate: 1,
                                           cabAmount: newCompanyCabAmountRef.current || cabAmountRef.current || [],
-                                          dualTrip: '',
+                                          dualTrip: 0,
                                           dualTripAmount: [],
-                                          guard: '',
+                                          guard: 0,
                                           guardPrice: '',
                                           billingCycleCompany: '',
                                           billingCycleVendor: '',
@@ -743,7 +833,7 @@ const AddCabRateDriver = () => {
                     color="secondary"
                     variant="outlined"
                     onClick={() => {
-                      navigate('/management/cab/view', { replace: true });
+                      navigate('/management/driver/view', { replace: true });
                     }}
                   >
                     Cancel
