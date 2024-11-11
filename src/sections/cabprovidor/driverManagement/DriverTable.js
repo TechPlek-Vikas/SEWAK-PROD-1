@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import TableSkeleton from 'components/tables/TableSkeleton';
 import EmptyTableDemo from 'components/tables/EmptyTable';
 import AssignVehiclePopup from './driverOverview/assignVehiclePopup/AssignVehiclePopup';
+import ReassignVehicle from './driverOverview/reassignVehiclePopup/ReassignVehicle';
 
 const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading, setUpdateKey, updateKey }) => {
   const theme = useTheme();
@@ -20,6 +21,8 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
   const [driverId, setDriverId] = useState(null);
   const [assignedVehicle, setAssignedVehicle] = useState([]);
   const [pendingDialogOpen, setPendingDialogOpen] = useState(false);
+  const [reassignDialogOpen, setReassignDialogOpen] = useState(false);
+
   //assignedVehicle
   const handleClosePendingDialog = () => {
     setPendingDialogOpen(false);
@@ -31,6 +34,17 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
     console.log(id);
     setDriverId(id);
     setPendingDialogOpen(true);
+  };
+
+  const handleOpenReassignDialog = (row) => {
+    setDriverId(row);
+    setAssignedVehicle(row?.assignedVehicle || []);
+    setReassignDialogOpen(true);
+  };
+
+  const handleCloseReassignDialog = () => {
+    setReassignDialogOpen(false);
+    setDriverId(null);
   };
 
   const columns = useMemo(
@@ -79,6 +93,8 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
         Header: 'Vehicles',
         accessor: 'assignedVehicle',
         Cell: ({ row }) => {
+          // console.log("row.original",row.original);
+
           const assignedVehicle = row.original.assignedVehicle;
           const cabNo = assignedVehicle ? assignedVehicle.vehicleId.vehicleNumber : null; // accessing vehicleNumber if assigned
 
@@ -105,13 +121,13 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
                 label={cabNo}
                 size="small"
                 variant="light"
-                // sx={{
-                //   ':hover': {
-                //     backgroundColor: 'rgba(36, 140, 106 ,.5)',
-                //     cursor: 'pointer'
-                //   }
-                // }}
-                // onClick={() => handleOpenPendingDialog(row.original)}
+                sx={{
+                  ':hover': {
+                    backgroundColor: 'rgba(36, 140, 106 ,.5)',
+                    cursor: 'pointer'
+                  }
+                }}
+                onClick={() => handleOpenReassignDialog(row.original)}
               />
             );
           }
@@ -243,6 +259,15 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
       <Dialog open={pendingDialogOpen} onClose={handleClosePendingDialog}>
         <AssignVehiclePopup
           handleClose={handleClosePendingDialog}
+          driverId={driverId}
+          setUpdateKey={setUpdateKey}
+          updateKey={updateKey}
+          assignedVehicle={assignedVehicle}
+        />
+      </Dialog>
+      <Dialog open={reassignDialogOpen} onClose={handleCloseReassignDialog}>
+        <ReassignVehicle
+          handleClose={handleCloseReassignDialog}
           driverId={driverId}
           setUpdateKey={setUpdateKey}
           updateKey={updateKey}
