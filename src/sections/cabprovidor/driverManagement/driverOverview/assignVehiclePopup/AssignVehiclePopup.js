@@ -115,7 +115,7 @@ const AssignVehiclePopup = ({ handleClose, driverId, setUpdateKey, updateKey, as
   useEffect(() => {
     const fetchdata = async () => {
       const token = localStorage.getItem('serviceToken');
-      const response = await axiosServices.get(`/vehicle/all?id=${CabproviderId}`);
+      const response = await axiosServices.get(`/vehicle/all?id=${CabproviderId}&page=1&limit=5000`);
       if (response.status === 200) {
         setLoading(false);
         console.log('response', response);
