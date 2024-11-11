@@ -59,7 +59,7 @@ const EcommerceDataChart = ({ data }) => {
     },
     tooltip: {
       y: {
-        formatter: (val) => '$ ' + val + ' thousands'
+        formatter: (val) => '₹ ' + val + ' thousands'
       }
     }
   };
@@ -247,7 +247,7 @@ export default function OverviewGraph() {
                   </ListItemAvatar>
                   <ListItemText
                     primary={<Typography color="text.secondary">Revenue</Typography>}
-                    secondary={<Typography variant="subtitle1">$5,667</Typography>}
+                    secondary={<Typography variant="subtitle1">₹5,667</Typography>}
                   />
                 </ListItem>
                 <ListItem
