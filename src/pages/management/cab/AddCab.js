@@ -676,8 +676,7 @@ const AddCab = () => {
     insuranceExpiryDate: Yup.date().required('Permit expiry date is required'),
     insuranceExpiryDate_Doc: id ? Yup.mixed().required('InsuranceExpiryDate_Doc is required') : Yup.mixed(),
     pollutionExpiryDate: Yup.date()
-      .required('PollutionExpiryDate is required')
-      .max(new Date(), 'PollutionExpiryDate cannot be in the future'),
+      .required('PollutionExpiryDate is required'),
     pollutionExpiryDate_Doc: id ? Yup.mixed().required('PollutionExpiryDate_Doc is required') : Yup.mixed(),
     permitOneYrExpiryDate: Yup.date().required('PermitOneYrExpiryDate is required'),
     permitOneYrExpiryDate_doc: id ? Yup.mixed().required('PermitOneYrExpiryDate_doc is required') : Yup.mixed(),
