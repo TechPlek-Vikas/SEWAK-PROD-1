@@ -34,7 +34,7 @@ import { openSnackbar } from 'store/reducers/snackbar';
 import { createRateMasterForDriver } from 'store/slice/cabProvidor/cabRateSlice';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { fetchDrivers } from 'store/slice/cabProvidor/driverSlice';
+import { fetchAllDrivers, fetchDrivers } from 'store/slice/cabProvidor/driverSlice';
 import axios from 'utils/axios';
 import { formatDateUsingMoment, getNestedComplexProperty } from 'utils/helper';
 
@@ -77,6 +77,9 @@ const AddCabRateDriver = () => {
 
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
   const [rateIndex, setRateIndex] = useState(null);
+  const userInfo = JSON.parse(localStorage.getItem('userInformation'));
+
+  const CabProviderId = userInfo.userId;
 
   useEffect(() => {
     if (driverIDs?.length > 0 && companyIDs?.length > 0) {
@@ -96,7 +99,8 @@ const AddCabRateDriver = () => {
     setRemoveDialogOpen(false); // Close the dialog
   };
 
-  const driverList = useSelector((state) => state.drivers.drivers) || [];
+  // const driverList = useSelector((state) => state.drivers.drivers) || [];
+  const driverList = useSelector((state) => state.drivers.allDrivers) || [];
   const vehicleTypeList = useSelector((state) => state.vehicleTypes.vehicleTypes) || [];
   const zoneList = useSelector((state) => state.zoneName.zoneNames) || [];
   const zoneTypeList = useSelector((state) => state.zoneType.zoneTypes) || [];
@@ -114,7 +118,9 @@ const AddCabRateDriver = () => {
     // dispatch(fetchAllVehicleTypes());
     // dispatch(fetchZoneNames());
     // dispatch(fetchAllZoneTypes());
-    dispatch(fetchDrivers({ page: 1, limit: 1000, driverType: 1 }));
+    // dispatch(fetchDrivers({ page: 1, limit: 1000, driverType: 1 }));
+    console.log("CabProviderId", CabProviderId);
+    dispatch(fetchAllDrivers(CabProviderId));
   }, [dispatch]);
 
   const formik = useFormik({
@@ -166,7 +172,7 @@ const AddCabRateDriver = () => {
         {
           zoneNameID: '',
           zoneTypeID: null,
-          cabRate:1,
+          cabRate: 1,
           cabAmount: newCompanyCabAmountRef.current || cabAmountRef.current,
           dualTrip: '',
           dualTripAmount: [],
@@ -285,17 +291,18 @@ const AddCabRateDriver = () => {
                         label="Driver Name"
                         id="driverId"
                         options={driverList}
-                        getOptionLabel={(option) => option.userName}
+                        // getOptionLabel={(option) => option.userName}
+                        getOptionLabel={(option) => option.driverId.userName}
                         placeholder="Select Driver"
                         saveToFun={(e, value, _, action) => {
                           setFieldValue(
                             'driverId',
-                            value.map((driverItem) => driverItem._id)
+                            value.map((driverItem) => driverItem.driverId._id)
                           );
-                          setDriverIDs(value.map((driverItem) => driverItem._id));
+                          setDriverIDs(value.map((driverItem) => driverItem.driverId._id));
                         }}
-                        matchID="_id"
-                        displayDeletedKeyName="userName"
+                        matchID="driverId._id"
+                        // displayDeletedKeyName="userName"
                       />
                     </Stack>
                   </Grid>
@@ -710,7 +717,7 @@ const AddCabRateDriver = () => {
                                         arrayHelpers.push({
                                           zoneNameID: '',
                                           zoneTypeID: null,
-                                          cabRate:1,
+                                          cabRate: 1,
                                           cabAmount: newCompanyCabAmountRef.current || cabAmountRef.current || [],
                                           dualTrip: '',
                                           dualTripAmount: [],
