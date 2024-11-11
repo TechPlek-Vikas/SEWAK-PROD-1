@@ -74,6 +74,7 @@ const AddCabRateDriver = () => {
   const [columnCount, setColumnCount] = useState(FIXED_COLUMN_COUNT);
   const [driverIDs, setDriverIDs] = useState(null);
   const [companyIDs, setCompanyIDs] = useState(null);
+  const [vehicleTypeIDs, setVehicleTypeIDs] = useState(null);
   const [driverList, setDriverList] = useState([]);
 
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
@@ -147,7 +148,7 @@ const AddCabRateDriver = () => {
     initialValues: getInitialValue(),
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        if (!values.driverId.length) {
+        if (values.driverId.length === 0) {
           dispatch(
             openSnackbar({
               open: true,
@@ -162,7 +163,7 @@ const AddCabRateDriver = () => {
           return;
         }
 
-        if (!companyIDs) {
+        if (!companyIDs || companyIDs?.length === 0) {
           dispatch(
             openSnackbar({
               open: true,
@@ -176,6 +177,60 @@ const AddCabRateDriver = () => {
           );
           return;
         }
+
+        if (!vehicleTypeIDs || vehicleTypeIDs?.length === 0) {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Please select at least one vehicle type',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              close: true
+            })
+          );
+          return;
+        }
+
+        // if(values.rateData.length === 0){
+        //   dispatch(
+        //     openSnackbar({
+        //       open: true,
+        //       message: 'Please enter at least one rate',
+        //       variant: 'alert',
+        //       alert: {
+        //         color: 'error'
+        //       },
+        //       close: true
+        //     })
+        //   );
+        //   return;
+        // }
+
+        const zoneNameIDs = values.rateData.flatMap((company) => company.rateMaster.map((rate) => rate.zoneNameID));
+        console.log('zoneNameIDs', zoneNameIDs);
+
+        const errorCondition = zoneNameIDs.some((zoneNameID) => zoneNameID === '');
+
+        if (errorCondition) {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Please enter rate',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              close: true
+            })
+          );
+          return;
+        }
+
+
+        // await new Promise((resolve) => setTimeout(resolve, 5000));
+        
         const response = await dispatch(
           createRateMasterForDriver({
             data: {
@@ -199,7 +254,19 @@ const AddCabRateDriver = () => {
           navigate('/management/driver/view', { replace: true });
         }
       } catch (error) {
+        console.log(`🚀 ~ AddCabRateDriver ~ error:`, error);
         setSubmitting(false);
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Failed to create rate master',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            close: true
+          })
+        );
       } finally {
         setSubmitting(false);
       }
@@ -418,9 +485,12 @@ const AddCabRateDriver = () => {
                         getOptionLabel={(option) => option['vehicleTypeName']}
                         placeholder="Select Vehicle Type"
                         saveToFun={(e, val, _, action) => {
+                          setVehicleTypeIDs(val.map((vehicleType) => vehicleType._id));
                           handleVehicleTypeChange(e, val, action);
                         }}
                         onChange={(e, val, _, action) => {
+                          console.log('v = ', val);
+                          setVehicleTypeIDs(val.map((vehicleType) => vehicleType._id));
                           handleVehicleTypeChange(e, val, action);
                         }}
                         matchID="_id"
@@ -481,7 +551,7 @@ const AddCabRateDriver = () => {
                                             }`}</TableCell>
                                           ))}
 
-                                          <TableCell>Guard</TableCell>
+                                          {/* <TableCell>Guard</TableCell> */}
                                           <TableCell>Guard Price</TableCell>
                                           <TableCell>Billing Cycle Company</TableCell>
                                           <TableCell>Billing Cycle Vendor</TableCell>
@@ -712,22 +782,33 @@ const AddCabRateDriver = () => {
                                             )}
 
                                             {/* Guard */}
-                                            <TableCell>
+                                            {/* <TableCell>
                                               <FormikSelectField1
                                                 label="Guard"
                                                 name={`rateData.${index}.rateMaster.${rateIndex}.guard`}
                                                 options={optionsForDualTrip}
                                                 fullWidth
                                               />
-                                            </TableCell>
+                                            </TableCell> */}
 
                                             {/* Guard Price */}
                                             <TableCell>
                                               <FormikTextField
                                                 name={`rateData.${index}.rateMaster.${rateIndex}.guardPrice`}
                                                 label="Guard Price"
+                                                onChange={(event) => {
+                                                  const { value } = event.target;
+                                                  console.log('event.target.value = ', value);
+                                                  const numericValue = event.target.value.replace(/[^0-9]/g, '');
+                                                  if (Number(numericValue) > 0) {
+                                                    setFieldValue(`rateData.${index}.rateMaster.${rateIndex}.guard`, 1);
+                                                  } else {
+                                                    setFieldValue(`rateData.${index}.rateMaster.${rateIndex}.guard`, 0);
+                                                  }
+                                                  setFieldValue(`rateData.${index}.rateMaster.${rateIndex}.guardPrice`, numericValue);
+                                                }}
                                                 fullWidth
-                                                disabled={!(getFieldProps(`rateData.${index}.rateMaster.${rateIndex}.guard`).value == 1)}
+                                                // disabled={!(getFieldProps(`rateData.${index}.rateMaster.${rateIndex}.guard`).value == 1)}
                                               />
                                             </TableCell>
 
@@ -805,7 +886,7 @@ const AddCabRateDriver = () => {
                                           dualTrip: 0,
                                           dualTripAmount: [],
                                           guard: 0,
-                                          guardPrice: '',
+                                          guardPrice: '0',
                                           billingCycleCompany: '',
                                           billingCycleVendor: '',
                                           effectiveDate: null
