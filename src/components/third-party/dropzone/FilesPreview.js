@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { List, ListItemText, ListItem } from '@mui/material';
+import { List, ListItemText, ListItem, Typography, Stack } from '@mui/material';
 
 // project-imports
 import { DropzopType } from 'config';
@@ -12,7 +12,7 @@ import IconButton from 'components/@extended/IconButton';
 import getDropzoneData from 'utils/getDropzoneData';
 
 // assets
-import { CloseCircle, Document } from 'iconsax-react';
+import { CloseCircle, Document, Eye } from 'iconsax-react';
 
 // ==============================|| MULTI UPLOAD - PREVIEW ||============================== //
 
@@ -30,51 +30,7 @@ export default function FilesPreview({ showList = false, files, onRemove, type }
       }}
     >
       {files.map((file, index) => {
-        const { key, name, size, preview, type } = getDropzoneData(file, index);
-
-        if (showList) {
-          return (
-            <ListItem
-              key={key}
-              sx={{
-                p: 0,
-                m: 0.5,
-                width: layoutType === DropzopType.standard ? 64 : 80,
-                height: layoutType === DropzopType.standard ? 64 : 80,
-                borderRadius: 1.25,
-                position: 'relative',
-                display: 'inline-flex',
-                verticalAlign: 'text-top',
-                border: `solid 1px ${theme.palette.divider}`,
-                overflow: 'hidden'
-              }}
-            >
-              {type?.includes('image') && <img alt="preview" src={preview} style={{ width: '100%' }} />}
-              {!type?.includes('image') && <Document variant="Bold" style={{ width: '100%', fontSize: '1.5rem' }} />}
-
-              {onRemove && (
-                <IconButton
-                  size="small"
-                  color="error"
-                  shape="rounded"
-                  onClick={() => onRemove(file)}
-                  sx={{
-                    fontSize: '0.875rem',
-                    bgcolor: 'background.paper',
-                    p: 0,
-                    width: 'auto',
-                    height: 'auto',
-                    top: 2,
-                    right: 2,
-                    position: 'absolute'
-                  }}
-                >
-                  <CloseCircle variant="Bold" />
-                </IconButton>
-              )}
-            </ListItem>
-          );
-        }
+        const { key, name, size, preview, type: fileType } = getDropzoneData(file, index);
 
         return (
           <ListItem
@@ -84,21 +40,40 @@ export default function FilesPreview({ showList = false, files, onRemove, type }
               px: 2,
               py: 0.75,
               borderRadius: 0.75,
-              border: (theme) => `solid 1px ${theme.palette.divider}`
+              border: (theme) => `solid 1px ${theme.palette.divider}`,
+              display: 'flex',
+              alignItems: 'center'
             }}
           >
-            <Document variant="Bold" style={{ width: '30px', height: '30px', fontSize: '1.15rem', marginRight: 4 }} />
+            {fileType.includes('image') ? (
+              <img alt="preview" src={preview} style={{ width: 64, height: 64, borderRadius: 8, marginRight: theme.spacing(2) }} />
+            ) : (
+              <Document variant="Bold" style={{ width: 30, height: 30, fontSize: '1.5rem', marginRight: theme.spacing(2) }} />
+            )}
 
             <ListItemText
-              primary={typeof file === 'string' ? file : name}
-              secondary={typeof file === 'string' ? '' : size}
-              primaryTypographyProps={{ variant: 'subtitle2' }}
-              secondaryTypographyProps={{ variant: 'caption' }}
+              primary={
+                <Typography
+                  variant="subtitle2"
+                  component="a"
+                  onClick={() => window.open(preview, '_blank')}
+                  sx={{
+                    cursor: 'pointer',
+                    color: 'primary.main'
+                    // textDecoration: 'underline',
+                    // '&:hover': { color: 'primary.dark' }
+                  }}
+                >
+                  {name}
+                </Typography>
+              }
             />
+
+            {/* <ListItemText primary={<Typography variant="subtitle2">{name}</Typography>} /> */}
 
             {onRemove && (
               <IconButton edge="end" size="small" onClick={() => onRemove(file)}>
-                <CloseCircle variant="Bold" style={{ fontSize: '1.15rem' }} />
+                <CloseCircle variant="Bold" style={{ fontSize: '1.16rem' }} />
               </IconButton>
             )}
           </ListItem>
