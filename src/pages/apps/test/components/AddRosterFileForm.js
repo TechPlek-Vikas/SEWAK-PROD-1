@@ -136,7 +136,7 @@ const AddRosterFileForm = ({ handleClose }) => {
   return (
     <form onSubmit={formik.handleSubmit} id="validation-forms">
       <MainCard title="Upload Roster">
-        <DialogContent direction="row" sx={{height:"50vh"}}>
+        <DialogContent direction="row" sx={{height:"56vh"}}>
           <Stack spacing={1}>
             <Grid item xs={4}>
               <Stack spacing={1}>

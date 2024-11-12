@@ -13,12 +13,16 @@ import {
   Typography,
   Stack,
   Button,
-  CircularProgress
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { Add, ArrowDown2, ArrowRight2 } from 'iconsax-react';
-import { Fragment, useCallback, useMemo } from 'react';
+import { Fragment, useCallback, useMemo, useState } from 'react';
 import { useExpanded, useTable } from 'react-table';
 import { Link, useNavigate } from 'react-router-dom';
 import PaginationBox from 'components/tables/Pagination';
@@ -26,6 +30,9 @@ import WrapperButton from 'components/common/guards/WrapperButton';
 import { MODULE, PERMISSIONS } from 'constant';
 import TableSkeleton from 'components/tables/TableSkeleton';
 import EmptyTableDemo from 'components/tables/EmptyTable';
+import axiosServices from 'utils/axios';
+import { dispatch } from 'store';
+import { openSnackbar } from 'store/reducers/snackbar';
 
 const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading }) => {
   const navigate = useNavigate();
@@ -96,7 +103,7 @@ const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loadin
           return value
             .toLowerCase()
             .split(' ')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
         }
       },
@@ -118,6 +125,90 @@ const CompanyTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loadin
           }
         }
       }
+      // {
+      //   Header: 'Status',
+      //   accessor: 'isActive',
+      //   Cell: ({ row, value }) => {
+          
+      //     const [status, setStatus] = useState(value);
+      //     const [openDialog, setOpenDialog] = useState(false); // To control the visibility of the dialog
+      //     const [newStatus, setNewStatus] = useState(null); // To store the status to be toggled
+      
+      //     const handleToggleStatus = () => {
+      //       // Determine new status based on current status
+      //       const toggledStatus = status === 1 ? 0 : 1;
+      //       setNewStatus(toggledStatus);
+      //       setOpenDialog(true); // Open the confirmation dialog
+      //     };
+      
+      //     const handleConfirmStatusUpdate = async () => {
+      //       try {
+      //         // Make PUT request to update status
+      //         await axiosServices.put('/company/updateActiveStatus', {
+      //           data: {
+      //             companyId: row.original._id,
+      //             status: newStatus
+      //           }
+      //         });
+      
+      //         // Update local status
+      //         setStatus(newStatus);
+      //         setOpenDialog(false); // Close the dialog after successful update
+      //       } catch (error) {
+      //         console.error("Error updating status:", error);
+      //         dispatch(
+      //           openSnackbar({
+      //             open: true,
+      //             message: error.response.data?.error || 'Something went wrong',
+      //             variant: 'alert',
+      //             alert: {
+      //               color: 'error'
+      //             },
+      //             close: true
+      //           })
+      //         );
+      //       }
+      //     };
+      
+      //     const handleCancel = () => {
+      //       setOpenDialog(false); // Close the dialog without making any change
+      //     };
+      
+      //     return (
+      //       <>
+      //         <Chip
+      //           label={status === 1 ? "Active" : "Inactive"}
+      //           color={status === 1 ? "success" : "error"}
+      //           variant="light"
+      //           size="small"
+      //           onClick={handleToggleStatus}
+      //           sx={{
+      //             ':hover': {
+      //               backgroundColor: status === 1 ? 'rgba(36, 140, 106, 0.5)' : 'rgba(255, 0, 0, 0.3)',
+      //               cursor: 'pointer'
+      //             }
+      //           }}
+      //         />
+      
+      //         {/* Confirmation Dialog */}
+      //         <Dialog open={openDialog} onClose={handleCancel}>
+      //           <DialogTitle>Confirm Status Change</DialogTitle>
+      //           <DialogContent>
+      //             Are you sure you want to {newStatus === 1 ? 'activate' : 'deactivate'} this company?
+      //           </DialogContent>
+      //           <DialogActions>
+      //             <Button onClick={handleCancel} color="error">
+      //               Cancel
+      //             </Button>
+      //             <Button onClick={handleConfirmStatusUpdate} variant="contained">
+      //               Confirm
+      //             </Button>
+      //           </DialogActions>
+      //         </Dialog>
+      //       </>
+      //     );
+      //   }
+      // }
     ],
     []
   );

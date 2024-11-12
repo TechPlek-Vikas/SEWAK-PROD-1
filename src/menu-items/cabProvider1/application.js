@@ -28,7 +28,7 @@ const application = {
       title: <FormattedMessage id="roster" />,
       type: 'collapse',
       icon: icons.samplePage,
-      url: '/apps/roster/dashboard',
+      // url: '/apps/roster/dashboard',
       children: [
         {
           id: 'list',
@@ -42,6 +42,13 @@ const application = {
           title: <FormattedMessage id="upload" />,
           type: 'item',
           url: '/apps/roster/create',
+          // icon: icons.upload
+        },
+        {
+          id: 'files',
+          title: <FormattedMessage id="files" />,
+          type: 'item',
+          url: '/apps/roster/file-management',
           // icon: icons.upload
         },
 
@@ -60,7 +67,7 @@ const application = {
       id: 'invoices',
       title: <FormattedMessage id="invoices" />,
       type: 'collapse',
-      url: '/apps/invoices/dashboard',
+      // url: '/apps/invoices/dashboard',
       icon: icons.invoice,
       children: [
         {
