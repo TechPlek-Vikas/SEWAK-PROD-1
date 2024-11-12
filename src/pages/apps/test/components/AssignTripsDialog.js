@@ -383,6 +383,14 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
         }
       },
       {
+        header: 'Location',
+        accessorKey: 'location',
+        dataType: 'plain_text',
+        meta: {
+          className: 'cell-center'
+        }
+      },
+      {
         header: 'Status',
         accessorKey: 'select',
         dataType: 'select'

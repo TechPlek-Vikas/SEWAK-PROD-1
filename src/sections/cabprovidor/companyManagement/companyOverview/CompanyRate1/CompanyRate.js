@@ -238,10 +238,12 @@ const CompanyRate = ({ id, companyName, onBackToList }) => {
                                         <TableCell>
                                           <FormikAutocomplete
                                             name={`rateData.${index}.zoneTypeID`}
-                                            options={zoneTypeList.filter(
-                                              (zoneType) =>
-                                                zoneType.zoneId._id === getNestedComplexProperty(values, `rateData.${index}.zoneNameID`)
-                                            )}
+                                            options={zoneTypeList
+                                              .filter(
+                                                (zoneType) =>
+                                                  zoneType.zoneId._id === getNestedComplexProperty(values, `rateData.${index}.zoneNameID`)
+                                              )
+                                              .sort((a, b) => a.zoneTypeName.localeCompare(b.zoneTypeName))}
                                             placeholder="Select Zone Type"
                                             sx={{ width: '150px' }}
                                             getOptionLabel={(option) => option['zoneTypeName']}
