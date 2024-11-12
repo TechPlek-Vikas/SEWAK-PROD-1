@@ -93,7 +93,7 @@ export default function CreateRosterTemplate() {
     });
 
     console.log(response.data);
-      closeDrawer();
+    closeDrawer();
     // Save to local storage or handle as needed
     localStorage.setItem('template', JSON.stringify(templateData));
     console.log('Template saved:', templateData);
@@ -118,7 +118,17 @@ export default function CreateRosterTemplate() {
   return (
     <>
       <Drawer anchor={'bottom'} open={isOpen} onClose={closeDrawer}>
-        <MainCard content={false} title={'Create Excel Template'}>
+        <MainCard
+          content={false}
+          title={'Create Excel Template'}
+          sx={{
+            overflowY: 'auto', // Allows vertical scrolling
+            scrollbarWidth: 'none', // Firefox
+            '&::-webkit-scrollbar': {
+              display: 'none' // Chrome, Safari, Edge
+            }
+          }}
+        >
           <Box sx={{ width: '100%' }} role="presentation">
             <Grid container spacing={2} sx={{ p: 2 }}>
               <Grid item xs={12} md={3}>
