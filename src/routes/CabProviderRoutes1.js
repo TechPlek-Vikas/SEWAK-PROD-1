@@ -135,10 +135,10 @@ const CabProvidorRoutes = {
             {
               path: 'roster',
               children: [
-                {
-                  path: 'dashboard',
-                  element: <RosterDashboard />
-                },
+                // {
+                //   path: 'dashboard',
+                //   element: <RosterDashboard />
+                // },
                 {
                   path: 'view',
                   element: <Roster />
@@ -190,10 +190,10 @@ const CabProvidorRoutes = {
             {
               path: 'invoices',
               children: [
-                {
-                  path: 'dashboard',
-                  element: <InvoiceDashboard />
-                },
+                // {
+                //   path: 'dashboard',
+                //   element: <InvoiceDashboard />
+                // },
                 {
                   path: 'list',
                   element: <List />
