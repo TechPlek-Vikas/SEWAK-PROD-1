@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Loader from 'components/Loader';
 import { MODULE, PERMISSIONS } from 'constant';
 import { openSnackbar } from 'store/reducers/snackbar';
+import CustomCircularLoader from 'components/CustomCircularLoader';
 
 // const x = {
 //   company: ['CREATE', 'edit'],
@@ -252,7 +253,8 @@ export const JWTProvider = ({ children }) => {
     // Handle profile update logic
   };
   if (auth.isInitialized !== undefined && !auth.isInitialized) {
-    return <Loader />;
+    // return <Loader />;
+    return <CustomCircularLoader />;
   }
   return (
     <JWTContext.Provider
