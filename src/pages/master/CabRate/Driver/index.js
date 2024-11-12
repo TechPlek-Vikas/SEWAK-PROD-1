@@ -669,11 +669,16 @@ const AddCabRateDriver = () => {
                                             <TableCell>
                                               <FormikAutocomplete
                                                 name={`rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`}
-                                                options={zoneTypeList.filter(
-                                                  (zoneType) =>
-                                                    zoneType.zoneId._id ===
-                                                    getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
-                                                )}
+                                                options={zoneTypeList
+                                                  .filter(
+                                                    (zoneType) =>
+                                                      zoneType.zoneId._id ===
+                                                      getNestedComplexProperty(
+                                                        values,
+                                                        `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`
+                                                      )
+                                                  )
+                                                  .sort((a, b) => a.zoneTypeName.localeCompare(b.zoneTypeName))}
                                                 placeholder="Select Zone Type"
                                                 sx={{ width: '150px' }}
                                                 getOptionLabel={(option) => option['zoneTypeName']}
