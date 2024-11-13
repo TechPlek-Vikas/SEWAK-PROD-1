@@ -94,7 +94,7 @@ const VendorDashboard = Loadable(lazy(() => import('pages/dashboard/vendorDashbo
 const CompanyDashboard = Loadable(lazy(() => import('pages/dashboard/companyDashboard/CompanyDashboard')));
 const UserDashboard = Loadable(lazy(() => import('pages/dashboard/userDashboard/UserDashboard')));
 const InvoiceDashboard = Loadable(lazy(() => import('pages/dashboard/invoiceDashboard/InvoiceDashboard')));
-
+const EditDriver = Loadable(lazy(() => import('pages/management/driver/EditDriver.js')));
 // Dashboard
 const RosterDashboard1 = Loadable(lazy(() => import('pages/apps/test/dashboard')));
 
@@ -354,11 +354,11 @@ const CabProvidorRoutes = {
                 {
                   path: 'add-driver-rate',
                   element: <AddCabRateDriver />
+                },
+                {
+                  path: 'edit/:id',
+                  element: <EditDriver />
                 }
-                // {
-                //   path: 'add-driver',
-                //   element: <AddDriver />
-                // }
               ]
             },
             // Cab
