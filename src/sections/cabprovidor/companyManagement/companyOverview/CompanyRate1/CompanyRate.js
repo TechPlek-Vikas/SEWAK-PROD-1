@@ -77,6 +77,23 @@ const CompanyRate = ({ id, companyName, onBackToList }) => {
   };
 
   const handleSubmit = async (values, { resetForm }) => {
+    const zoneNameIDs = values.rateData.map((rateData) => rateData.zoneNameID);
+
+    if (zoneNameIDs.some((zoneNameID) => zoneNameID === '')) {
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: 'Please select zone name',
+          variant: 'alert',
+          alert: {
+            color: 'error'
+          },
+          close: true
+        })
+      );
+      return;
+    }
+
     // Process the rateData structure and ensure it aligns with the expected API structure
     const formValues = {
       rateData: values.rateData.map((rateData) => ({
@@ -104,6 +121,8 @@ const CompanyRate = ({ id, companyName, onBackToList }) => {
       cabRate: 0,
       billingCycle: ''
     }));
+
+    // await new Promise((resolve) => setTimeout(resolve, 5000));
 
     try {
       const response = await axiosServices.post(
@@ -238,10 +257,12 @@ const CompanyRate = ({ id, companyName, onBackToList }) => {
                                         <TableCell>
                                           <FormikAutocomplete
                                             name={`rateData.${index}.zoneTypeID`}
-                                            options={zoneTypeList.filter(
-                                              (zoneType) =>
-                                                zoneType.zoneId._id === getNestedComplexProperty(values, `rateData.${index}.zoneNameID`)
-                                            )}
+                                            options={zoneTypeList
+                                              .filter(
+                                                (zoneType) =>
+                                                  zoneType.zoneId._id === getNestedComplexProperty(values, `rateData.${index}.zoneNameID`)
+                                              )
+                                              .sort((a, b) => a.zoneTypeName.localeCompare(b.zoneTypeName))}
                                             placeholder="Select Zone Type"
                                             sx={{ width: '150px' }}
                                             getOptionLabel={(option) => option['zoneTypeName']}
@@ -452,7 +473,7 @@ const CompanyRate = ({ id, companyName, onBackToList }) => {
               >
                 Cancel
               </Button>
-              <Button type="submit" variant="contained">
+              <Button type="submit" variant="contained" disabled={isSubmitting || !dirty}>
                 {' '}
                 Add
               </Button>

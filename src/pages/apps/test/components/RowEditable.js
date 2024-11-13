@@ -21,20 +21,62 @@ import { InfoCircle } from 'iconsax-react';
 // project-imports
 // ==============================|| EDITABLE ROW ||============================== //
 
+function getCompanyRate(data, zoneNameId, vehicleTypeId, zoneTypeId = null, guard, dualTrip) {
+  // Check for missing required arguments
+  if (!data || !zoneNameId || !vehicleTypeId || guard === undefined || dualTrip === undefined) {
+    console.warn('Missing required arguments for getCompanyRate');
+    return { guardPrice: 0, companyRate: 0 }; // or return null;
+  }
+
+  let guardPrice;
+  let companyRate;
+
+  // Filter to find the matching object
+  const obj = data.filter(
+    (item) =>
+      item.zoneNameID._id === zoneNameId &&
+      item.VehicleTypeName._id === vehicleTypeId &&
+      (zoneTypeId === null || (item.zoneTypeID && item.zoneTypeID._id === zoneTypeId))
+  );
+
+  if (obj.length === 0) {
+    // No matching object found
+    console.warn('No matching data found for the specified criteria');
+    return { guardPrice: 0, companyRate: 0 };
+  }
+
+  // Determine guardPrice based on the guard parameter
+  guardPrice = guard === 1 ? obj[0].guardPrice || 0 : 0;
+
+  // Determine companyRate based on the dualTrip parameter
+  companyRate = dualTrip === 0 ? obj[0].cabAmount.amount || 0 : obj[0].dualTripAmount.amount || 0;
+
+  return { guardPrice, companyRate };
+}
+
 export default function RowEditable({ getValue: initialValue, row, column, table }) {
   const [value, setValue] = useState(initialValue);
   const tableMeta = table.options.meta;
   const { original, index } = row;
   const { id, columnDef } = column;
-  const { _zoneName_options, _vehicleType_options, _drivers_options } = original;
+  const { _zoneName_options, _vehicleType_options, _drivers_options, _company_Rate } = original;
+  console.log({ original });
 
+  const { guardPrice, companyRate } = getCompanyRate(
+    _company_Rate,
+    original._zoneName._id,
+    original._vehicleType._id,
+    original._zoneType._id,
+    original._guard_1,
+    original._dualTrip_1
+  );
   const onChange = (e) => {
     if (id === '_guard_1' || id === '_dual_trip') {
       setValue(e.target.checked ? 1 : 0);
     } else {
       setValue(e.target?.value);
     }
-    console.log({ id }, e.target?.value, { original });
+    console.log({ original });
   };
 
   const onBlur = () => {
@@ -130,12 +172,11 @@ export default function RowEditable({ getValue: initialValue, row, column, table
                 value={value}
                 onChange={onChange}
                 onBlur={onBlur}
+                renderValue={(selected) => selected?.zoneName || 'Select a zone'}
               >
                 {_zoneName_options.map((zone) => {
-                  console.log({ value });
-                  console.log({ _zoneName_options });
                   return (
-                    <MenuItem key={zone._id} value={zone}>
+                    <MenuItem key={zone?._id} value={zone}>
                       <Typography>{zone.zoneName}</Typography>
                     </MenuItem>
                   );
@@ -144,7 +185,6 @@ export default function RowEditable({ getValue: initialValue, row, column, table
             </>
           ) : (
             <Typography>
-              {console.log({value})}
               {value?.zoneName}{' '}
               {!value._id && (
                 <Tooltip title={'select Zone Name'}>
@@ -170,11 +210,12 @@ export default function RowEditable({ getValue: initialValue, row, column, table
               onChange={onChange}
               onBlur={onBlur}
               disabled={!original._zoneName?.zoneType}
+              renderValue={(selected) => selected?.zoneTypeName || 'Select a zonetype'}
             >
               {original._zoneName.zoneType &&
                 original._zoneName.zoneType.map((type) => {
                   return (
-                    <MenuItem key={type._id} value={type}>
+                    <MenuItem key={type?._id} value={type}>
                       <Typography>{type.zoneTypeName}</Typography>
                     </MenuItem>
                   );
@@ -183,7 +224,7 @@ export default function RowEditable({ getValue: initialValue, row, column, table
           ) : (
             <Typography>
               {value?.zoneTypeName}{' '}
-              {!value._id && (
+              {!value?._id && (
                 <Tooltip title={'select Zone type'}>
                   <IconButton size="small" color="info">
                     <InfoCircle />
@@ -207,6 +248,7 @@ export default function RowEditable({ getValue: initialValue, row, column, table
               value={value}
               onChange={onChange}
               onBlur={onBlur}
+              renderValue={(selected) => selected?.vehicleTypeName || 'Select a vehicleype'}
             >
               {_vehicleType_options.map((type) => {
                 return (
@@ -323,7 +365,7 @@ export default function RowEditable({ getValue: initialValue, row, column, table
               id="editable-company-rate"
               type="number" // Set the type to number to accept numeric input
               value={value} // Display current rate if available, or empty string
-              onChange={onChange}
+              onChange={(e) => setValue(e.target.value)}
               onBlur={onBlur}
             />
           ) : (

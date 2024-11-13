@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import { Box, Chip, Dialog, Stack, Typography } from '@mui/material';
+import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
 import ScrollX from 'components/ScrollX';
 import PaginationBox from 'components/tables/Pagination';
 import ReactTable from 'components/tables/reactTable/ReactTable';
@@ -12,6 +12,10 @@ import { Link } from 'react-router-dom';
 import TableSkeleton from 'components/tables/TableSkeleton';
 import EmptyTableDemo from 'components/tables/EmptyTable';
 import AssignVehiclePopup from './driverOverview/assignVehiclePopup/AssignVehiclePopup';
+import ReassignVehicle from './driverOverview/reassignVehiclePopup/ReassignVehicle';
+import axiosServices from 'utils/axios';
+import { openSnackbar } from 'store/reducers/snackbar';
+import { dispatch } from 'store';
 
 const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading, setUpdateKey, updateKey }) => {
   const theme = useTheme();
@@ -20,6 +24,8 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
   const [driverId, setDriverId] = useState(null);
   const [assignedVehicle, setAssignedVehicle] = useState([]);
   const [pendingDialogOpen, setPendingDialogOpen] = useState(false);
+  const [reassignDialogOpen, setReassignDialogOpen] = useState(false);
+
   //assignedVehicle
   const handleClosePendingDialog = () => {
     setPendingDialogOpen(false);
@@ -31,6 +37,17 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
     console.log(id);
     setDriverId(id);
     setPendingDialogOpen(true);
+  };
+
+  const handleOpenReassignDialog = (row) => {
+    setDriverId(row);
+    setAssignedVehicle(row?.assignedVehicle || []);
+    setReassignDialogOpen(true);
+  };
+
+  const handleCloseReassignDialog = () => {
+    setReassignDialogOpen(false);
+    setDriverId(null);
   };
 
   const columns = useMemo(
@@ -79,6 +96,8 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
         Header: 'Vehicles',
         accessor: 'assignedVehicle',
         Cell: ({ row }) => {
+          // console.log("row.original",row.original);
+
           const assignedVehicle = row.original.assignedVehicle;
           const cabNo = assignedVehicle ? assignedVehicle.vehicleId.vehicleNumber : null; // accessing vehicleNumber if assigned
 
@@ -105,13 +124,13 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
                 label={cabNo}
                 size="small"
                 variant="light"
-                // sx={{
-                //   ':hover': {
-                //     backgroundColor: 'rgba(36, 140, 106 ,.5)',
-                //     cursor: 'pointer'
-                //   }
-                // }}
-                // onClick={() => handleOpenPendingDialog(row.original)}
+                sx={{
+                  ':hover': {
+                    backgroundColor: 'rgba(36, 140, 106 ,.5)',
+                    cursor: 'pointer'
+                  }
+                }}
+                onClick={() => handleOpenReassignDialog(row.original)}
               />
             );
           }
@@ -125,6 +144,87 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
           const { values } = row;
           const time = values['createdAt'];
           return <>{time ? formattedDate(time, 'DD MMMM YYYY, hh:mm A') : ''}</>;
+        }
+      },
+      {
+        Header: 'Status',
+        accessor: 'isActive',
+        Cell: ({ row, value }) => {
+          const [status, setStatus] = useState(value);
+          const [openDialog, setOpenDialog] = useState(false); // To control the visibility of the dialog
+          const [newStatus, setNewStatus] = useState(null); // To store the status to be toggled
+
+          const handleToggleStatus = () => {
+            // Determine new status based on current status
+            const toggledStatus = status === 1 ? 0 : 1;
+            setNewStatus(toggledStatus);
+            setOpenDialog(true); // Open the confirmation dialog
+          };
+
+          const handleConfirmStatusUpdate = async () => {
+            try {
+              // Make PUT request to update status
+              await axiosServices.put('/driver/updateActiveStatus', {
+                data: {
+                  driverId: row.original._id,
+                  status: newStatus
+                }
+              });
+
+              // Update local status
+              setStatus(newStatus);
+              setOpenDialog(false); // Close the dialog after successful update
+            } catch (error) {
+              console.error('Error updating status:', error);
+              dispatch(
+                openSnackbar({
+                  open: true,
+                  message: error.response.data?.error || 'Something went wrong',
+                  variant: 'alert',
+                  alert: {
+                    color: 'error'
+                  },
+                  close: true
+                })
+              );
+            }
+          };
+
+          const handleCancel = () => {
+            setOpenDialog(false); // Close the dialog without making any change
+          };
+
+          return (
+            <>
+              <Chip
+                label={status === 1 ? 'Active' : 'Inactive'}
+                color={status === 1 ? 'success' : 'error'}
+                variant="light"
+                size="small"
+                onClick={handleToggleStatus}
+                sx={{
+                  ':hover': {
+                    backgroundColor: status === 1 ? 'rgba(36, 140, 106, 0.5)' : 'rgba(255, 0, 0, 0.3)',
+                    cursor: 'pointer'
+                  }
+                }}
+              />
+
+              {/* Confirmation Dialog */}
+              <Dialog open={openDialog} onClose={handleCancel}>
+                <DialogTitle>Confirm Status Change</DialogTitle>
+                <DialogContent>Are you sure you want to {newStatus === 1 ? 'activate' : 'deactivate'} this driver?</DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCancel} color="error">
+                    Cancel
+                  </Button>
+                  <Button onClick={handleConfirmStatusUpdate} variant="contained">
+                    Confirm
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </>
+          );
         }
       }
       //   {
@@ -243,6 +343,15 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
       <Dialog open={pendingDialogOpen} onClose={handleClosePendingDialog}>
         <AssignVehiclePopup
           handleClose={handleClosePendingDialog}
+          driverId={driverId}
+          setUpdateKey={setUpdateKey}
+          updateKey={updateKey}
+          assignedVehicle={assignedVehicle}
+        />
+      </Dialog>
+      <Dialog open={reassignDialogOpen} onClose={handleCloseReassignDialog}>
+        <ReassignVehicle
+          handleClose={handleCloseReassignDialog}
           driverId={driverId}
           setUpdateKey={setUpdateKey}
           updateKey={updateKey}

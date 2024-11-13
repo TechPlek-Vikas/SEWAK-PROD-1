@@ -73,6 +73,7 @@ const AddCabRateVendor = () => {
   const [columnCount, setColumnCount] = useState(FIXED_COLUMN_COUNT);
   const [vendorIDs, setVendorIDs] = useState(null);
   const [companyIDs, setCompanyIDs] = useState(null);
+  const [vehicleTypeIDs, setVehicleTypeIDs] = useState(null);
 
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
   const [rateIndex, setRateIndex] = useState(null);
@@ -117,6 +118,71 @@ const AddCabRateVendor = () => {
     initialValues: getInitialValue(),
     onSubmit: async (values, { setSubmitting }) => {
       try {
+        if (values.vendorId.length === 0) {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Please select vendor',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              close: true
+            })
+          );
+          return;
+        }
+
+        if (!companyIDs || companyIDs?.length === 0) {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Please select company',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              close: true
+            })
+          );
+          return;
+        }
+
+        if (!vehicleTypeIDs || vehicleTypeIDs?.length === 0) {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Please select at least one vehicle type',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              close: true
+            })
+          );
+          return;
+        }
+
+        const zoneNameIDs = values.rateData.flatMap((company) => company.rateMaster.map((rate) => rate.zoneNameID));
+        console.log('zoneNameIDs', zoneNameIDs);
+
+        const errorCondition = zoneNameIDs.some((zoneNameID) => zoneNameID === '');
+
+        if (errorCondition) {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Please enter rate',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              close: true
+            })
+          );
+          return;
+        }
+
         const response = await dispatch(
           createRateMasterForVendor({
             data: {
@@ -137,10 +203,21 @@ const AddCabRateVendor = () => {
               close: true
             })
           );
-          navigate('/management/cab/view', { replace: true });
+          navigate('/management/vendor/view', { replace: true });
         }
       } catch (error) {
         setSubmitting(false);
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Failed to create rate master',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            close: true
+          })
+        );
       } finally {
         setSubmitting(false);
       }
@@ -164,9 +241,9 @@ const AddCabRateVendor = () => {
           zoneTypeID: null,
           cabRate: 1,
           cabAmount: newCompanyCabAmountRef.current || cabAmountRef.current,
-          dualTrip: '',
+          dualTrip: 0,
           dualTripAmount: [],
-          guard: '',
+          guard: 0,
           guardPrice: '0',
           billingCycleCompany: '',
           billingCycleVendor: ''
@@ -288,9 +365,17 @@ const AddCabRateVendor = () => {
                         );
                         setVendorIDs(value.map((vendor) => vendor.vendorId));
                       }}
+                      onChange={(e, value, _, action) => {
+                        setFieldValue(
+                          'vendorId',
+                          value.map((vendor) => vendor.vendorId)
+                        );
+                        setVendorIDs(value.map((vendor) => vendor.vendorId));
+                      }}
                       matchID="vendorId"
-                      displayDeletedKeyName="vendorCompanyName"
-                      defaultVal={values.vendorId}
+                      // displayDeletedKeyName="vendorCompanyName"
+                      disableConfirmation
+                      disableCloseOnSelect
                     />
                   </Stack>
                 </Grid>
@@ -310,8 +395,14 @@ const AddCabRateVendor = () => {
                         handleCompanyChange(e, val);
                         setCompanyIDs(val.map((company) => company._id));
                       }}
+                      onChange={(e, val) => {
+                        handleCompanyChange(e, val);
+                        setCompanyIDs(val.map((company) => company._id));
+                      }}
                       matchID="_id"
-                      displayDeletedKeyName="company_name"
+                      // displayDeletedKeyName="company_name"
+                      disableConfirmation
+                      disableCloseOnSelect
                     />
                   </Stack>
                 </Grid>
@@ -320,7 +411,6 @@ const AddCabRateVendor = () => {
                 <Grid item xs={12} sm={4}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="vehicleType">Vehicle Type</InputLabel>
-                    {/* DESC  : MultipleAutoCompleteWithDeleteConfirmation1 : DELETE CONFIRMATION FOR SINGLE OPTION DELETE & ALL OPTIONS */}
                     <MultipleAutoCompleteWithDeleteConfirmation1
                       label="Vehicle Type"
                       id="vehicleType"
@@ -328,12 +418,20 @@ const AddCabRateVendor = () => {
                       getOptionLabel={(option) => option['vehicleTypeName']}
                       placeholder="Select Vehicle Type"
                       saveToFun={(e, val, _, action) => {
+                        setVehicleTypeIDs(val.map((vehicleType) => vehicleType._id));
+                        handleVehicleTypeChange(e, val, action);
+                      }}
+                      onChange={(e, val, _, action) => {
+                        console.log('v = ', val);
+                        setVehicleTypeIDs(val.map((vehicleType) => vehicleType._id));
                         handleVehicleTypeChange(e, val, action);
                       }}
                       matchID="_id"
-                      displayDeletedKeyName="vehicleTypeName"
-                      deleteAllMessage="Vehicle Types"
-                      disableClearable // To hide all clear button
+                      // displayDeletedKeyName="vehicleTypeName"
+                      // deleteAllMessage="Vehicle Types"
+                      // disableClearable // To hide all clear button
+                      disableConfirmation
+                      disableCloseOnSelect
                     />
                   </Stack>
                 </Grid>
@@ -386,7 +484,7 @@ const AddCabRateVendor = () => {
                                           }`}</TableCell>
                                         ))}
 
-                                        <TableCell>Guard</TableCell>
+                                        {/* <TableCell>Guard</TableCell> */}
                                         <TableCell>Guard Price</TableCell>
                                         <TableCell>Billing Cycle Company</TableCell>
                                         <TableCell>Billing Cycle Vendor</TableCell>
@@ -461,7 +559,9 @@ const AddCabRateVendor = () => {
                                               // Reset the value by ensuring it refers only to the current index
                                               value={
                                                 zoneList?.find(
-                                                  (item) => item['_id'] === getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
+                                                  (item) =>
+                                                    item['_id'] ===
+                                                    getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
                                                 ) || null
                                               }
                                               renderOption={(props, option) => (
@@ -474,30 +574,37 @@ const AddCabRateVendor = () => {
 
                                           {/* Zone Type */}
                                           <TableCell>
-                                          <FormikAutocomplete
-                                            name={`rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`}
-                                            options={zoneTypeList.filter(
-                                              (zoneType) =>
-                                                zoneType.zoneId._id === getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
-                                            )}
-                                            placeholder="Select Zone Type"
-                                            sx={{ width: '150px' }}
-                                            getOptionLabel={(option) => option['zoneTypeName']}
-                                            saveValue="_id"
-                                            defaultValue={null}
-                                            value={
-                                              zoneTypeList?.find(
-                                                (item) => item['_id'] === getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`)
-                                              ) || null
-                                            }
-                                            renderOption={(props, option) => (
-                                              <Box component="li" {...props}>
-                                                {option['zoneTypeName']}
-                                              </Box>
-                                            )}
-                                            disabled={!getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)}
-                                          />
-                                        </TableCell>
+                                            <FormikAutocomplete
+                                              name={`rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`}
+                                              options={zoneTypeList
+                                                .filter(
+                                                  (zoneType) =>
+                                                    zoneType.zoneId._id ===
+                                                    getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
+                                                )
+                                                .sort((a, b) => a.zoneTypeName.localeCompare(b.zoneTypeName))}
+                                              placeholder="Select Zone Type"
+                                              sx={{ width: '150px' }}
+                                              getOptionLabel={(option) => option['zoneTypeName']}
+                                              saveValue="_id"
+                                              defaultValue={null}
+                                              value={
+                                                zoneTypeList?.find(
+                                                  (item) =>
+                                                    item['_id'] ===
+                                                    getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`)
+                                                ) || null
+                                              }
+                                              renderOption={(props, option) => (
+                                                <Box component="li" {...props}>
+                                                  {option['zoneTypeName']}
+                                                </Box>
+                                              )}
+                                              disabled={
+                                                !getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
+                                              }
+                                            />
+                                          </TableCell>
 
                                           {/* Cab Rate */}
                                           {/* <TableCell>
@@ -579,22 +686,40 @@ const AddCabRateVendor = () => {
                                           )}
 
                                           {/* Guard */}
-                                          <TableCell>
+                                          {/* <TableCell>
                                             <FormikSelectField1
                                               label="Guard"
                                               name={`rateData.${index}.rateMaster.${rateIndex}.guard`}
                                               options={optionsForDualTrip}
                                               fullWidth
                                             />
-                                          </TableCell>
+                                          </TableCell> */}
 
                                           {/* Guard Price */}
                                           <TableCell>
-                                            <FormikTextField
+                                            {/* <FormikTextField
                                               name={`rateData.${index}.rateMaster.${rateIndex}.guardPrice`}
                                               label="Guard Price"
                                               fullWidth
                                               disabled={!(getFieldProps(`rateData.${index}.rateMaster.${rateIndex}.guard`).value == 1)}
+                                            /> */}
+
+                                            <FormikTextField
+                                              name={`rateData.${index}.rateMaster.${rateIndex}.guardPrice`}
+                                              label="Guard Price"
+                                              onChange={(event) => {
+                                                const { value } = event.target;
+                                                console.log('event.target.value = ', value);
+                                                const numericValue = event.target.value.replace(/[^0-9]/g, '');
+                                                if (Number(numericValue) > 0) {
+                                                  setFieldValue(`rateData.${index}.rateMaster.${rateIndex}.guard`, 1);
+                                                } else {
+                                                  setFieldValue(`rateData.${index}.rateMaster.${rateIndex}.guard`, 0);
+                                                }
+                                                setFieldValue(`rateData.${index}.rateMaster.${rateIndex}.guardPrice`, numericValue);
+                                              }}
+                                              fullWidth
+                                              // disabled={!(getFieldProps(`rateData.${index}.rateMaster.${rateIndex}.guard`).value == 1)}
                                             />
                                           </TableCell>
 
@@ -652,10 +777,10 @@ const AddCabRateVendor = () => {
                                         zoneTypeID: null,
                                         cabRate: 1,
                                         cabAmount: newCompanyCabAmountRef.current || cabAmountRef.current || [],
-                                        dualTrip: '',
+                                        dualTrip: 0,
                                         dualTripAmount: [],
-                                        guard: '',
-                                        guardPrice: '',
+                                        guard: 0,
+                                        guardPrice: '0',
                                         billingCycleCompany: '',
                                         billingCycleVendor: ''
                                       })
@@ -682,7 +807,7 @@ const AddCabRateVendor = () => {
                   color="secondary"
                   variant="outlined"
                   onClick={() => {
-                    navigate('/management/cab/view', { replace: true });
+                    navigate('/management/vendor/view', { replace: true });
                   }}
                 >
                   Cancel

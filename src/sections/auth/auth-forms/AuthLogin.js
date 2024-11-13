@@ -38,8 +38,10 @@ const AuthLogin = () => {
     <>
       <Formik
         initialValues={{
-          email: credentials.email,
-          password: credentials.password
+          // email: credentials.email,
+          // password: credentials.password
+          email: '',
+          password: ''
         }}
         validationSchema={Yup.object().shape({
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
@@ -53,9 +55,7 @@ const AuthLogin = () => {
               setSubmitting(false);
             }
           } catch (err) {
-          
-            if(err.response.status === 400){
- 
+            if (err.response.status === 400) {
               dispatch(
                 openSnackbar({
                   open: true,

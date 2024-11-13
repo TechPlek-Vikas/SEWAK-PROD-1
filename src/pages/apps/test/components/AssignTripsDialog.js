@@ -40,13 +40,17 @@ import RowEditable from './RowEditable';
 
 const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
-export default function AssignTripsDialog({ data: tripData, open, handleClose, setInitateRender }) {
+export default function AssignTripsDialog({ data: tripData, open, handleClose, setInitateRender, fileData }) {
   // const [data, setData] = useState(() => makeData(10));
   const [data, setData] = useState([]);
   const [payload1, setPayload1] = useState([]);
   const [zoneInfo, setZoneInfo] = useState([]);
   const [vehicleTypeInfo, setVehicleTypeInfo] = useState([]);
   const [drivers, setDrivers] = useState([]);
+  const [companyRate, setCompanyrate] = useState([]);
+  const [driverRate, setDriverRate] = useState([]);
+  console.log({ zoneInfo });
+  console.log({ fileData });
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toISOString().split('T')[0]; // This will return the date in yyyy-mm-dd format
@@ -60,7 +64,7 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
         companyID: item._company_info?._id,
         tripDate: formatDate(item._trip_date),
         tripTime: item._trip_time,
-        tripType: item._dualTrip_1,
+        tripType: item.tripType,
         zoneNameID: item._zoneName._id,
         zoneTypeID: item._zoneType._id,
         location: item.location,
@@ -97,7 +101,7 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
         companyID: item._company_info?._id,
         tripDate: formatDate(item._trip_date),
         tripTime: item._trip_time,
-        tripType: item._dualTrip_1,
+        tripType: item.tripType,
         zoneNameID: item._zoneName?._id,
         zoneTypeID: item._zoneType?._id,
         location: item.location,
@@ -190,6 +194,27 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
   }, []);
 
   useEffect(() => {
+    const fetchCompanyRate = async () => {
+      const companyId = fileData?.companyId?._id;
+      if (!companyId) return;
+      const response = await axiosServices.get(`/company/unwind/rates?companyId=${companyId}`);
+      console.log('fetchCompanyRate', response.data.data);
+      setCompanyrate(response.data.data);
+    };
+
+    const fetchDriverRate = async () => {
+      const companyId = fileData?.companyId?._id;
+      if (!companyId) return;
+      const response = await axiosServices.get(`/driver/all/driver/rate?companyID=${companyId}`);
+      console.log('fetchDriverRate', response.data.data);
+      setDriverRate(response.data.data);
+    };
+
+    fetchCompanyRate();
+    fetchDriverRate();
+  }, [fileData]);
+  console.log({ tripData });
+  useEffect(() => {
     if (tripData?.length > 0) {
       const mappedData = tripData.map((item) => ({
         ...item, // Spread existing properties
@@ -201,7 +226,7 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
         _dual_trip: 0,
         _trip_status: item.status,
         _file_id: item.rosterFileId,
-        _roster_id: item._id,
+        _roster_id: item?._id,
         _dualTrip_1: 0,
         _guard_1: item.guard,
         _company_info: item?.companyID,
@@ -211,31 +236,50 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
         _companyRate: item.vehicleRate,
         _driverRate_or_vendorRate: 0,
         // _vendorrateRate: 0,
+
         _zoneName:
           item.zoneNameArray?.length === 1
-            ? { _id: item.zoneNameArray[0]._id, zoneName: item.zoneNameArray[0].zoneName }
-            : { _id: null, zoneName: item.zoneName },
+            ? {
+                _id: item.zoneNameArray[0]?._id || null, // Add fallback for undefined
+                zoneName: item.zoneNameArray[0]?.zoneName || 'N/A', // Fallback for undefined zoneName
+                zoneType: zoneInfo?.find((zone) => zone?._id === item.zoneNameArray[0]?._id)?.zoneType || [] // Fallback for undefined zoneType
+              }
+            : {
+                _id: null,
+                zoneName: item.zoneName || 'N/A', // Fallback for undefined zoneName
+                zoneType: [] // Fallback for no matching zoneType
+              },
+
         _zoneType:
           item.zoneTypeArray?.length === 1
-            ? { _id: item.zoneTypeArray[0]._id, zoneTypeName: item.zoneTypeArray[0].zoneTypeName }
-            : { _id: null, zoneTypeName: item.zoneType },
+            ? {
+                _id: item.zoneTypeArray[0]?._id || null, // Add fallback for undefined
+                zoneTypeName: item.zoneTypeArray[0]?.zoneTypeName || 'N/A' // Fallback for undefined zoneTypeName
+              }
+            : { _id: null, zoneTypeName: item.zoneType || 'N/A' }, // Fallback for undefined zoneType
+
         _vehicleType:
           item.vehicleTypeArray?.length === 1
-            ? { _id: item.vehicleTypeArray[0]._id, vehicleTypeName: item.vehicleTypeArray[0].vehicleTypeName }
-            : { _id: null, vehicleTypeName: item.vehicleType },
+            ? {
+                _id: item.vehicleTypeArray[0]?._id || null, // Add fallback for undefined
+                vehicleTypeName: item.vehicleTypeArray[0]?.vehicleTypeName || 'N/A' // Fallback for undefined vehicleTypeName
+              }
+            : { _id: null, vehicleTypeName: item.vehicleType || 'N/A' }, // Fallback for undefined vehicleType
+
         _driver: { _id: null, userName: null },
         _cab: { _id: null, vehicleNumber: null },
-        _zoneName_options: zoneInfo,
-        _vehicleType_options: vehicleTypeInfo,
-        _drivers_options: drivers
+        _zoneName_options: zoneInfo || [], // Ensure zoneInfo is not undefined
+        _vehicleType_options: vehicleTypeInfo || [], // Ensure vehicleTypeInfo is not undefined
+        _drivers_options: drivers || [], // Ensure drivers is not undefined
+        _company_Rate: companyRate || null, // Fallback if companyRate is undefined
+        _driver_rate: driverRate || null // Fallback if driverRate is undefined
       }));
 
       setData(mappedData);
     }
-  }, [tripData, drivers, vehicleTypeInfo, zoneInfo]);
+  }, [tripData, drivers, vehicleTypeInfo, zoneInfo, companyRate, driverRate]);
 
   console.log({ data });
-  console.log({ tripData });
   const columns = useMemo(
     () => [
       {
@@ -339,6 +383,14 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
         }
       },
       {
+        header: 'Location',
+        accessorKey: 'location',
+        dataType: 'plain_text',
+        meta: {
+          className: 'cell-center'
+        }
+      },
+      {
         header: 'Status',
         accessorKey: 'select',
         dataType: 'select'
@@ -366,7 +418,7 @@ export default function AssignTripsDialog({ data: tripData, open, handleClose, s
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6">
               Assign New Trips
             </Typography>
-            <Button  sx={{ ml: 2, flex: 0.2 }} color="success" variant="contained" onClick={generateTrips}>
+            <Button sx={{ ml: 2, flex: 0.2 }} color="success" variant="contained" onClick={generateTrips}>
               Save
             </Button>
           </Toolbar>

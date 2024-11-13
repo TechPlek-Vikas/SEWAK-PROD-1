@@ -675,9 +675,7 @@ const AddCab = () => {
     fitnessDate_Doc: id ? Yup.mixed().required('FitnessDate_Doc is required') : Yup.mixed(),
     insuranceExpiryDate: Yup.date().required('Permit expiry date is required'),
     insuranceExpiryDate_Doc: id ? Yup.mixed().required('InsuranceExpiryDate_Doc is required') : Yup.mixed(),
-    pollutionExpiryDate: Yup.date()
-      .required('PollutionExpiryDate is required')
-      .max(new Date(), 'PollutionExpiryDate cannot be in the future'),
+    pollutionExpiryDate: Yup.date().required('PollutionExpiryDate is required'),
     pollutionExpiryDate_Doc: id ? Yup.mixed().required('PollutionExpiryDate_Doc is required') : Yup.mixed(),
     permitOneYrExpiryDate: Yup.date().required('PermitOneYrExpiryDate is required'),
     permitOneYrExpiryDate_doc: id ? Yup.mixed().required('PermitOneYrExpiryDate_doc is required') : Yup.mixed(),
@@ -826,7 +824,16 @@ const AddCab = () => {
                       <Grid item xs={12} sm={style}>
                         <Stack spacing={1}>
                           <InputLabel>Vehicle Number</InputLabel>
-                          <FormikTextField name="vehicleNumber" id="vehicleNumber" placeholder="Enter Vehicle Number" fullWidth />
+                          <FormikTextField
+                            name="vehicleNumber"
+                            id="vehicleNumber"
+                            placeholder="Enter Vehicle Number"
+                            fullWidth
+                            onChange={(e) => {
+                              const value = event.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); // allows letters, numbers, and spaces
+                              setFieldValue('vehicleNumber', value);
+                            }}
+                          />
                         </Stack>
                       </Grid>
 
@@ -854,7 +861,7 @@ const AddCab = () => {
                               sx={{ width: '100%' }}
                               value={values.fitnessDate}
                               format="dd/MM/yyyy"
-                              // minDate={new Date()}
+                              minDate={new Date()}
                               onChange={(newValue) => {
                                 setFieldValue('fitnessDate', newValue);
                               }}
@@ -903,7 +910,7 @@ const AddCab = () => {
                               sx={{ width: '100%' }}
                               value={values.insuranceExpiryDate}
                               format="dd/MM/yyyy"
-                              // minDate={new Date()}
+                              minDate={new Date()}
                               onChange={(newValue) => {
                                 setFieldValue('insuranceExpiryDate', newValue);
                               }}
@@ -955,7 +962,7 @@ const AddCab = () => {
                               }}
                               value={values.pollutionExpiryDate}
                               format="dd/MM/yyyy"
-                              // minDate={new Date()}
+                              minDate={new Date()}
                               onChange={(newValue) => setFieldValue('pollutionExpiryDate', newValue)}
                             />
                             {!!formik.errors.pollutionExpiryDate && formik.touched.pollutionExpiryDate && (
@@ -1002,7 +1009,7 @@ const AddCab = () => {
                               sx={{ width: '100%' }}
                               value={values.permitOneYrExpiryDate}
                               format="dd/MM/yyyy"
-                              // minDate={new Date()}
+                              minDate={new Date()}
                               onChange={(newValue) => setFieldValue('permitOneYrExpiryDate', newValue)}
                             />
                             {!!formik.errors.permitOneYrExpiryDate && formik.touched.permitOneYrExpiryDate && (
@@ -1049,7 +1056,7 @@ const AddCab = () => {
                               sx={{ width: '100%' }}
                               value={values.permitFiveYrExpiryDate}
                               format="dd/MM/yyyy"
-                              // minDate={new Date()}
+                              minDate={new Date()}
                               onChange={(newValue) => {
                                 // Ensure newValue is a Date object
                                 if (newValue instanceof Date && !isNaN(newValue)) {

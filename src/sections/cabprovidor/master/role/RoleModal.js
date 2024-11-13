@@ -36,7 +36,7 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
 
   const [errors, setErrors] = useState({
     roleName: '',
-    roleDescription: ''
+    // roleDescription: ''
   });
 
   const roleNameRef = useRef('');
@@ -51,7 +51,7 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
     let isValid = true;
     const validationErrors = {
       roleName: '',
-      roleDescription: ''
+      // roleDescription: ''
     };
 
     if (!roleName || roleName.length < 3) {
@@ -59,10 +59,10 @@ const RoleModal = ({ handleClose, roleId, handleRefetch }) => {
       isValid = false;
     }
 
-    if (!roleDescription || roleDescription.length < 5) {
-      validationErrors.roleDescription = 'Description must be at least 5 characters long';
-      isValid = false;
-    }
+    // if (!roleDescription || roleDescription.length < 5) {
+    //   validationErrors.roleDescription = 'Description must be at least 5 characters long';
+    //   isValid = false;
+    // }
 
     setErrors(validationErrors);
     const allPermissionsEmpty = Object.values(existedPermissions).every((permissions) => permissions.length === 0);
