@@ -41,7 +41,7 @@ const getInitialValue = (data) => {
   return data ? {} : { vendorId: [], rateData: [] };
 };
 
-const FIXED_COLUMN_COUNT = 10;
+const FIXED_COLUMN_COUNT = 6;
 
 const calculateMinWidth = (columnCount) => {
   const widthPerColumn = 200; // Set a fixed width per column (adjust as needed)
@@ -103,12 +103,14 @@ const AddCabRateVendor = () => {
 
   useEffect(() => {
     const fetchCompanyData = async () => {
-      const response = await axios.get('/company');
-      const result = response.data.data?.result.map((item) => ({
-        _id: item._id,
-        company_name: item.company_name
-      }));
-      setCompanyData(result);
+      const response = await axios.get('/company/all');
+      console.log('response', response);
+      // const result = response.data.data?.result.map((item) => ({
+      //   _id: item._id,
+      //   company_name: item.company_name
+      // }));
+      // setCompanyData(result);
+      setCompanyData(response.data.companies);
     };
     fetchCompanyData();
     dispatch(fetchAllVendors());
@@ -235,6 +237,8 @@ const AddCabRateVendor = () => {
     const updatedRateData = selectedCompanies.map((company) => ({
       companyID: company._id,
       company_name: company.company_name,
+      effectiveDate: company.effectiveDate,
+      billingCycle: company.billingCycle,
       rateMaster: existingRates[company._id] || [
         {
           zoneNameID: '',
@@ -254,7 +258,8 @@ const AddCabRateVendor = () => {
     setFieldValue('rateData', updatedRateData);
   };
 
-  const handleVehicleTypeChange = (event, selectedVehicleTypes, action) => {
+  const handleVehicleTypeChange = (event, selectedVehicleTypes, action, optionType) => {
+    console.log('optionType = ', optionType);
     const existingCabAmountMap = values.rateData.reduce((acc, company) => {
       company.rateMaster.forEach((rate) => {
         rate.cabAmount.forEach((cab) => {
@@ -296,6 +301,14 @@ const AddCabRateVendor = () => {
     } else if (action === DELETE_ACTIONS.DELETE_ONE) {
       setColumnCount((p) => p - 1);
     } else if (action === DELETE_ACTIONS.DELETE_ALL) {
+      setColumnCount(FIXED_COLUMN_COUNT);
+    }
+
+    if (optionType === 'selectOption') {
+      setColumnCount((p) => p + (cabAmount?.length || 0));
+    } else if (optionType === 'removeOption') {
+      setColumnCount((p) => p - 1);
+    } else if (optionType === 'clear') {
       setColumnCount(FIXED_COLUMN_COUNT);
     }
 
@@ -421,10 +434,12 @@ const AddCabRateVendor = () => {
                         setVehicleTypeIDs(val.map((vehicleType) => vehicleType._id));
                         handleVehicleTypeChange(e, val, action);
                       }}
-                      onChange={(e, val, _, action) => {
+                      onChange={(e, val, optionType, action, b) => {
                         console.log('v = ', val);
+                        console.log('optionType = ', optionType);
+                        console.log('b = ', b);
                         setVehicleTypeIDs(val.map((vehicleType) => vehicleType._id));
-                        handleVehicleTypeChange(e, val, action);
+                        handleVehicleTypeChange(e, val, action, optionType);
                       }}
                       matchID="_id"
                       // displayDeletedKeyName="vehicleTypeName"
@@ -450,6 +465,17 @@ const AddCabRateVendor = () => {
                           title={
                             <Stack direction="row" spacing={1} alignItems="center" gap={1}>
                               Add Company Rate for <Chip label={item.company_name} color="primary" />
+                            </Stack>
+                          }
+                          secondary={
+                            <Stack direction="row" spacing={1} alignItems="center" gap={1}>
+                              <FormikSelectField1
+                                outlined
+                                label="Billing Cycle"
+                                name={`rateData.${index}.billingCycle`}
+                                options={optionsForBillingCycle}
+                                fullWidth
+                              />
                             </Stack>
                           }
                         >
@@ -486,8 +512,8 @@ const AddCabRateVendor = () => {
 
                                         {/* <TableCell>Guard</TableCell> */}
                                         <TableCell>Guard Price</TableCell>
-                                        <TableCell>Billing Cycle Company</TableCell>
-                                        <TableCell>Billing Cycle Vendor</TableCell>
+                                        {/* <TableCell>Billing Cycle Company</TableCell>
+                                        <TableCell>Billing Cycle Vendor</TableCell> */}
 
                                         <TableCell>Action</TableCell>
                                       </TableRow>
@@ -724,24 +750,24 @@ const AddCabRateVendor = () => {
                                           </TableCell>
 
                                           {/* Billing Cycle Company */}
-                                          <TableCell>
+                                          {/* <TableCell>
                                             <FormikSelectField1
                                               label="Dual Trip"
                                               name={`rateData.${index}.rateMaster.${rateIndex}.billingCycleCompany`}
                                               options={optionsForBillingCycle}
                                               fullWidth
                                             />
-                                          </TableCell>
+                                          </TableCell> */}
 
                                           {/* Billing Cycle Vendor */}
-                                          <TableCell>
+                                          {/* <TableCell>
                                             <FormikSelectField1
                                               label="Dual Trip"
                                               name={`rateData.${index}.rateMaster.${rateIndex}.billingCycleVendor`}
                                               options={optionsForBillingCycle}
                                               fullWidth
                                             />
-                                          </TableCell>
+                                          </TableCell> */}
 
                                           {/* Delete */}
                                           <TableCell>
