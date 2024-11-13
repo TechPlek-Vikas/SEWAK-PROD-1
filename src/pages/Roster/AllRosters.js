@@ -48,6 +48,8 @@ import { useDispatch } from 'react-redux';
 import { fetchCompaniesRosterFile } from 'store/slice/cabProvidor/rosterFileSlice';
 import TableSkeleton from 'components/tables/TableSkeleton';
 import Error500 from 'pages/maintenance/error/500';
+import Breadcrumbs from 'components/@extended/Breadcrumbs';
+import { APP_DEFAULT_PATH } from 'config';
 
 // ==============================|| REACT TABLE ||============================== //
 
@@ -370,11 +372,15 @@ const AllRosters = () => {
     }
   ];
 
+  let breadcrumbLinks = [{ title: 'Home', to: APP_DEFAULT_PATH },{ title: 'Roster', to: '/apps/roster/all-roster' }];
+
   if (loading) return <TableSkeleton rows={10} columns={9} />;
   if (error) return <Error500 />;
 
   return (
     <>
+    <Breadcrumbs custom heading="Roster" links={breadcrumbLinks} />
+
       <Grid container direction={matchDownSM ? 'column' : 'row'} spacing={2} sx={{ pb: 2 }}>
         <Grid item md={8}>
           <Grid container direction="row" spacing={2}>
