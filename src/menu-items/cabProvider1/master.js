@@ -24,68 +24,77 @@ const master = {
   icon: icons.samplePage,
   children: [
     // Role
-    {
-      id: 'role',
-      title: <FormattedMessage id="role" />,
-      type: 'collapse',
-      icon: icons.role,
-      children: [
-        {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
-          type: 'item',
-          url: '/master/role'
-          // icon: icons.view
-        }
-      ]
-    },
+    // {
+    //   id: 'role',
+    //   title: <FormattedMessage id="role" />,
+    //   type: 'collapse',
+    //   icon: icons.role,
+    //   children: [
+    //     {
+    //       id: 'view',
+    //       title: <FormattedMessage id="view" />,
+    //       type: 'item',
+    //       url: '/master/role'
+    //       // icon: icons.view
+    //     }
+    //   ]
+    // },
     // Zone
     {
       id: 'zone',
       title: <FormattedMessage id="zone" />,
       type: 'collapse',
+      url: '/master/zone',
       icon: icons.zone,
       children: [
+        // {
+        //   id: 'view',
+        //   title: <FormattedMessage id="view" />,
+        //   type: 'item',
+        //   url: '/master/zone'
+        //   // icon: icons.view
+        // }
         {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
-          type: 'item',
-          url: '/master/zone'
-          // icon: icons.view
-        }
-      ]
-    },
-    // Zone Type
-    {
-      id: 'zone-type',
-      title: <FormattedMessage id="zone type" />,
-      type: 'collapse',
-      icon: icons.zone,
-      children: [
-        {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
+          id: 'zone-type',
+          title: <FormattedMessage id="zone-type" />,
           type: 'item',
           url: '/master/zone-type'
           // icon: icons.view
         }
       ]
     },
+    // Zone Type
+    // {
+    //   id: 'zone-type',
+    //   title: <FormattedMessage id="zone type" />,
+    //   type: 'collapse',
+    //   icon: icons.zone,
+    //   children: [
+    //     {
+    //       id: 'view',
+    //       title: <FormattedMessage id="view" />,
+    //       type: 'item',
+    //       url: '/master/zone-type'
+    //       // icon: icons.view
+    //     }
+    //   ]
+    // },
     // Cab Type
     {
       id: 'cab-type',
       title: <FormattedMessage id="cab type" />,
-      type: 'collapse',
+      type: 'item',
+      url: '/master/cab-type',
       icon: icons.cab,
-      children: [
-        {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
-          type: 'item',
-          url: '/master/cab-type'
-          // icon: icons.view
-        }
-      ]
+      // children: [
+      //   {
+      //     id: 'view',
+      //     title: <FormattedMessage id="view" />,
+      //     type: 'item',
+      //     url: '/master/cab-type'
+      //     // icon: icons.view
+      //   }
+      // ]
     }
   ]
 };

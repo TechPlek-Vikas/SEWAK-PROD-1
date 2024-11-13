@@ -25,15 +25,6 @@ const setting = {
       type: 'collapse',
       icon: icons.setting,
       children: [
-        // User
-        {
-          id: 'user',
-          title: <FormattedMessage id="user" />,
-          type: 'item',
-          url: '/management/user/view',
-          icon: icons.user
-        },
-
         // Role
         {
           id: 'role',
@@ -44,14 +35,6 @@ const setting = {
         }
       ]
     },
-
-    {
-      id: 'invoice-setting',
-      title: <FormattedMessage id="invoice setting" />,
-      type: 'item',
-      icon: icons.invoice,
-      url: '/settings/invoice'
-    }
   ]
 };
 
