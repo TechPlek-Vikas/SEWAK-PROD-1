@@ -180,9 +180,9 @@ const Mails = () => {
 
   useEffect(() => {
     // hide left drawer when email app opens
-    const drawerCall = dispatch(openDrawer(false));
+    // const drawerCall = dispatch(openDrawer(false));
     const userCall = dispatch(getUser(1));
-    Promise.all([drawerCall, userCall]).then(() => setLoading(false));
+    Promise.all([userCall]).then(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

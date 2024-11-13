@@ -156,12 +156,12 @@ const CompanyWiseRoster = ({ rosterData, id }) => {
     []
   );
 
-  useEffect(() => {
-    // hide left drawer when email app opens
-    const drawerCall = dispatch(openDrawer(false));
-    Promise.all([drawerCall]).then(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   // hide left drawer when email app opens
+  //   const drawerCall = dispatch(openDrawer(false));
+  //   Promise.all([drawerCall]).then(() => setLoading(false));
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const handleAssignTrips = () => {
     navigate(`/assign-trips/${id}?fromDate=${fromDate}&toDate=${toDate}`);

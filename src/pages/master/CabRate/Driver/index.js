@@ -37,12 +37,13 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { fetchAllDrivers, fetchDrivers } from 'store/slice/cabProvidor/driverSlice';
 import axios from 'utils/axios';
 import { formatDateUsingMoment, getNestedComplexProperty } from 'utils/helper';
+import moment from 'moment';
 
 const getInitialValue = (data) => {
   return data ? {} : { driverId: [], rateData: [] };
 };
 
-const FIXED_COLUMN_COUNT = 10;
+const FIXED_COLUMN_COUNT = 4;
 
 const calculateMinWidth = (columnCount) => {
   const widthPerColumn = 200; // Set a fixed width per column (adjust as needed)
@@ -83,6 +84,16 @@ const AddCabRateDriver = () => {
 
   const CabProviderId = userInfo.userId;
 
+  const scrollRef = useRef(null);
+
+  // Function to handle horizontal scroll on mouse wheel
+  // const handleScroll = (event) => {
+  //   if (scrollRef.current) {
+  //     scrollRef.current.scrollLeft += event.deltaY;
+  //     event.preventDefault(); // Prevent vertical scroll
+  //   }
+  // };
+
   useEffect(() => {
     if (driverIDs?.length > 0 && companyIDs?.length > 0) {
       // Todo : API CALLING TO CHECK EXISTING RATES
@@ -110,12 +121,9 @@ const AddCabRateDriver = () => {
 
   useEffect(() => {
     const fetchCompanyData = async () => {
-      const response = await axios.get('/company');
-      const result = response.data.data?.result.map((item) => ({
-        _id: item._id,
-        company_name: item.company_name
-      }));
-      setCompanyData(result);
+      const response = await axios.get('/company/all');
+      console.log('response', response);
+      setCompanyData(response.data.companies);
     };
     fetchCompanyData();
     // dispatch(fetchAllVehicleTypes());
@@ -228,9 +236,8 @@ const AddCabRateDriver = () => {
           return;
         }
 
-
         // await new Promise((resolve) => setTimeout(resolve, 5000));
-        
+
         const response = await dispatch(
           createRateMasterForDriver({
             data: {
@@ -284,6 +291,8 @@ const AddCabRateDriver = () => {
     const updatedRateData = selectedCompanies.map((company) => ({
       companyID: company._id,
       company_name: company.company_name,
+      effectiveDate: company.effectiveDate ? moment(company.effectiveDate).format('YYYY-MM-DD') : null,
+      billingCycle: company.billingCycle,
       rateMaster: existingRates[company._id] || [
         {
           zoneNameID: '',
@@ -304,7 +313,7 @@ const AddCabRateDriver = () => {
     setFieldValue('rateData', updatedRateData);
   };
 
-  const handleVehicleTypeChange = (event, selectedVehicleTypes, action) => {
+  const handleVehicleTypeChange = (event, selectedVehicleTypes, action, optionType) => {
     const existingCabAmountMap = values.rateData.reduce((acc, company) => {
       company.rateMaster.forEach((rate) => {
         rate.cabAmount.forEach((cab) => {
@@ -346,6 +355,14 @@ const AddCabRateDriver = () => {
     } else if (action === DELETE_ACTIONS.DELETE_ONE) {
       setColumnCount((p) => p - 1);
     } else if (action === DELETE_ACTIONS.DELETE_ALL) {
+      setColumnCount(FIXED_COLUMN_COUNT);
+    }
+
+    if (optionType === 'selectOption') {
+      setColumnCount((p) => p + (cabAmount?.length || 0));
+    } else if (optionType === 'removeOption') {
+      setColumnCount((p) => p - 1);
+    } else if (optionType === 'clear') {
       setColumnCount(FIXED_COLUMN_COUNT);
     }
 
@@ -488,10 +505,10 @@ const AddCabRateDriver = () => {
                           setVehicleTypeIDs(val.map((vehicleType) => vehicleType._id));
                           handleVehicleTypeChange(e, val, action);
                         }}
-                        onChange={(e, val, _, action) => {
+                        onChange={(e, val, optionType, action, b) => {
                           console.log('v = ', val);
                           setVehicleTypeIDs(val.map((vehicleType) => vehicleType._id));
-                          handleVehicleTypeChange(e, val, action);
+                          handleVehicleTypeChange(e, val, action, optionType);
                         }}
                         matchID="_id"
                         // displayDeletedKeyName="vehicleTypeName"
@@ -519,12 +536,38 @@ const AddCabRateDriver = () => {
                                 Add Company Rate for <Chip label={item.company_name} color="primary" />
                               </Stack>
                             }
+                            secondary={
+                              <Stack direction="row" spacing={1} alignItems="center" gap={1}>
+                                <FormikSelectField1
+                                  outlined
+                                  label="Billing Cycle"
+                                  name={`rateData.${index}.billingCycle`}
+                                  options={optionsForBillingCycle}
+                                  fullWidth
+                                />
+
+                                <DatePicker
+                                  label="Select Effective Date"
+                                  sx={{ width: '100%' }}
+                                  // value={`rateData.${index}.effectiveDate`}
+                                  value={values.rateData[index].effectiveDate ? new Date(values.rateData[index].effectiveDate) : null} // Convert string to Date object
+                                  format="dd/MM/yyyy"
+                                  // maxDate={new Date()}
+                                  onChange={(newValue) => {
+                                    setFieldValue(`rateData.${index}.effectiveDate`, formatDateUsingMoment(newValue, 'YYYY-MM-DD'));
+                                  }}
+                                />
+                              </Stack>
+                            }
                           >
                             <FieldArray
                               name={`rateData.${index}.rateMaster`}
                               render={(arrayHelpers) => (
                                 <Stack spacing={2}>
-                                  <TableContainer>
+                                  <TableContainer
+                                  // ref={scrollRef}
+                                  // onWheel={handleScroll}
+                                  >
                                     <Table
                                       sx={{
                                         minWidth: calculateMinWidth(columnCount)
@@ -553,10 +596,10 @@ const AddCabRateDriver = () => {
 
                                           {/* <TableCell>Guard</TableCell> */}
                                           <TableCell>Guard Price</TableCell>
-                                          <TableCell>Billing Cycle Company</TableCell>
+                                          {/* <TableCell>Billing Cycle Company</TableCell>
                                           <TableCell>Billing Cycle Vendor</TableCell>
 
-                                          <TableCell>Effective Date</TableCell>
+                                          <TableCell>Effective Date</TableCell> */}
                                           <TableCell>Action</TableCell>
                                         </TableRow>
                                       </TableHead>
@@ -818,27 +861,27 @@ const AddCabRateDriver = () => {
                                             </TableCell>
 
                                             {/* Billing Cycle Company */}
-                                            <TableCell>
+                                            {/* <TableCell>
                                               <FormikSelectField1
                                                 label="Dual Trip"
                                                 name={`rateData.${index}.rateMaster.${rateIndex}.billingCycleCompany`}
                                                 options={optionsForBillingCycle}
                                                 fullWidth
                                               />
-                                            </TableCell>
+                                            </TableCell> */}
 
                                             {/* Billing Cycle Vendor */}
-                                            <TableCell>
+                                            {/* <TableCell>
                                               <FormikSelectField1
                                                 label="Dual Trip"
                                                 name={`rateData.${index}.rateMaster.${rateIndex}.billingCycleVendor`}
                                                 options={optionsForBillingCycle}
                                                 fullWidth
                                               />
-                                            </TableCell>
+                                            </TableCell> */}
 
                                             {/* Effective Date */}
-                                            <TableCell>
+                                            {/* <TableCell>
                                               <DatePicker
                                                 label="Select Effective Date"
                                                 sx={{ width: '100%' }}
@@ -852,7 +895,7 @@ const AddCabRateDriver = () => {
                                                   );
                                                 }}
                                               />
-                                            </TableCell>
+                                            </TableCell> */}
 
                                             {/* Delete */}
                                             <TableCell>
