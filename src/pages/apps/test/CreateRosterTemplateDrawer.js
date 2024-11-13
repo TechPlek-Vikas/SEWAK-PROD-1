@@ -27,8 +27,8 @@ export default function CreateRosterTemplate() {
   // State for form data
   const [formData, setFormData] = useState({
     templateName: '',
-    dateFormat: '',
-    timeFormat: '',
+    dateFormat: 'DD:MM;YYYY',
+    timeFormat: 'HH:mm',
     pickupType: '',
     dropType: ''
   });
@@ -85,8 +85,6 @@ export default function CreateRosterTemplate() {
       mappedData: mappedHeaders // Include mapped headers
     };
 
-    console.log('templateData', templateData);
-
     const response = await axiosServices.post('tripData/add/roster/setting', {
       data: {
         CabproviderId: '66a3373468199b3e5b2ffeab',
@@ -133,7 +131,7 @@ export default function CreateRosterTemplate() {
                   required
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              {/* <Grid item xs={12} md={3}>
                 <TextField
                   label="Date Format (DD-MM-YYYY)"
                   variant="outlined"
@@ -152,7 +150,7 @@ export default function CreateRosterTemplate() {
                   fullWidth
                   required
                 />
-              </Grid>
+              </Grid> */}
               <Grid item xs={12} md={3} container spacing={2} alignItems="flex-end">
                 <Grid item xs={6}>
                   <TextField

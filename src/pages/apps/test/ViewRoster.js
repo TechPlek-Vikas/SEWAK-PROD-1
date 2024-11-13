@@ -264,7 +264,7 @@ const ViewRosterTest1 = () => {
   const { rosterData: stateData, fileData } = location.state || {};
   const [selectedData, setSelectedData] = useState([]);
   const [initateRender, setInitateRender] = useState(0);
-console.log({stateData})
+  console.log({ stateData });
   const handleAssignTrips = () => {
     console.log(selectedData);
   };
@@ -475,7 +475,7 @@ console.log({stateData})
   );
   let breadcrumbLinks = [
     { title: 'Home', to: APP_DEFAULT_PATH },
-    { title: 'Roster', to: 'apps/roster/dashboard' },
+    { title: 'Roster', to: '/apps/roster/dashboard' },
     { title: `${fileData?.companyId?.company_name}`, to: `/management/company/overview/${fileData?.companyId?._id}` },
     { title: 'Generate Trips' }
   ];
