@@ -37,7 +37,7 @@
   "add driver rate": "Add Driver Rate",
   "cab": "Cab",
   "add cab": "Add Cab",
-  "zone type": "Zone Type",
+  "zone-type": "Zone Type",
   "application": "Application",
   "setting": "Setting",
   "account setting": "Account Setting",
@@ -48,5 +48,6 @@
   "cab type": "Cab Type",
   "view-driver-rate":"View Driver Rate",
   "view-vendor-rate":"View Vendor Rate",
-  "files":"Files"
+  "files":"Files",
+  "user-setting":"User Setting"
 }

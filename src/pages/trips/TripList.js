@@ -50,6 +50,8 @@ import AlertDialog from 'components/alertDialog/AlertDialog';
 import axiosServices from 'utils/axios';
 import FormDialog from 'components/alertDialog/FormDialog';
 import { convertToDateUsingMoment, formattedDate } from 'utils/helper';
+import Breadcrumbs from 'components/@extended/Breadcrumbs';
+import { APP_DEFAULT_PATH } from 'config';
 
 const avatarImage = require.context('assets/images/users', true);
 
@@ -682,13 +684,15 @@ const TripList = () => {
     }
   ];
 
+  let breadcrumbLinks = [{ title: 'Home', to: APP_DEFAULT_PATH },{ title: 'Trips', to: '/apps/trips/list' }];
+
   // console.log('Data = ', data);
 
   if (loading) return <Loader />;
 
   return (
     <>
-      <Grid container direction={matchDownSM ? 'column' : 'row'} spacing={2} sx={{ pb: 2 }}>
+      {/* <Grid container direction={matchDownSM ? 'column' : 'row'} spacing={2} sx={{ pb: 2 }}>
         <Grid item md={8}>
           <Grid container direction="row" spacing={2}>
             {widgetsData.map((widget, index) => (
@@ -756,7 +760,8 @@ const TripList = () => {
             </Box>
           </Box>
         </Grid>
-      </Grid>
+      </Grid> */}
+        <Breadcrumbs custom heading="Trips" links={breadcrumbLinks} />
 
       <MainCard content={false}>
         <ScrollX>

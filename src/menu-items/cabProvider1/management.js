@@ -26,67 +26,67 @@ const management = {
   icon: icons.samplePage,
   children: [
     // User
-    {
-      id: 'user',
-      title: <FormattedMessage id="user" />,
-      type: 'collapse',
-      // url: '/management/user/dashboard',
-      icon: icons.user,
-      children: [
-        {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
-          type: 'item',
-          url: '/management/user/view',
-          // icon: icons.view
-        },
-        {
-          id: 'create',
-          title: <FormattedMessage id="create user" />,
-          type: 'item',
-          url: '/management/user/add-user',
-          // icon: icons.add
-        }
-      ]
-    },
+    // {
+    //   id: 'user',
+    //   title: <FormattedMessage id="user" />,
+    //   type: 'collapse',
+    //   // url: '/management/user/dashboard',
+    //   icon: icons.user,
+    //   children: [
+    //     {
+    //       id: 'view',
+    //       title: <FormattedMessage id="view" />,
+    //       type: 'item',
+    //       url: '/management/user/view',
+    //       // icon: icons.view
+    //     },
+    //     {
+    //       id: 'create',
+    //       title: <FormattedMessage id="create user" />,
+    //       type: 'item',
+    //       url: '/management/user/add-user',
+    //       // icon: icons.add
+    //     }
+    //   ]
+    // },
 
     // Company
     {
       id: 'company',
       title: <FormattedMessage id="company" />,
-      type: 'collapse',
-      // url: '/management/company/dashboard',
+      type: 'item',
+      url: '/management/company/view',
       icon: icons.company,
-      children: [
-        {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
-          type: 'item',
-          url: '/management/company/view',
-          // icon: icons.view
-        },
-        {
-          id: 'create-company',
-          title: <FormattedMessage id="add company" />,
-          type: 'item',
-          url: '/management/company/add-company',
-          // icon: icons.add
-        },
-        {
-          id: 'create-branch-company',
-          title: <FormattedMessage id="add company branch" />,
-          type: 'item',
-          url: '/management/company/add-company-branch',
-          // icon: icons.add
-        },
-        {
-          id: 'create-company-rate',
-          title: <FormattedMessage id="add company rate" />,
-          type: 'item',
-          url: '/management/company/add-company-rate',
-          // icon: icons.add
-        }
-      ]
+      // children: [
+      //   {
+      //     id: 'view',
+      //     title: <FormattedMessage id="view" />,
+      //     type: 'item',
+      //     url: '/management/company/view',
+      //     // icon: icons.view
+      //   },
+      //   {
+      //     id: 'create-company',
+      //     title: <FormattedMessage id="add company" />,
+      //     type: 'item',
+      //     url: '/management/company/add-company',
+      //     // icon: icons.add
+      //   },
+      //   {
+      //     id: 'create-branch-company',
+      //     title: <FormattedMessage id="add company branch" />,
+      //     type: 'item',
+      //     url: '/management/company/add-company-branch',
+      //     // icon: icons.add
+      //   },
+      //   {
+      //     id: 'create-company-rate',
+      //     title: <FormattedMessage id="add company rate" />,
+      //     type: 'item',
+      //     url: '/management/company/add-company-rate',
+      //     // icon: icons.add
+      //   }
+      // ]
     },
 
     // Vendor
@@ -94,23 +94,23 @@ const management = {
       id: 'vendor',
       title: <FormattedMessage id="vendor" />,
       type: 'collapse',
-      // url: '/management/vendor/dashboard',
+      url: '/management/vendor/view',
       icon: icons.vendor,
       children: [
-        {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
-          type: 'item',
-          url: '/management/vendor/view',
-          // icon: icons.view
-        },
-        {
-          id: 'create-vendor',
-          title: <FormattedMessage id="add vendor" />,
-          type: 'item',
-          url: '/management/vendor/add-vendor',
-          // icon: icons.add
-        },
+        // {
+        //   id: 'view',
+        //   title: <FormattedMessage id="view" />,
+        //   type: 'item',
+        //   url: '/management/vendor/view',
+        //   // icon: icons.view
+        // },
+        // {
+        //   id: 'create-vendor',
+        //   title: <FormattedMessage id="add vendor" />,
+        //   type: 'item',
+        //   url: '/management/vendor/add-vendor',
+        //   // icon: icons.add
+        // },
         {
           id: 'create-vendor-rate',
           title: <FormattedMessage id="add vendor rate" />,
@@ -132,16 +132,16 @@ const management = {
       id: 'driver',
       title: <FormattedMessage id="driver" />,
       type: 'collapse',
-      // url: '/management/driver/dashboard',
+      url: '/management/driver/view',
       icon: icons.driver,
       children: [
-        {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
-          type: 'item',
-          url: '/management/driver/view',
-          // icon: icons.view
-        },
+        // {
+        //   id: 'view',
+        //   title: <FormattedMessage id="view" />,
+        //   type: 'item',
+        //   url: '/management/driver/view',
+        //   // icon: icons.view
+        // },
         {
           id: 'create-driver-rate',
           title: <FormattedMessage id="add driver rate" />,
@@ -162,25 +162,25 @@ const management = {
     {
       id: 'cab',
       title: <FormattedMessage id="cab" />,
-      type: 'collapse',
-      // url: '/management/cab/dashboard',
+      type: 'item',
+      url: '/management/cab/view',
       icon: icons.vehicle,
-      children: [
-        {
-          id: 'view',
-          title: <FormattedMessage id="view" />,
-          type: 'item',
-          url: '/management/cab/view',
-          // icon: icons.view
-        },
-        {
-          id: 'create-cab',
-          title: <FormattedMessage id="add cab" />,
-          type: 'item',
-          url: '/management/cab/add-cab',
-          // icon: icons.add
-        }
-      ]
+      // children: [
+      //   {
+      //     id: 'view',
+      //     title: <FormattedMessage id="view" />,
+      //     type: 'item',
+      //     url: '/management/cab/view',
+      //     // icon: icons.view
+      //   },
+      //   {
+      //     id: 'create-cab',
+      //     title: <FormattedMessage id="add cab" />,
+      //     type: 'item',
+      //     url: '/management/cab/add-cab',
+      //     // icon: icons.add
+      //   }
+      // ]
     }
   ]
 };
