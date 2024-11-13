@@ -16,6 +16,8 @@ import {
   TableRow,
   TextField
 } from '@mui/material';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { HttpStatusCode } from 'axios';
 import AlertDelete from 'components/alertDialog/AlertDelete';
 import FormikAutocomplete from 'components/autocomplete/AutoComplete';
@@ -27,6 +29,7 @@ import FormikSelectField1 from 'components/select/Select1';
 import FormikTextField from 'components/textfield/TextField';
 import { FieldArray, Form, FormikProvider, useFormik } from 'formik';
 import { Add, Trash } from 'iconsax-react';
+import moment from 'moment';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
@@ -35,7 +38,7 @@ import { createRateMasterForVendor } from 'store/slice/cabProvidor/cabRateSlice'
 // import { fetchAllStateTaxes } from 'store/reducers/stateTax';
 import { fetchAllVendors } from 'store/slice/cabProvidor/vendorSlice';
 import axios from 'utils/axios';
-import { getNestedComplexProperty } from 'utils/helper';
+import { formatDateUsingMoment, getNestedComplexProperty } from 'utils/helper';
 
 const getInitialValue = (data) => {
   return data ? {} : { vendorId: [], rateData: [] };
@@ -237,7 +240,9 @@ const AddCabRateVendor = () => {
     const updatedRateData = selectedCompanies.map((company) => ({
       companyID: company._id,
       company_name: company.company_name,
-      effectiveDate: company.effectiveDate,
+      // effectiveDate: company.effectiveDate,
+      // effectiveDate: company.effectiveDate ? new Date(company.effectiveDate) : null,
+      effectiveDate: company.effectiveDate ? moment(company.effectiveDate).format('YYYY-MM-DD') : null,
       billingCycle: company.billingCycle,
       rateMaster: existingRates[company._id] || [
         {
@@ -357,176 +362,189 @@ const AddCabRateVendor = () => {
   return (
     <>
       <FormikProvider value={formik}>
-        <Form autoComplete="off" onSubmit={handleSubmit}>
-          <Stack gap={2}>
-            <MainCard>
-              <Grid container spacing={3}>
-                {/* Vendor Company Name */}
-                <Grid item xs={12} sm={4}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor="vendorId">Vendor Company Name</InputLabel>
-                    <MultipleAutoCompleteWithDeleteConfirmation1
-                      label="Vendor Company Name"
-                      id="vendorId"
-                      options={vendorList}
-                      getOptionLabel={(option) => option.vendorCompanyName}
-                      placeholder="Select Vendor"
-                      saveToFun={(e, value, _, action) => {
-                        setFieldValue(
-                          'vendorId',
-                          value.map((vendor) => vendor.vendorId)
-                        );
-                        setVendorIDs(value.map((vendor) => vendor.vendorId));
-                      }}
-                      onChange={(e, value, _, action) => {
-                        setFieldValue(
-                          'vendorId',
-                          value.map((vendor) => vendor.vendorId)
-                        );
-                        setVendorIDs(value.map((vendor) => vendor.vendorId));
-                      }}
-                      matchID="vendorId"
-                      // displayDeletedKeyName="vendorCompanyName"
-                      disableConfirmation
-                      disableCloseOnSelect
-                    />
-                  </Stack>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <Form autoComplete="off" onSubmit={handleSubmit}>
+            <Stack gap={2}>
+              <MainCard>
+                <Grid container spacing={3}>
+                  {/* Vendor Company Name */}
+                  <Grid item xs={12} sm={4}>
+                    <Stack spacing={1}>
+                      <InputLabel htmlFor="vendorId">Vendor Company Name</InputLabel>
+                      <MultipleAutoCompleteWithDeleteConfirmation1
+                        label="Vendor Company Name"
+                        id="vendorId"
+                        options={vendorList}
+                        getOptionLabel={(option) => option.vendorCompanyName}
+                        placeholder="Select Vendor"
+                        saveToFun={(e, value, _, action) => {
+                          setFieldValue(
+                            'vendorId',
+                            value.map((vendor) => vendor.vendorId)
+                          );
+                          setVendorIDs(value.map((vendor) => vendor.vendorId));
+                        }}
+                        onChange={(e, value, _, action) => {
+                          setFieldValue(
+                            'vendorId',
+                            value.map((vendor) => vendor.vendorId)
+                          );
+                          setVendorIDs(value.map((vendor) => vendor.vendorId));
+                        }}
+                        matchID="vendorId"
+                        // displayDeletedKeyName="vendorCompanyName"
+                        disableConfirmation
+                        disableCloseOnSelect
+                      />
+                    </Stack>
+                  </Grid>
+
+                  {/* Company Name */}
+                  <Grid item xs={12} sm={4}>
+                    <Stack spacing={1}>
+                      <InputLabel htmlFor="companyId">Company Name</InputLabel>
+
+                      <MultipleAutoCompleteWithDeleteConfirmation1
+                        label="Company Name"
+                        id="companyId"
+                        options={companyData}
+                        getOptionLabel={(option) => option['company_name']}
+                        placeholder="Select Company"
+                        saveToFun={(e, val) => {
+                          handleCompanyChange(e, val);
+                          setCompanyIDs(val.map((company) => company._id));
+                        }}
+                        onChange={(e, val) => {
+                          handleCompanyChange(e, val);
+                          setCompanyIDs(val.map((company) => company._id));
+                        }}
+                        matchID="_id"
+                        // displayDeletedKeyName="company_name"
+                        disableConfirmation
+                        disableCloseOnSelect
+                      />
+                    </Stack>
+                  </Grid>
+
+                  {/* Vehicle Type */}
+                  <Grid item xs={12} sm={4}>
+                    <Stack spacing={1}>
+                      <InputLabel htmlFor="vehicleType">Vehicle Type</InputLabel>
+                      <MultipleAutoCompleteWithDeleteConfirmation1
+                        label="Vehicle Type"
+                        id="vehicleType"
+                        options={vehicleTypeList}
+                        getOptionLabel={(option) => option['vehicleTypeName']}
+                        placeholder="Select Vehicle Type"
+                        saveToFun={(e, val, _, action) => {
+                          setVehicleTypeIDs(val.map((vehicleType) => vehicleType._id));
+                          handleVehicleTypeChange(e, val, action);
+                        }}
+                        onChange={(e, val, optionType, action, b) => {
+                          console.log('v = ', val);
+                          console.log('optionType = ', optionType);
+                          console.log('b = ', b);
+                          setVehicleTypeIDs(val.map((vehicleType) => vehicleType._id));
+                          handleVehicleTypeChange(e, val, action, optionType);
+                        }}
+                        matchID="_id"
+                        // displayDeletedKeyName="vehicleTypeName"
+                        // deleteAllMessage="Vehicle Types"
+                        // disableClearable // To hide all clear button
+                        disableConfirmation
+                        disableCloseOnSelect
+                      />
+                    </Stack>
+                  </Grid>
                 </Grid>
+              </MainCard>
 
-                {/* Company Name */}
-                <Grid item xs={12} sm={4}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor="companyId">Company Name</InputLabel>
+              {values.rateData.length > 0 && (
+                <Box sx={{ p: 1 }}>
+                  <CardHeader title="Rate Master" />
 
-                    <MultipleAutoCompleteWithDeleteConfirmation1
-                      label="Company Name"
-                      id="companyId"
-                      options={companyData}
-                      getOptionLabel={(option) => option['company_name']}
-                      placeholder="Select Company"
-                      saveToFun={(e, val) => {
-                        handleCompanyChange(e, val);
-                        setCompanyIDs(val.map((company) => company._id));
-                      }}
-                      onChange={(e, val) => {
-                        handleCompanyChange(e, val);
-                        setCompanyIDs(val.map((company) => company._id));
-                      }}
-                      matchID="_id"
-                      // displayDeletedKeyName="company_name"
-                      disableConfirmation
-                      disableCloseOnSelect
-                    />
-                  </Stack>
-                </Grid>
+                  <Grid container spacing={3} gap={3}>
+                    {values.rateData.map((item, index) => {
+                      return (
+                        <Grid item xs={12} key={item.companyID}>
+                          <MainCard
+                            title={
+                              <Stack direction="row" spacing={1} alignItems="center" gap={1}>
+                                Add Company Rate for <Chip label={item.company_name} color="primary" />
+                              </Stack>
+                            }
+                            secondary={
+                              <Stack direction="row" spacing={1} alignItems="center" gap={1}>
+                                <FormikSelectField1
+                                  outlined
+                                  label="Billing Cycle"
+                                  name={`rateData.${index}.billingCycle`}
+                                  options={optionsForBillingCycle}
+                                  fullWidth
+                                />
 
-                {/* Vehicle Type */}
-                <Grid item xs={12} sm={4}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor="vehicleType">Vehicle Type</InputLabel>
-                    <MultipleAutoCompleteWithDeleteConfirmation1
-                      label="Vehicle Type"
-                      id="vehicleType"
-                      options={vehicleTypeList}
-                      getOptionLabel={(option) => option['vehicleTypeName']}
-                      placeholder="Select Vehicle Type"
-                      saveToFun={(e, val, _, action) => {
-                        setVehicleTypeIDs(val.map((vehicleType) => vehicleType._id));
-                        handleVehicleTypeChange(e, val, action);
-                      }}
-                      onChange={(e, val, optionType, action, b) => {
-                        console.log('v = ', val);
-                        console.log('optionType = ', optionType);
-                        console.log('b = ', b);
-                        setVehicleTypeIDs(val.map((vehicleType) => vehicleType._id));
-                        handleVehicleTypeChange(e, val, action, optionType);
-                      }}
-                      matchID="_id"
-                      // displayDeletedKeyName="vehicleTypeName"
-                      // deleteAllMessage="Vehicle Types"
-                      // disableClearable // To hide all clear button
-                      disableConfirmation
-                      disableCloseOnSelect
-                    />
-                  </Stack>
-                </Grid>
-              </Grid>
-            </MainCard>
+                                <DatePicker
+                                  label="Select Effective Date"
+                                  sx={{ width: '100%' }}
+                                  // value={`rateData.${index}.effectiveDate`}
+                                  value={values.rateData[index].effectiveDate ? new Date(values.rateData[index].effectiveDate) : null} // Convert string to Date object
+                                  format="dd/MM/yyyy"
+                                  // maxDate={new Date()}
+                                  onChange={(newValue) => {
+                                    setFieldValue(`rateData.${index}.effectiveDate`, formatDateUsingMoment(newValue, 'YYYY-MM-DD'));
+                                  }}
+                                />
+                              </Stack>
+                            }
+                          >
+                            <FieldArray
+                              name={`rateData.${index}.rateMaster`}
+                              render={(arrayHelpers) => (
+                                <Stack spacing={2}>
+                                  <TableContainer>
+                                    <Table
+                                      sx={{
+                                        minWidth: calculateMinWidth(columnCount)
+                                      }}
+                                    >
+                                      {/* Headers */}
+                                      <TableHead>
+                                        <TableRow>
+                                          <TableCell>#</TableCell>
+                                          <TableCell>Zone Name</TableCell>
+                                          <TableCell>Zone Type</TableCell>
+                                          {/* <TableCell>Cab Rate</TableCell> */}
 
-            {values.rateData.length > 0 && (
-              <Box sx={{ p: 1 }}>
-                <CardHeader title="Rate Master" />
+                                          {cabAmountRef.current?.map((cab, cabIndex) => (
+                                            <TableCell key={cabIndex}>{`Amount for ${
+                                              vehicleTypeList.find((v) => v._id === cab.vehicleTypeID)?.vehicleTypeName || 'Vehicle Type'
+                                            }`}</TableCell>
+                                          ))}
 
-                <Grid container spacing={3} gap={3}>
-                  {values.rateData.map((item, index) => {
-                    return (
-                      <Grid item xs={12} key={item.companyID}>
-                        <MainCard
-                          title={
-                            <Stack direction="row" spacing={1} alignItems="center" gap={1}>
-                              Add Company Rate for <Chip label={item.company_name} color="primary" />
-                            </Stack>
-                          }
-                          secondary={
-                            <Stack direction="row" spacing={1} alignItems="center" gap={1}>
-                              <FormikSelectField1
-                                outlined
-                                label="Billing Cycle"
-                                name={`rateData.${index}.billingCycle`}
-                                options={optionsForBillingCycle}
-                                fullWidth
-                              />
-                            </Stack>
-                          }
-                        >
-                          <FieldArray
-                            name={`rateData.${index}.rateMaster`}
-                            render={(arrayHelpers) => (
-                              <Stack spacing={2}>
-                                <TableContainer>
-                                  <Table
-                                    sx={{
-                                      minWidth: calculateMinWidth(columnCount)
-                                    }}
-                                  >
-                                    {/* Headers */}
-                                    <TableHead>
-                                      <TableRow>
-                                        <TableCell>#</TableCell>
-                                        <TableCell>Zone Name</TableCell>
-                                        <TableCell>Zone Type</TableCell>
-                                        {/* <TableCell>Cab Rate</TableCell> */}
+                                          <TableCell>Dual Trip</TableCell>
+                                          {cabAmountRef.current?.map((cab, cabIndex) => (
+                                            <TableCell key={cabIndex}>{`Dual Trip Amount for ${
+                                              vehicleTypeList.find((v) => v._id === cab.vehicleTypeID)?.vehicleTypeName || 'Vehicle Type'
+                                            }`}</TableCell>
+                                          ))}
 
-                                        {cabAmountRef.current?.map((cab, cabIndex) => (
-                                          <TableCell key={cabIndex}>{`Amount for ${
-                                            vehicleTypeList.find((v) => v._id === cab.vehicleTypeID)?.vehicleTypeName || 'Vehicle Type'
-                                          }`}</TableCell>
-                                        ))}
-
-                                        <TableCell>Dual Trip</TableCell>
-                                        {cabAmountRef.current?.map((cab, cabIndex) => (
-                                          <TableCell key={cabIndex}>{`Dual Trip Amount for ${
-                                            vehicleTypeList.find((v) => v._id === cab.vehicleTypeID)?.vehicleTypeName || 'Vehicle Type'
-                                          }`}</TableCell>
-                                        ))}
-
-                                        {/* <TableCell>Guard</TableCell> */}
-                                        <TableCell>Guard Price</TableCell>
-                                        {/* <TableCell>Billing Cycle Company</TableCell>
+                                          {/* <TableCell>Guard</TableCell> */}
+                                          <TableCell>Guard Price</TableCell>
+                                          {/* <TableCell>Billing Cycle Company</TableCell>
                                         <TableCell>Billing Cycle Vendor</TableCell> */}
 
-                                        <TableCell>Action</TableCell>
-                                      </TableRow>
-                                    </TableHead>
+                                          <TableCell>Action</TableCell>
+                                        </TableRow>
+                                      </TableHead>
 
-                                    {/* Body */}
-                                    <TableBody>
-                                      {item.rateMaster.map((rate, rateIndex) => (
-                                        <TableRow key={rateIndex}>
-                                          <TableCell>{rateIndex + 1}</TableCell>
+                                      {/* Body */}
+                                      <TableBody>
+                                        {item.rateMaster.map((rate, rateIndex) => (
+                                          <TableRow key={rateIndex}>
+                                            <TableCell>{rateIndex + 1}</TableCell>
 
-                                          {/* Zone Name */}
-                                          {/* <TableCell>
+                                            {/* Zone Name */}
+                                            {/* <TableCell>
                                             <FormikAutocomplete
                                               name={`rateData.${index}.zoneNameID`}
                                               options={zoneList}
@@ -547,8 +565,8 @@ const AddCabRateVendor = () => {
                                             />
                                           </TableCell> */}
 
-                                          {/* Zone Type */}
-                                          {/* <TableCell>
+                                            {/* Zone Type */}
+                                            {/* <TableCell>
                                             <FormikAutocomplete
                                               name={`rateData.${index}.zoneTypeID`}
                                               options={zoneTypeList.filter(
@@ -573,67 +591,76 @@ const AddCabRateVendor = () => {
                                             />
                                           </TableCell> */}
 
-                                          {/* Zone Name */}
-                                          <TableCell>
-                                            <FormikAutocomplete
-                                              name={`rateData.${index}.rateMaster.${rateIndex}.zoneNameID`}
-                                              options={zoneList}
-                                              placeholder="Select Zone Name"
-                                              sx={{ width: '150px' }}
-                                              getOptionLabel={(option) => option['zoneName']}
-                                              saveValue="_id"
-                                              // Reset the value by ensuring it refers only to the current index
-                                              value={
-                                                zoneList?.find(
-                                                  (item) =>
-                                                    item['_id'] ===
-                                                    getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
-                                                ) || null
-                                              }
-                                              renderOption={(props, option) => (
-                                                <Box component="li" {...props}>
-                                                  {option['zoneName']}
-                                                </Box>
-                                              )}
-                                            />
-                                          </TableCell>
+                                            {/* Zone Name */}
+                                            <TableCell>
+                                              <FormikAutocomplete
+                                                name={`rateData.${index}.rateMaster.${rateIndex}.zoneNameID`}
+                                                options={zoneList}
+                                                placeholder="Select Zone Name"
+                                                sx={{ width: '150px' }}
+                                                getOptionLabel={(option) => option['zoneName']}
+                                                saveValue="_id"
+                                                // Reset the value by ensuring it refers only to the current index
+                                                value={
+                                                  zoneList?.find(
+                                                    (item) =>
+                                                      item['_id'] ===
+                                                      getNestedComplexProperty(
+                                                        values,
+                                                        `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`
+                                                      )
+                                                  ) || null
+                                                }
+                                                renderOption={(props, option) => (
+                                                  <Box component="li" {...props}>
+                                                    {option['zoneName']}
+                                                  </Box>
+                                                )}
+                                              />
+                                            </TableCell>
 
-                                          {/* Zone Type */}
-                                          <TableCell>
-                                            <FormikAutocomplete
-                                              name={`rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`}
-                                              options={zoneTypeList
-                                                .filter(
-                                                  (zoneType) =>
-                                                    zoneType.zoneId._id ===
-                                                    getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
-                                                )
-                                                .sort((a, b) => a.zoneTypeName.localeCompare(b.zoneTypeName))}
-                                              placeholder="Select Zone Type"
-                                              sx={{ width: '150px' }}
-                                              getOptionLabel={(option) => option['zoneTypeName']}
-                                              saveValue="_id"
-                                              defaultValue={null}
-                                              value={
-                                                zoneTypeList?.find(
-                                                  (item) =>
-                                                    item['_id'] ===
-                                                    getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`)
-                                                ) || null
-                                              }
-                                              renderOption={(props, option) => (
-                                                <Box component="li" {...props}>
-                                                  {option['zoneTypeName']}
-                                                </Box>
-                                              )}
-                                              disabled={
-                                                !getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
-                                              }
-                                            />
-                                          </TableCell>
+                                            {/* Zone Type */}
+                                            <TableCell>
+                                              <FormikAutocomplete
+                                                name={`rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`}
+                                                options={zoneTypeList
+                                                  .filter(
+                                                    (zoneType) =>
+                                                      zoneType.zoneId._id ===
+                                                      getNestedComplexProperty(
+                                                        values,
+                                                        `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`
+                                                      )
+                                                  )
+                                                  .sort((a, b) => a.zoneTypeName.localeCompare(b.zoneTypeName))}
+                                                placeholder="Select Zone Type"
+                                                sx={{ width: '150px' }}
+                                                getOptionLabel={(option) => option['zoneTypeName']}
+                                                saveValue="_id"
+                                                defaultValue={null}
+                                                value={
+                                                  zoneTypeList?.find(
+                                                    (item) =>
+                                                      item['_id'] ===
+                                                      getNestedComplexProperty(
+                                                        values,
+                                                        `rateData.${index}.rateMaster.${rateIndex}.zoneTypeID`
+                                                      )
+                                                  ) || null
+                                                }
+                                                renderOption={(props, option) => (
+                                                  <Box component="li" {...props}>
+                                                    {option['zoneTypeName']}
+                                                  </Box>
+                                                )}
+                                                disabled={
+                                                  !getNestedComplexProperty(values, `rateData.${index}.rateMaster.${rateIndex}.zoneNameID`)
+                                                }
+                                              />
+                                            </TableCell>
 
-                                          {/* Cab Rate */}
-                                          {/* <TableCell>
+                                            {/* Cab Rate */}
+                                            {/* <TableCell>
                                             <FormikSelectField1
                                               label="Dual Trip"
                                               name={`rateData.${index}.rateMaster.${rateIndex}.cabRate`}
@@ -642,77 +669,79 @@ const AddCabRateVendor = () => {
                                             />
                                           </TableCell> */}
 
-                                          {rate.cabAmount?.map((cab, cabIndex) => (
-                                            <TableCell key={cabIndex}>
-                                              <TextField
-                                                key={cabIndex}
-                                                label={`Amount for ${
-                                                  vehicleTypeList.find((v) => v._id === cab.vehicleTypeID)?.vehicleTypeName ||
-                                                  'Vehicle Type'
-                                                }`}
-                                                {...getFieldProps(`rateData.${index}.rateMaster.${rateIndex}.cabAmount.${cabIndex}.amount`)}
-                                              />
-                                            </TableCell>
-                                          ))}
-
-                                          {/* Dual Trip */}
-                                          <TableCell>
-                                            <FormikSelectField1
-                                              label="Dual Trip"
-                                              name={`rateData.${index}.rateMaster.${rateIndex}.dualTrip`}
-                                              options={optionsForDualTrip}
-                                              fullWidth
-                                              onChange={handleSelectChangeForDualTrip}
-                                            />
-                                          </TableCell>
-
-                                          {rate.dualTripAmount.length > 0 ? (
-                                            rate.dualTripAmount.map((cab, cabIndex) => (
+                                            {rate.cabAmount?.map((cab, cabIndex) => (
                                               <TableCell key={cabIndex}>
                                                 <TextField
                                                   key={cabIndex}
-                                                  // variant="filled"
-                                                  disabled={
-                                                    !(
-                                                      getNestedComplexProperty(
-                                                        values,
-                                                        `rateData.${index}.rateMaster.${rateIndex}.dualTrip`
-                                                      ) == 1
-                                                    )
-                                                  }
-                                                  label={`Dual Trip Amount for ${
+                                                  label={`Amount for ${
                                                     vehicleTypeList.find((v) => v._id === cab.vehicleTypeID)?.vehicleTypeName ||
                                                     'Vehicle Type'
                                                   }`}
                                                   {...getFieldProps(
-                                                    `rateData.${index}.rateMaster.${rateIndex}.dualTripAmount.${cabIndex}.amount`
+                                                    `rateData.${index}.rateMaster.${rateIndex}.cabAmount.${cabIndex}.amount`
                                                   )}
                                                 />
                                               </TableCell>
-                                            ))
-                                          ) : (
-                                            <>
-                                              {newCompanyCabAmountRef.current?.map((cab, cabIndex) => (
+                                            ))}
+
+                                            {/* Dual Trip */}
+                                            <TableCell>
+                                              <FormikSelectField1
+                                                label="Dual Trip"
+                                                name={`rateData.${index}.rateMaster.${rateIndex}.dualTrip`}
+                                                options={optionsForDualTrip}
+                                                fullWidth
+                                                onChange={handleSelectChangeForDualTrip}
+                                              />
+                                            </TableCell>
+
+                                            {rate.dualTripAmount.length > 0 ? (
+                                              rate.dualTripAmount.map((cab, cabIndex) => (
                                                 <TableCell key={cabIndex}>
                                                   <TextField
                                                     key={cabIndex}
                                                     // variant="filled"
+                                                    disabled={
+                                                      !(
+                                                        getNestedComplexProperty(
+                                                          values,
+                                                          `rateData.${index}.rateMaster.${rateIndex}.dualTrip`
+                                                        ) == 1
+                                                      )
+                                                    }
                                                     label={`Dual Trip Amount for ${
                                                       vehicleTypeList.find((v) => v._id === cab.vehicleTypeID)?.vehicleTypeName ||
                                                       'Vehicle Type'
                                                     }`}
-                                                    disabled={true}
                                                     {...getFieldProps(
                                                       `rateData.${index}.rateMaster.${rateIndex}.dualTripAmount.${cabIndex}.amount`
                                                     )}
                                                   />
                                                 </TableCell>
-                                              ))}
-                                            </>
-                                          )}
+                                              ))
+                                            ) : (
+                                              <>
+                                                {newCompanyCabAmountRef.current?.map((cab, cabIndex) => (
+                                                  <TableCell key={cabIndex}>
+                                                    <TextField
+                                                      key={cabIndex}
+                                                      // variant="filled"
+                                                      label={`Dual Trip Amount for ${
+                                                        vehicleTypeList.find((v) => v._id === cab.vehicleTypeID)?.vehicleTypeName ||
+                                                        'Vehicle Type'
+                                                      }`}
+                                                      disabled={true}
+                                                      {...getFieldProps(
+                                                        `rateData.${index}.rateMaster.${rateIndex}.dualTripAmount.${cabIndex}.amount`
+                                                      )}
+                                                    />
+                                                  </TableCell>
+                                                ))}
+                                              </>
+                                            )}
 
-                                          {/* Guard */}
-                                          {/* <TableCell>
+                                            {/* Guard */}
+                                            {/* <TableCell>
                                             <FormikSelectField1
                                               label="Guard"
                                               name={`rateData.${index}.rateMaster.${rateIndex}.guard`}
@@ -721,36 +750,36 @@ const AddCabRateVendor = () => {
                                             />
                                           </TableCell> */}
 
-                                          {/* Guard Price */}
-                                          <TableCell>
-                                            {/* <FormikTextField
+                                            {/* Guard Price */}
+                                            <TableCell>
+                                              {/* <FormikTextField
                                               name={`rateData.${index}.rateMaster.${rateIndex}.guardPrice`}
                                               label="Guard Price"
                                               fullWidth
                                               disabled={!(getFieldProps(`rateData.${index}.rateMaster.${rateIndex}.guard`).value == 1)}
                                             /> */}
 
-                                            <FormikTextField
-                                              name={`rateData.${index}.rateMaster.${rateIndex}.guardPrice`}
-                                              label="Guard Price"
-                                              onChange={(event) => {
-                                                const { value } = event.target;
-                                                console.log('event.target.value = ', value);
-                                                const numericValue = event.target.value.replace(/[^0-9]/g, '');
-                                                if (Number(numericValue) > 0) {
-                                                  setFieldValue(`rateData.${index}.rateMaster.${rateIndex}.guard`, 1);
-                                                } else {
-                                                  setFieldValue(`rateData.${index}.rateMaster.${rateIndex}.guard`, 0);
-                                                }
-                                                setFieldValue(`rateData.${index}.rateMaster.${rateIndex}.guardPrice`, numericValue);
-                                              }}
-                                              fullWidth
-                                              // disabled={!(getFieldProps(`rateData.${index}.rateMaster.${rateIndex}.guard`).value == 1)}
-                                            />
-                                          </TableCell>
+                                              <FormikTextField
+                                                name={`rateData.${index}.rateMaster.${rateIndex}.guardPrice`}
+                                                label="Guard Price"
+                                                onChange={(event) => {
+                                                  const { value } = event.target;
+                                                  console.log('event.target.value = ', value);
+                                                  const numericValue = event.target.value.replace(/[^0-9]/g, '');
+                                                  if (Number(numericValue) > 0) {
+                                                    setFieldValue(`rateData.${index}.rateMaster.${rateIndex}.guard`, 1);
+                                                  } else {
+                                                    setFieldValue(`rateData.${index}.rateMaster.${rateIndex}.guard`, 0);
+                                                  }
+                                                  setFieldValue(`rateData.${index}.rateMaster.${rateIndex}.guardPrice`, numericValue);
+                                                }}
+                                                fullWidth
+                                                // disabled={!(getFieldProps(`rateData.${index}.rateMaster.${rateIndex}.guard`).value == 1)}
+                                              />
+                                            </TableCell>
 
-                                          {/* Billing Cycle Company */}
-                                          {/* <TableCell>
+                                            {/* Billing Cycle Company */}
+                                            {/* <TableCell>
                                             <FormikSelectField1
                                               label="Dual Trip"
                                               name={`rateData.${index}.rateMaster.${rateIndex}.billingCycleCompany`}
@@ -759,8 +788,8 @@ const AddCabRateVendor = () => {
                                             />
                                           </TableCell> */}
 
-                                          {/* Billing Cycle Vendor */}
-                                          {/* <TableCell>
+                                            {/* Billing Cycle Vendor */}
+                                            {/* <TableCell>
                                             <FormikSelectField1
                                               label="Dual Trip"
                                               name={`rateData.${index}.rateMaster.${rateIndex}.billingCycleVendor`}
@@ -769,83 +798,84 @@ const AddCabRateVendor = () => {
                                             />
                                           </TableCell> */}
 
-                                          {/* Delete */}
-                                          <TableCell>
-                                            <IconButton
-                                              onClick={(event) => {
-                                                handleOpenDialog(rateIndex);
-                                              }}
-                                            >
-                                              <Trash color="red" />
-                                            </IconButton>
-                                          </TableCell>
+                                            {/* Delete */}
+                                            <TableCell>
+                                              <IconButton
+                                                onClick={(event) => {
+                                                  handleOpenDialog(rateIndex);
+                                                }}
+                                              >
+                                                <Trash color="red" />
+                                              </IconButton>
+                                            </TableCell>
 
-                                          <AlertDelete
-                                            title={`Rate ${rateIndex + 1}`}
-                                            open={removeDialogOpen}
-                                            handleClose={(event, confirm) =>
-                                              handleCloseDialog(event, confirm, arrayHelpers.remove, rateIndex)
-                                            }
-                                          />
-                                        </TableRow>
-                                      ))}
-                                    </TableBody>
-                                  </Table>
-                                </TableContainer>
+                                            <AlertDelete
+                                              title={`Rate ${rateIndex + 1}`}
+                                              open={removeDialogOpen}
+                                              handleClose={(event, confirm) =>
+                                                handleCloseDialog(event, confirm, arrayHelpers.remove, rateIndex)
+                                              }
+                                            />
+                                          </TableRow>
+                                        ))}
+                                      </TableBody>
+                                    </Table>
+                                  </TableContainer>
 
-                                <Stack direction={'row'}>
-                                  <Button
-                                    variant="outlined"
-                                    startIcon={<Add />}
-                                    onClick={() =>
-                                      arrayHelpers.push({
-                                        zoneNameID: '',
-                                        zoneTypeID: null,
-                                        cabRate: 1,
-                                        cabAmount: newCompanyCabAmountRef.current || cabAmountRef.current || [],
-                                        dualTrip: 0,
-                                        dualTripAmount: [],
-                                        guard: 0,
-                                        guardPrice: '0',
-                                        billingCycleCompany: '',
-                                        billingCycleVendor: ''
-                                      })
-                                    }
-                                  >
-                                    Add Rate
-                                  </Button>
+                                  <Stack direction={'row'}>
+                                    <Button
+                                      variant="outlined"
+                                      startIcon={<Add />}
+                                      onClick={() =>
+                                        arrayHelpers.push({
+                                          zoneNameID: '',
+                                          zoneTypeID: null,
+                                          cabRate: 1,
+                                          cabAmount: newCompanyCabAmountRef.current || cabAmountRef.current || [],
+                                          dualTrip: 0,
+                                          dualTripAmount: [],
+                                          guard: 0,
+                                          guardPrice: '0',
+                                          billingCycleCompany: '',
+                                          billingCycleVendor: ''
+                                        })
+                                      }
+                                    >
+                                      Add Rate
+                                    </Button>
+                                  </Stack>
                                 </Stack>
-                              </Stack>
-                            )}
-                          />
-                        </MainCard>
-                      </Grid>
-                    );
-                  })}
-                </Grid>
-              </Box>
-            )}
+                              )}
+                            />
+                          </MainCard>
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                </Box>
+              )}
 
-            <MainCard>
-              <Stack direction={'row'} justifyContent="center" alignItems="center" gap={2}>
-                <Button
-                  type="submit"
-                  color="secondary"
-                  variant="outlined"
-                  onClick={() => {
-                    navigate('/management/vendor/view', { replace: true });
-                  }}
-                >
-                  Cancel
-                </Button>
+              <MainCard>
+                <Stack direction={'row'} justifyContent="center" alignItems="center" gap={2}>
+                  <Button
+                    type="submit"
+                    color="secondary"
+                    variant="outlined"
+                    onClick={() => {
+                      navigate('/management/vendor/view', { replace: true });
+                    }}
+                  >
+                    Cancel
+                  </Button>
 
-                <Button type="submit" variant="contained" disabled={isSubmitting || !dirty}>
-                  Add
-                </Button>
-              </Stack>
-            </MainCard>
-          </Stack>
-        </Form>
+                  <Button type="submit" variant="contained" disabled={isSubmitting || !dirty}>
+                    Add
+                  </Button>
+                </Stack>
+              </MainCard>
+            </Stack>
+          </Form>
+        </LocalizationProvider>
       </FormikProvider>
     </>
   );
