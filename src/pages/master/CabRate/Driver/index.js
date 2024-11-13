@@ -94,6 +94,18 @@ const AddCabRateDriver = () => {
   //   }
   // };
 
+  // Array of refs for each TableContainer
+  const scrollRefs = useRef([]);
+
+  // Function to handle horizontal scroll on mouse wheel
+  const handleScroll = (index) => (event) => {
+    const currentRef = scrollRefs.current[index];
+    if (currentRef && currentRef.contains(event.target)) {
+      currentRef.scrollLeft += event.deltaY;
+      event.preventDefault();
+    }
+  };
+
   useEffect(() => {
     if (driverIDs?.length > 0 && companyIDs?.length > 0) {
       // Todo : API CALLING TO CHECK EXISTING RATES
@@ -565,8 +577,10 @@ const AddCabRateDriver = () => {
                               render={(arrayHelpers) => (
                                 <Stack spacing={2}>
                                   <TableContainer
-                                  // ref={scrollRef}
-                                  // onWheel={handleScroll}
+                                    // ref={scrollRef}
+                                    // onWheel={handleScroll}
+                                    ref={(el) => (scrollRefs.current[index] = el)} // Assign a unique ref for each table
+                                    onWheel={handleScroll(index)} // Attach a unique scroll handler
                                   >
                                     <Table
                                       sx={{
