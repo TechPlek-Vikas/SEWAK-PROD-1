@@ -2,15 +2,13 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { Bill, MenuBoard, Setting2, Wallet } from 'iconsax-react';
-import { MODULE, PERMISSIONS } from 'constant';
+import { Bill, MenuBoard, Setting2 } from 'iconsax-react';
 
 // icons
 const icons = {
   samplePage: MenuBoard,
-  setting:Setting2,
+  setting: Setting2,
   invoice: Bill,
-  account:Wallet
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -23,37 +21,36 @@ const setting = {
   children: [
     {
       id: 'setting',
-      title: <FormattedMessage id="setting" />,
+      title: <FormattedMessage id="user-setting" />,
       type: 'collapse',
       icon: icons.setting,
       children: [
-        // Account
-        // {
-        //   id: 'account-setting',
-        //   title: <FormattedMessage id="account setting" />,
-        //   type: 'item',
-        //   // icon: icons.account,
-        //   url: '/settings/account'
-        // },
-
-        // Roster
-        // {
-        //   id: 'roster-setting',
-        //   title: <FormattedMessage id="roster setting" />,
-        //   type: 'item',
-        //   // icon: icons.samplePage,
-        //   url: '/settings/roster'
-        // },
-
-        // Invoice
+        // User
         {
-          id: 'invoice-setting',
-          title: <FormattedMessage id="invoice setting" />,
+          id: 'user',
+          title: <FormattedMessage id="user" />,
           type: 'item',
-          // icon: icons.invoice,
-          url: '/settings/invoice'
+          url: '/management/user/view',
+          icon: icons.user
+        },
+
+        // Role
+        {
+          id: 'role',
+          title: <FormattedMessage id="role" />,
+          type: 'item',
+          url: '/master/role',
+          icon: icons.role
         }
       ]
+    },
+
+    {
+      id: 'invoice-setting',
+      title: <FormattedMessage id="invoice setting" />,
+      type: 'item',
+      icon: icons.invoice,
+      url: '/settings/invoice'
     }
   ]
 };
