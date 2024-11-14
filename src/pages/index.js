@@ -7,7 +7,7 @@ import { useTheme } from '@mui/material/styles';
 import ReportCard from 'components/cards/statistics/ReportCard';
 import MainCard from 'components/MainCard';
 import { AlignBottom, Autonio, Car, Driver, User, UserSquare } from 'iconsax-react';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchDashboardData } from 'store/slice/cabProvidor/dashboardSlice';
 import { fetchAllRoles } from 'store/slice/cabProvidor/roleSlice';
@@ -24,8 +24,7 @@ import { RiMoneyRupeeCircleFill } from 'react-icons/ri';
 import { GiPayMoney } from 'react-icons/gi';
 
 import { GiTakeMyMoney } from 'react-icons/gi';
-
-
+import CustomCircularLoader from 'components/CustomCircularLoader';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
@@ -33,8 +32,10 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
 
+  const loading = useSelector((state) => state.dashboard.loading);
   const dashboardData = useSelector((state) => state.dashboard.data);
   console.log('dashboardData', dashboardData);
+
   const companyWiseEarningsData = useSelector((state) => state.dashboard.companyData);
   console.log('companyWiseEarningsData', companyWiseEarningsData);
 
@@ -137,6 +138,8 @@ const Dashboard = () => {
   //     </Stack>
   //   </>
   // );
+
+  if (loading || !dashboardData) return <CustomCircularLoader />;
 
   return (
     <>

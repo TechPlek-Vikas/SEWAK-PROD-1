@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useMemo, useEffect, Fragment, useState, useRef } from 'react';
 import { useNavigate } from 'react-router';
+import { ThemeMode } from 'config';
 
 // material-ui
 import {
@@ -233,7 +234,7 @@ const List = () => {
   const [data, setData] = useState([]);
   const [metadata, setMetadata] = useState([]);
 
-  console.log({metadata} );
+  console.log({ metadata });
 
   useEffect(() => {
     const fetchInvoice = async () => {
@@ -242,11 +243,11 @@ const List = () => {
 
         setData(response.data.data);
         setMetadata(response.data.metaData);
-        setLoading(false)
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching invoices:', error);
-      }finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -352,6 +353,9 @@ const List = () => {
           const [newStatus, setNewStatus] = useState(null);
           const [remarks, setRemarks] = useState('');
           const token = localStorage.getItem('serviceToken');
+          const theme = useTheme();
+          const mode = theme.palette.mode;
+          const navigate = useNavigate();
 
           const handleMenuClick = (event) => {
             setAnchorEl(event.currentTarget);
@@ -385,16 +389,13 @@ const List = () => {
 
           const confirmStatusChange = async () => {
             try {
-              const response = await axiosServices.put(
-                `/invoice/update/paymentStatus`,
-                {
-                  data: {
-                    invoiceId: row.original._id,
-                    status: newStatus,
-                    remarks: newStatus === 3 ? remarks : undefined // Include remarks if cancelled
-                  }
-                },
-              );
+              const response = await axiosServices.put(`/invoice/update/paymentStatus`, {
+                data: {
+                  invoiceId: row.original._id,
+                  status: newStatus,
+                  remarks: newStatus === 3 ? remarks : undefined // Include remarks if cancelled
+                }
+              });
 
               if (response.status === 201) {
                 dispatch(
@@ -425,9 +426,31 @@ const List = () => {
 
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
+              <Tooltip
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      backgroundColor: mode === ThemeMode.DARK ? theme.palette.grey[50] : theme.palette.grey[700],
+                      opacity: 0.9
+                    }
+                  }
+                }}
+                title="View"
+              >
+                <IconButton
+                  color="success"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/apps/invoices/details/${row.original._id}`); // Use navigate for redirection
+                  }}
+                >
+                  <Eye />
+                </IconButton>
+              </Tooltip>
               <IconButton edge="end" aria-label="more actions" color="secondary" onClick={handleMenuClick}>
                 <More style={{ fontSize: '1.15rem' }} />
               </IconButton>
+
               <Menu
                 id="fade-menu"
                 MenuListProps={{ 'aria-labelledby': 'fade-button' }}
@@ -498,8 +521,9 @@ const List = () => {
       count: metadata?.paid?.paidCount || 0,
       amount: metadata?.paid?.paidAmount || 0,
       percentage: (
-        ((metadata?.paid?.paidCount || 0) / 
-        ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) * 100
+        ((metadata?.paid?.paidCount || 0) /
+          ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) *
+        100
       ).toFixed(2),
       isLoss: false,
       invoice: metadata?.paid?.paidCount || 0,
@@ -511,8 +535,9 @@ const List = () => {
       count: metadata?.unpaid?.unpaidCount || 0,
       amount: metadata?.unpaid?.unpaidAmount || 0,
       percentage: (
-        ((metadata?.unpaid?.unpaidCount || 0) / 
-        ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) * 100
+        ((metadata?.unpaid?.unpaidCount || 0) /
+          ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) *
+        100
       ).toFixed(2),
       isLoss: true,
       invoice: metadata?.unpaid?.unpaidCount || 0,
@@ -524,8 +549,9 @@ const List = () => {
       count: metadata?.overDue?.overDueCount || 0,
       amount: metadata?.overDue?.overDueAmount || 0,
       percentage: (
-        ((metadata?.overDue?.overDueCount || 0) / 
-        ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) * 100
+        ((metadata?.overDue?.overDueCount || 0) /
+          ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) *
+        100
       ).toFixed(2),
       isLoss: true,
       invoice: metadata?.overDue?.overDueCount || 0,
@@ -533,7 +559,6 @@ const List = () => {
       chartData: [] // Add your chart metadata if necessary
     }
   ];
-  
 
   if (loading) return <Loader />;
 
