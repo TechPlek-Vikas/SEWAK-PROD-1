@@ -215,15 +215,15 @@ const InvoiceDetails = () => {
                   <Stack spacing={1}>
                     <Typography variant="h5">From:</Typography>
                     <FormControl sx={{ width: '100%' }}>
-                      {/* <Typography color="secondary">{details?.billedBy.cabProviderLegalName}</Typography>
-                      <Typography color="secondary">{details?.billedBy.contactPersonName}</Typography>
-                      <Typography color="secondary">{details?.billedBy.workEmail}</Typography>
-                      <Typography color="secondary">{details?.billedBy.workMobileNumber}</Typography>
-                      <Typography color="secondary">{details?.billedBy.officeAddress}</Typography>
-                      <Typography color="secondary">{details?.billedBy.officePinCode}</Typography>
-                      <Typography color="secondary">{details?.billedBy.officeState}</Typography> */}
-                      <Typography color="secondary">{details?.billedBy.PAN}</Typography>
-                      <Typography color="secondary">{details?.billedBy.GSTIN}</Typography>
+                      <Typography color="secondary">{details?.billedBy.cabProviderLegalName || 'N/A'}</Typography>
+                      <Typography color="secondary">{details?.billedBy.contactPersonName || 'N/A'}</Typography>
+                      <Typography color="secondary">{details?.billedBy.workEmail || 'N/A'}</Typography>
+                      <Typography color="secondary">{details?.billedBy.workMobileNumber || 'N/A'}</Typography>
+                      <Typography color="secondary">{details?.billedBy.officeAddress || 'N/A'}</Typography>
+                      <Typography color="secondary">{details?.billedBy.officePinCode || 'N/A'}</Typography>
+                      <Typography color="secondary">{details?.billedBy.officeState || 'N/A'}</Typography>
+                      <Typography color="secondary">{details?.billedBy.PAN || 'N/A'}</Typography>
+                      <Typography color="secondary">{details?.billedBy.GSTIN || 'N/A'}</Typography>
                     </FormControl>
                   </Stack>
                 </MainCard>

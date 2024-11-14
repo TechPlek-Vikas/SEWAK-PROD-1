@@ -138,14 +138,19 @@ const getInitialValues = (data, user, userSpecificData) => {
     start_date: null, // For Start Date
     end_date: null, // For End Date
     cashierInfo: {
+      cabProviderLegalName: userSpecificData?.cabProviderLegalName || '',
+      PAN: userSpecificData?.PAN || '',
+      GSTIN: userSpecificData?.GSTIN || '',
+      contactPersonName: userSpecificData?.contactPersonName || '',
+      workEmail: user?.userEmail || '',
+      workMobileNumber : userSpecificData?.workMobileNumber || '',
+      officeAddress : userSpecificData?.officeAddress || '',
+      officePinCode: userSpecificData?.officePinCode || '',
+      officeState: userSpecificData?.officeState || '',
       address: user?.address || '',
       city: user?.city || '',
       state: user?.state || '',
       postal_code: user?.pinCode || '',
-      GSTIN: userSpecificData?.GSTIN || '',
-      company_name: userSpecificData?.cabProviderLegalName || '',
-      PAN: userSpecificData?.PAN || '',
-      company_email: user?.userEmail || ''
     },
     customerInfo: {
       address: '',
@@ -894,8 +899,8 @@ const Create2 = () => {
                                   <Grid item xs={6}>
                                     <TextField
                                       label="Company Name"
-                                      value={formValues.company_name || 'N/A'}
-                                      name="company_name"
+                                      value={formValues.cabProviderLegalName || 'N/A'}
+                                      name="cabProviderLegalName"
                                       onChange={handleChangeCashierDetails}
                                       fullWidth
                                       sx={{
@@ -996,7 +1001,7 @@ const Create2 = () => {
                               </>
                             ) : (
                               <>
-                                <Typography variant="subtitle1">{formValues.company_name || 'N/A'}</Typography>
+                                <Typography variant="subtitle1">{formValues.cabProviderLegalName || 'N/A'}</Typography>
                                 <Typography color="secondary">
                                   {`${formValues.address || 'N/A'}, ${formValues.city || 'N/A'}, ${formValues.state || 'N/A'}-${
                                     formValues.postal_code || 'N/A'
