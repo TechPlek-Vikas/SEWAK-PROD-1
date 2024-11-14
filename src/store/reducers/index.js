@@ -22,6 +22,7 @@ import { invoiceReducer } from './invoice';
 import { rosterFileReducer } from 'store/slice/cabProvidor/rosterFileSlice';
 import { rosterDataReducer } from 'store/slice/cabProvidor/rosterDataSlice';
 import { dashboardReducer } from 'store/slice/cabProvidor/dashboardSlice';
+import { invoicesReducer } from 'store/slice/cabProvidor/invoiceSlice';
 
 // ==============================|| COMBINE REDUCERS ||============================== //
 
@@ -45,7 +46,8 @@ const reducers = combineReducers({
   invoice: invoiceReducer,
   rosterFile: rosterFileReducer,
   rosterData: rosterDataReducer,
-  dashboard: dashboardReducer
+  dashboard: dashboardReducer,
+  invoices: invoicesReducer
 });
 
 export default reducers;

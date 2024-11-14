@@ -209,7 +209,7 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
                 error={formik.touched.userName && Boolean(formik.errors.userName)}
                 helperText={formik.touched.userName && formik.errors.userName}
                 fullWidth
-                autoComplete="off"
+                inputProps={{ autoComplete: 'off' }}
               />
             </Stack>
           </Grid>
@@ -226,7 +226,7 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
                 error={formik.touched.userEmail && Boolean(formik.errors.userEmail)}
                 helperText={formik.touched.userEmail && formik.errors.userEmail}
                 fullWidth
-                autoComplete="off"
+                inputProps={{ autoComplete: 'off' }}
               />
             </Stack>
           </Grid>
@@ -237,7 +237,8 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
                 id="password"
                 name="password"
                 type={showPasswords.password ? 'text' : 'password'}
-                placeholder="User Password"
+                placeholder="******"
+                inputProps={{ autoComplete: 'new-password' }}
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 error={formik.touched.password && Boolean(formik.errors.password)}
@@ -265,7 +266,8 @@ const BasicInfo = ({ basicInfo, handleNext, setErrorIndex, setVendorId }) => {
                 id="text-adornment-password"
                 name="confirmpassword"
                 type={showPasswords.confirmpassword ? 'text' : 'password'}
-                placeholder="Enter Confirm Password"
+                placeholder="******"
+                inputProps={{ autoComplete: 'new-password' }}
                 value={formik.values.confirmpassword}
                 onChange={formik.handleChange}
                 error={formik.touched.confirmpassword && Boolean(formik.errors.confirmpassword)}
