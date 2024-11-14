@@ -28,7 +28,7 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 // project-imports
 import MainCard from 'components/MainCard';
 import LogoSection from 'components/logo';
-import ExportPDFView from 'sections/apps/invoice/export-pdf';
+// import ExportPDFView from 'sections/apps/invoice/export-pdf';
 
 import { dispatch, useSelector } from 'store';
 
@@ -38,6 +38,7 @@ import { getInvoiceDetails } from 'store/slice/cabProvidor/invoiceSlice';
 import { openSnackbar } from 'store/reducers/snackbar';
 import CustomCircularLoader from 'components/CustomCircularLoader';
 import { formatDateUsingMoment } from 'utils/helper';
+import ExportPDFView from './export-pdf';
 // import LogoSection from './LogoSection';
 
 export const INVOICE_STATUS_ENUM = {
@@ -45,6 +46,7 @@ export const INVOICE_STATUS_ENUM = {
   PAID: 2,
   CANCELLED: 3
 };
+
 export const INVOICE_STATUS = {
   [INVOICE_STATUS_ENUM.UNPAID]: 'Unpaid',
   [INVOICE_STATUS_ENUM.PAID]: 'Paid',
@@ -156,11 +158,14 @@ const InvoiceDetails = () => {
                   <Edit color={theme.palette.text.secondary} />
                 </IconButton>
 
-                {/* <PDFDownloadLink document={<ExportPDFView list={list} />} fileName={`${list?.invoice_id}-${list?.customer_name}.pdf`}> */}
-                <IconButton>
-                  <DocumentDownload color={theme.palette.text.secondary} />
-                </IconButton>
-                {/* </PDFDownloadLink> */}
+                {/* <PDFDownloadLink
+                  document={<ExportPDFView list={details} />}
+                  fileName={`${details?._id}-${details?.billedTo?.company_name}.pdf`}
+                >
+                  <IconButton>
+                    <DocumentDownload color={theme.palette.text.secondary} />
+                  </IconButton>
+                </PDFDownloadLink> */}
 
                 {/* <ReactToPrint
                   trigger={() => (
