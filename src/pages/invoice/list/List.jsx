@@ -57,8 +57,14 @@ import axios from 'axios';
 import { formattedDate } from 'utils/helper';
 import FormDialog from 'components/alertDialog/FormDialog';
 import axiosServices from 'utils/axios';
+import { USERTYPE } from 'constant';
 
 const avatarImage = require.context('assets/images/users', true);
+
+const API_URL = {
+  [USERTYPE.iscabProvider]: '/invoice/by/cabProviderId',
+  [USERTYPE.isVendor]: '/invoice/all/vendor'
+};
 
 // ==============================|| REACT TABLE ||============================== //
 
@@ -230,6 +236,8 @@ ReactTable.propTypes = {
 const List = () => {
   const [loading, setLoading] = useState(true);
   const { alertPopup } = useSelector((state) => state.invoice);
+  const userType = useSelector((state) => state.auth.userType);
+  console.log(`🚀 ~ List ~ userType:`, userType);
 
   const [data, setData] = useState([]);
   const [metadata, setMetadata] = useState([]);
@@ -239,10 +247,10 @@ const List = () => {
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
-        const response = await axiosServices.get(`/invoice/by/cabProviderId`);
+        const response = await axiosServices.get(API_URL[userType]);
 
         setData(response.data.data);
-        setMetadata(response.data.metaData);
+        setMetadata(response.data?.metaData || {});
         setLoading(false);
       } catch (error) {
         console.error('Error fetching invoices:', error);
@@ -252,7 +260,7 @@ const List = () => {
     };
 
     fetchInvoice();
-  }, []);
+  }, [userType]);
 
   const handleClose = (status) => {
     if (status) {
@@ -412,9 +420,20 @@ const List = () => {
               }
 
               row.original.status = newStatus;
-              fetchInvoice();
+              // fetchInvoice();
             } catch (error) {
               console.error('Failed to update status:', error);
+              dispatch(
+                openSnackbar({
+                  open: true,
+                  message: error.response.data?.error || 'Something went wrong',
+                  variant: 'alert',
+                  alert: {
+                    color: 'error'
+                  },
+                  close: true
+                })
+              );
             }
 
             setDialogOpen(false);
@@ -447,9 +466,12 @@ const List = () => {
                   <Eye />
                 </IconButton>
               </Tooltip>
-              <IconButton edge="end" aria-label="more actions" color="secondary" onClick={handleMenuClick}>
-                <More style={{ fontSize: '1.15rem' }} />
-              </IconButton>
+
+              {userType === USERTYPE.iscabProvider && (
+                <IconButton edge="end" aria-label="more actions" color="secondary" onClick={handleMenuClick}>
+                  <More style={{ fontSize: '1.15rem' }} />
+                </IconButton>
+              )}
 
               <Menu
                 id="fade-menu"
@@ -508,8 +530,7 @@ const List = () => {
         }
       }
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [userType]
   );
 
   const theme = useTheme();

@@ -8,7 +8,6 @@ import Loadable from 'components/Loadable';
 import AuthGuard from 'utils/route-guard/AuthGuard';
 import ProtectedRoute from 'components/common/guards/ProtectedRoute';
 import { MODULE, PERMISSIONS } from 'constant';
-import List from 'pages/invoice/list/List';
 import Create from 'pages/invoice/create/Create2';
 import { element } from 'prop-types';
 import AllRosters from 'pages/Roster/AllRosters';
@@ -22,7 +21,6 @@ const UnderConstruction = Loadable(lazy(() => import('components/maintenance/Und
 
 const PageNotFound = Loadable(lazy(() => import('pages/maintenance/error/404')));
 
-
 // Dashboard
 const Dashboard = Loadable(lazy(() => import('pages')));
 // Roster
@@ -31,6 +29,11 @@ const RosterFileList = Loadable(lazy(() => import('pages/Roster/file-management'
 const MapRosterFile = Loadable(lazy(() => import('pages/Roster/map-roster')));
 const ViewRoster = Loadable(lazy(() => import('pages/Roster/view-roster')));
 const AssignTrips = Loadable(lazy(() => import('pages/Roster/assign-trips')));
+
+// Invoice
+const InvoiceList = Loadable(lazy(() => import('pages/invoice/list/List')));
+const InvoiceCreate = Loadable(lazy(() => import('pages/invoice/create/Create2')));
+const InvoiceDetails = Loadable(lazy(() => import('pages/invoice/details/Details')));
 
 // Management
 const User = Loadable(lazy(() => import('pages/management/user')));
@@ -71,8 +74,6 @@ const CabType = Loadable(lazy(() => import('pages/master/CabType')));
 const CabRate = Loadable(lazy(() => import('pages/master/CabRate')));
 const AddCabRateVendor = Loadable(lazy(() => import('pages/master/CabRate/Vendor')));
 const AddCabRateDriver = Loadable(lazy(() => import('pages/master/CabRate/Driver')));
-
-
 
 // ==============================|| MAIN ROUTES ||============================== //
 
@@ -143,15 +144,23 @@ const VendorRoutes = {
                 // },
                 {
                   path: 'list',
-                  element: <List />
+                  element: <InvoiceList />
                 },
                 // {
                 //   path: 'create',
                 //   element: <Create />
                 // },
+                // {
+                //   path: 'invoice',
+                //   element: <InvoiceList />
+                // },
                 {
-                  path: 'invoice',
-                  element: <List />
+                  path: 'details/:id',
+                  element: <InvoiceDetails />
+                },
+                {
+                  path: 'edit/:id',
+                  element: <UnderConstruction title="Edit Invoice" />
                 },
                 {
                   path: 'loans',

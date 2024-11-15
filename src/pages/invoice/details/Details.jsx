@@ -111,6 +111,10 @@ const InvoiceDetails = () => {
     return details?.invoiceData.reduce((acc, curr) => acc + Number(curr.discount), 0);
   }, [details?.invoiceData]);
 
+  const grandTotalAmount = useMemo(() => {
+    return subTotal - discount + tax;
+  }, [subTotal, discount, tax]);
+
   const renderTableRow = (item, index) => (
     <TableRow key={index}>
       <TableCell>{index + 1}</TableCell>
@@ -139,7 +143,7 @@ const InvoiceDetails = () => {
       </Stack>
       <Stack direction="row" justifyContent="space-between">
         <Typography variant="subtitle1">Grand Total:</Typography>
-        <Typography variant="subtitle1">{`₹ ${grandTotal?.toFixed(2)}`}</Typography>
+        <Typography variant="subtitle1">{`₹ ${grandTotalAmount?.toFixed(2) || grandTotal?.toFixed(2)}`}</Typography>
       </Stack>
     </Stack>
   );
