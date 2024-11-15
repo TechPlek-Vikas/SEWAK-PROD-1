@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useMemo, useEffect, Fragment, useState, useRef } from 'react';
 import { useNavigate } from 'react-router';
+import { ThemeMode } from 'config';
 
 // material-ui
 import {
@@ -56,8 +57,14 @@ import axios from 'axios';
 import { formattedDate } from 'utils/helper';
 import FormDialog from 'components/alertDialog/FormDialog';
 import axiosServices from 'utils/axios';
+import { USERTYPE } from 'constant';
 
 const avatarImage = require.context('assets/images/users', true);
+
+const API_URL = {
+  [USERTYPE.iscabProvider]: '/invoice/by/cabProviderId',
+  [USERTYPE.isVendor]: '/invoice/all/vendor'
+};
 
 // ==============================|| REACT TABLE ||============================== //
 
@@ -229,29 +236,31 @@ ReactTable.propTypes = {
 const List = () => {
   const [loading, setLoading] = useState(true);
   const { alertPopup } = useSelector((state) => state.invoice);
+  const userType = useSelector((state) => state.auth.userType);
+  console.log(`🚀 ~ List ~ userType:`, userType);
 
   const [data, setData] = useState([]);
   const [metadata, setMetadata] = useState([]);
 
-  console.log({metadata} );
+  console.log({ metadata });
 
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
-        const response = await axiosServices.get(`/invoice/by/cabProviderId`);
+        const response = await axiosServices.get(API_URL[userType]);
 
         setData(response.data.data);
-        setMetadata(response.data.metaData);
-        setLoading(false)
+        setMetadata(response.data?.metaData || {});
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching invoices:', error);
-      }finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchInvoice();
-  }, []);
+  }, [userType]);
 
   const handleClose = (status) => {
     if (status) {
@@ -352,6 +361,9 @@ const List = () => {
           const [newStatus, setNewStatus] = useState(null);
           const [remarks, setRemarks] = useState('');
           const token = localStorage.getItem('serviceToken');
+          const theme = useTheme();
+          const mode = theme.palette.mode;
+          const navigate = useNavigate();
 
           const handleMenuClick = (event) => {
             setAnchorEl(event.currentTarget);
@@ -385,16 +397,13 @@ const List = () => {
 
           const confirmStatusChange = async () => {
             try {
-              const response = await axiosServices.put(
-                `/invoice/update/paymentStatus`,
-                {
-                  data: {
-                    invoiceId: row.original._id,
-                    status: newStatus,
-                    remarks: newStatus === 3 ? remarks : undefined // Include remarks if cancelled
-                  }
-                },
-              );
+              const response = await axiosServices.put(`/invoice/update/paymentStatus`, {
+                data: {
+                  invoiceId: row.original._id,
+                  status: newStatus,
+                  remarks: newStatus === 3 ? remarks : undefined // Include remarks if cancelled
+                }
+              });
 
               if (response.status === 201) {
                 dispatch(
@@ -411,9 +420,20 @@ const List = () => {
               }
 
               row.original.status = newStatus;
-              fetchInvoice();
+              // fetchInvoice();
             } catch (error) {
               console.error('Failed to update status:', error);
+              dispatch(
+                openSnackbar({
+                  open: true,
+                  message: error.response.data?.error || 'Something went wrong',
+                  variant: 'alert',
+                  alert: {
+                    color: 'error'
+                  },
+                  close: true
+                })
+              );
             }
 
             setDialogOpen(false);
@@ -425,9 +445,34 @@ const List = () => {
 
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
-              <IconButton edge="end" aria-label="more actions" color="secondary" onClick={handleMenuClick}>
-                <More style={{ fontSize: '1.15rem' }} />
-              </IconButton>
+              <Tooltip
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      backgroundColor: mode === ThemeMode.DARK ? theme.palette.grey[50] : theme.palette.grey[700],
+                      opacity: 0.9
+                    }
+                  }
+                }}
+                title="View"
+              >
+                <IconButton
+                  color="success"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/apps/invoices/details/${row.original._id}`); // Use navigate for redirection
+                  }}
+                >
+                  <Eye />
+                </IconButton>
+              </Tooltip>
+
+              {userType === USERTYPE.iscabProvider && (
+                <IconButton edge="end" aria-label="more actions" color="secondary" onClick={handleMenuClick}>
+                  <More style={{ fontSize: '1.15rem' }} />
+                </IconButton>
+              )}
+
               <Menu
                 id="fade-menu"
                 MenuListProps={{ 'aria-labelledby': 'fade-button' }}
@@ -485,8 +530,7 @@ const List = () => {
         }
       }
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [userType]
   );
 
   const theme = useTheme();
@@ -498,8 +542,9 @@ const List = () => {
       count: metadata?.paid?.paidCount || 0,
       amount: metadata?.paid?.paidAmount || 0,
       percentage: (
-        ((metadata?.paid?.paidCount || 0) / 
-        ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) * 100
+        ((metadata?.paid?.paidCount || 0) /
+          ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) *
+        100
       ).toFixed(2),
       isLoss: false,
       invoice: metadata?.paid?.paidCount || 0,
@@ -511,8 +556,9 @@ const List = () => {
       count: metadata?.unpaid?.unpaidCount || 0,
       amount: metadata?.unpaid?.unpaidAmount || 0,
       percentage: (
-        ((metadata?.unpaid?.unpaidCount || 0) / 
-        ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) * 100
+        ((metadata?.unpaid?.unpaidCount || 0) /
+          ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) *
+        100
       ).toFixed(2),
       isLoss: true,
       invoice: metadata?.unpaid?.unpaidCount || 0,
@@ -524,8 +570,9 @@ const List = () => {
       count: metadata?.overDue?.overDueCount || 0,
       amount: metadata?.overDue?.overDueAmount || 0,
       percentage: (
-        ((metadata?.overDue?.overDueCount || 0) / 
-        ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) * 100
+        ((metadata?.overDue?.overDueCount || 0) /
+          ((metadata?.paid?.paidCount || 0) + (metadata?.unpaid?.unpaidCount || 0) + (metadata?.overDue?.overDueCount || 0))) *
+        100
       ).toFixed(2),
       isLoss: true,
       invoice: metadata?.overDue?.overDueCount || 0,
@@ -533,7 +580,6 @@ const List = () => {
       chartData: [] // Add your chart metadata if necessary
     }
   ];
-  
 
   if (loading) return <Loader />;
 

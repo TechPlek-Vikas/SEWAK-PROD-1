@@ -8,12 +8,7 @@ import Loadable from 'components/Loadable';
 import AuthGuard from 'utils/route-guard/AuthGuard';
 import ProtectedRoute from 'components/common/guards/ProtectedRoute';
 import { MODULE, PERMISSIONS } from 'constant';
-import List from 'pages/invoice/list/List';
 
-import Create from 'pages/invoice/create/Create';
-import Create1 from 'pages/invoice/create/Create1';
-import Create2 from 'pages/invoice/create/Create2';
-import { element } from 'prop-types';
 // import RosterDashboard from 'pages/apps/test/dashboard';
 import MapRosterFileTest from 'pages/apps/test/CreateRosterTemplateDrawer.js';
 import ViewRosterTest from 'pages/apps/test/List';
@@ -42,6 +37,11 @@ const MapRosterFile = Loadable(lazy(() => import('pages/Roster/map-roster')));
 const ViewRoster = Loadable(lazy(() => import('pages/Roster/view-roster')));
 const AssignTrips = Loadable(lazy(() => import('pages/Roster/assign-trips')));
 const AllRosters = Loadable(lazy(() => import('pages/Roster/AllRosters')));
+
+// Invoice
+const InvoiceList = Loadable(lazy(() => import('pages/invoice/list/List')));
+const InvoiceCreate = Loadable(lazy(() => import('pages/invoice/create/Create2')));
+const InvoiceDetails = Loadable(lazy(() => import('pages/invoice/details/Details')));
 
 //Trip
 const TripList = Loadable(lazy(() => import('pages/trips/TripList')));
@@ -197,17 +197,19 @@ const CabProvidorRoutes = {
                 // },
                 {
                   path: 'list',
-                  element: <List />
+                  element: <InvoiceList />
                 },
                 {
                   path: 'create',
-                  // element: <Create />
-                  // element: <Create1 />
-                  element: <Create2 />
+                  element: <InvoiceCreate />
                 },
                 {
-                  path: 'invoice',
-                  element: <List />
+                  path: 'details/:id',
+                  element: <InvoiceDetails />
+                },
+                {
+                  path: 'edit/:id',
+                  element: <UnderConstruction title="Edit Invoice" />
                 },
                 {
                   path: 'loans',
