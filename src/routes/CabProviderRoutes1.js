@@ -21,6 +21,7 @@ import ViewRosterTest1 from 'pages/apps/test/ViewRoster';
 import AddRosterFileForm from 'pages/apps/test/components/AddRosterFileForm';
 import DriverRate from 'pages/management/driver/driverRate/DriverRate';
 import VendorRatelisting from 'pages/management/vendor/vendorRate/VendorRatelisting';
+import TripView from 'pages/trips/TripView';
 
 const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/error/404')));
 const MaintenanceError500 = Loadable(lazy(() => import('pages/maintenance/error/500')));
@@ -182,7 +183,7 @@ const CabProvidorRoutes = {
                 {
                   path: 'all-roster',
                   element: <AllRosters />
-                }
+                },
               ]
             },
 
@@ -232,6 +233,10 @@ const CabProvidorRoutes = {
                 {
                   path: 'list',
                   element: <TripList />
+                },
+                {
+                  path: 'trip-view/:id',
+                  element: <TripView />
                 }
               ]
             }
