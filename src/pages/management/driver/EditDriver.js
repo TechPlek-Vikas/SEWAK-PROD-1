@@ -5,9 +5,6 @@ import {
   setGetSingleDetails,
   updateDriverBasicDetails,
   updateDriverSpecificDetails
-  //   incrementCounter
-  //   updateDriverBasicDetails,
-  //   updateDriverSpecificDetails,
 } from 'store/slice/cabProvidor/driverSlice';
 import { dispatch, useSelector } from 'store';
 import { Form, FormikProvider, useFormik } from 'formik';
@@ -27,15 +24,13 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import FormikTextField from 'components/textfield/TextField'; // D:\Vansh Gupta\SEWAK-PROD-1\src\components\textfield\TextField.js
+import FormikTextField from 'components/textfield/TextField';
 import { Camera } from 'iconsax-react';
 import { useTheme } from '@emotion/react';
 import { ThemeMode } from 'config';
 // import { messages } from "utils/messages";
 import UploadSingleFile from 'components/dropzone/SingleFile';
 import { handlePreview } from 'utils/helper';
-
-const sliceName = 'driver';
 
 const getInitialValuesForBasicInfo = (data) => {
   return {

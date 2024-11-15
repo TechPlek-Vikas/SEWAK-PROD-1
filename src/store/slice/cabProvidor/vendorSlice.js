@@ -61,6 +61,39 @@ export const addSpecialDetails = createAsyncThunk('vendors/addSpecialDetails', a
   }
 });
 
+// Get vendor details by id
+export const fetchVendorsById = createAsyncThunk('vendors/fetchVendorById', async (id, { rejectWithValue }) => {
+  try {
+    const response = await axios.get(`vendor/details/by?vendorId=${id}`);
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response ? error.response.data : error.message);
+  }
+});
+
+// Edit vendor basic details by Cabprovider
+export const editVendorBasicInfo = createAsyncThunk('vendors/editVendorBasicInfo', async (payload, { rejectWithValue }) => {
+  try {
+    const response = await axios.put('/vendor/update/basic/details', payload);
+    console.log(response);
+    return { success: response.data.success, message: response.data.message };
+  } catch (error) {
+    return rejectWithValue(error.response ? error.response.data : error.message);
+  }
+});
+
+// Edit vendor speific details by Cabprovider
+export const editVendorSpecificInfo = createAsyncThunk('vendors/editVendorSpecificInfo', async (payload, { rejectWithValue }) => {
+  try {
+    const response = await axios.put('/vendor/update/specific/details', payload);
+    console.log(response);
+    return { success: response.data.success, message: response.data.message };
+  } catch (error) {
+    return rejectWithValue(error.response ? error.response.data : error.message);
+  }
+});
+
 const initialState = {
   vendors: [],
   allVendors: [],

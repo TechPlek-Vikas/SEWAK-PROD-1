@@ -381,7 +381,7 @@ const DriverTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
                     console.log(`🚀 ~ row.values.id:`, row.values);
                     dispatch(handleOpen(ACTION.DELETE));
                     dispatch(setDeletedName(row.values['userName']));
-                    dispatch(setSelectedID(row.values._id)); //setDeletedName
+                    dispatch(setSelectedID(row.values._id));
                   }}
                 >
                   <Trash />

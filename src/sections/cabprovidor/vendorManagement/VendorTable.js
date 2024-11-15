@@ -1,5 +1,23 @@
 import PropTypes from 'prop-types';
-import { Box, Button, Chip, CircularProgress, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Tooltip
+} from '@mui/material';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { Fragment, useMemo } from 'react';
@@ -7,13 +25,20 @@ import { useExpanded, useTable } from 'react-table';
 import { Link, useNavigate } from 'react-router-dom';
 import PaginationBox from 'components/tables/Pagination';
 import Header from 'components/tables/genericTable/Header';
-import { Add } from 'iconsax-react';
+import { Add, Edit, Trash } from 'iconsax-react';
 import WrapperButton from 'components/common/guards/WrapperButton';
-import { MODULE, PERMISSIONS } from 'constant';
+import { ACTION, MODULE, PERMISSIONS } from 'constant';
 import EmptyTableDemo from 'components/tables/EmptyTable';
 import TableSkeleton from 'components/tables/TableSkeleton';
+import { ThemeMode } from 'config';
+import { useTheme } from '@mui/material/styles';
+import { dispatch, useSelector } from 'store';
 
 const VendorTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading }) => {
+  const theme = useTheme();
+  const mode = theme.palette.mode;
+  const navigate = useNavigate(); 
+
   const columns = useMemo(
     () => [
       {
@@ -70,6 +95,89 @@ const VendorTable = ({ data, page, setPage, limit, setLimit, lastPageNo, loading
             default:
               return <Chip color="info" label="Not Defined" size="small" variant="light" />;
           }
+        }
+      },
+      {
+        Header: 'Actions',
+        className: 'cell-center',
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          console.log(row);
+          return (
+            <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
+              {/* <Tooltip
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      backgroundColor: mode === ThemeMode.DARK ? theme.palette.grey[50] : theme.palette.grey[700],
+                      opacity: 0.9
+                    }
+                  }
+                }}
+                title="View"
+              >
+                <IconButton
+                  color="secondary"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/driver-overview/${driverID}`);
+                  }}
+                >
+                  <Eye />
+                </IconButton>
+              </Tooltip> */}
+
+              <Tooltip
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      backgroundColor: mode === ThemeMode.DARK ? theme.palette.grey[50] : theme.palette.grey[700],
+                      opacity: 0.9
+                    }
+                  }
+                }}
+                title="Edit"
+              >
+                <IconButton
+                  color="primary"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const id = row.original.vendorId;
+                    console.log('Id = ', id);
+                    navigate(`/management/vendor/edit/${id}`);
+                    // dispatch(setSelectedID(row.values._id));
+                  }}
+                >
+                  <Edit />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      backgroundColor: mode === ThemeMode.DARK ? theme.palette.grey[50] : theme.palette.grey[700],
+                      opacity: 0.9
+                    }
+                  }
+                }}
+                title="Delete"
+              >
+                <IconButton
+                  color="error"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log(`🚀 ~ row.values.id:`, row);
+                    dispatch(handleOpen(ACTION.DELETE));
+                    dispatch(setDeletedName(row.values['userName']));
+                    dispatch(setSelectedID(row.values._id));
+                  }}
+                >
+                  <Trash />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+          );
         }
       }
     ],
